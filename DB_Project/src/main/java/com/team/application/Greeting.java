@@ -2,8 +2,8 @@ package com.team.application;
 
 public class Greeting {
 
-    private long id;
-    private String content;
+    private long id=-1;
+    private String content="default";
 
     public long getId() {
         return id;
