@@ -1,0 +1,85 @@
+*{
+  /*this is the style-sheet*/
+  /*box-sizing: content-box; box model :width/height only represents the content's width/height, padding, margin border is added*/ 
+  /*box-sizing: border-box;  model : width/height is auto so that the sum is equal to desired width/height*/ 
+}
+
+body {
+  /* Old browsers */
+  background: #141E30;
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(-45deg, #35577D, #141E30);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(-45deg, #35577D, #141E30);
+  margin: 0;
+  padding: 0;
+}
+
+.image {
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/c/c2/Pan_troglodytes_%26_Pan_paniscus.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  border: 4px solid coral;
+  padding: 4px 4px;
+}
+.image p {
+	color: black;
+	font-weight: bold;
+}
+
+
+p {
+	color : white;
+	font-size : 20px;
+	font-family : Arial; 
+}
+	
+h1,h5 {
+	text-align: center;
+	font-family: Georgia;
+}
+h2{
+	text-align: center;
+}
+
+#habitat{
+	text-align: center;
+}
+
+.title{
+	color: teal;
+	text-transform: uppercase; 
+}
+
+/*  color:purple !important; will make the color of the specified elements purple no matter what id's or classes that exist */
+
+#id-1{
+	font-family: cursive;
+}
+
+.list li { /* all listed items inside of the entire block that has this class name */
+	color: teal;
+}
+
+
+/* X.class != .class X*/
+
+
+h2.specialh2{ /* all h2's with that class name */
+	font-size : 30px;
+}
+
+#habitat li{ /* all listed items inside of the entire block that has this id */
+	color : pink;
+}
+
+#video{
+	width: 500px;
+	margin: 0 auto;
+	position: center;
+}
+
+#media{
+	width:100%;
+}
