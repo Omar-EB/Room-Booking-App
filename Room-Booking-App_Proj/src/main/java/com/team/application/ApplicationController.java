@@ -1,6 +1,9 @@
 package com.team.application;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class ApplicationController {
 
     @RequestMapping("/")
-    public String index() {
+    public String index(Model model) {
+    	model.addAttribute("sources", Arrays.asList(Source.values()));
+    	model.addAttribute("singleSelectAllValues", Arrays.asList(Source.values()));
         return "index.html";
     }
     

@@ -26,6 +26,16 @@
 	<p><em>The following dummy article is based on the wikipedia article below:</em><br/></p>
 	<a href="https://en.wikipedia.org/wiki/Chimpanzee">Chimpanzee/Wikipedia</a>
     <h1 class="title"> The Chimpanzee (in templates) </h1>
+    <div th:each="source : ${sources}">
+  		<input name="source" type="radio" th:value="${source}"/><label for="source" th:text="| &nbsp; ${source} |">Something is wrong !</label>
+	</div>
+	<select> <!-- th:field="*{dropdownSelectedValue}" -->
+  		<option 
+	      th:each="dropdownValue: ${singleSelectAllValues}"
+	      th:value="${dropdownValue}"
+	      th:text="${dropdownValue}" >
+	    </option>
+	</select>
 	<div id="introduction">
       <h2  id="id-1">About Chimpanzees</h2>
       <p>The taxonomical genus (<em>Pan</em>) is currently found in the Congo jungle and West Africa. Its conservation status is currently <strong>Endangered</strong>.<br /><br /> The genus consists of two extant species: the common chimpanzee and the bonobo.</p>
