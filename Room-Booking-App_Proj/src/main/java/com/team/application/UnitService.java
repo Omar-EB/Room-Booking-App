@@ -24,4 +24,8 @@ public class UnitService {
 		}
 		return null;
 	}
+	
+	public void addUnit(Unit unit) {
+		units.add(unit);
+	}
 }

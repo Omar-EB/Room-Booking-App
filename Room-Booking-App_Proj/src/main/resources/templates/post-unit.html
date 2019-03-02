@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> post-unit </title>
+	
+	<style>
+    <!-- You can include css code here and it'll work jus' fine-->
+	<!-- You can also include style=" " in the head tags-->
+    </style>
+	
+	
+	<!-- Used to link to the css file-->
+	<link href="./styling.css" type="text/css" rel="stylesheet">
+	
+  </head>
+  
+  <body>
+	  <h1 class="title">Form (post)</h1>
+	  <form action="#" th:action="@{/unit}" th:object="${unit}" method="post">
+    	  <p>Id: <input type="text" th:field="*{id}" /></p>
+          <p>Name: <input type="text" th:field="*{name}" /></p>
+		  <p>Rating: <input type="text" th:field="*{rating}" /></p>
+          <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+      </form>
+  </body>
+</html>
