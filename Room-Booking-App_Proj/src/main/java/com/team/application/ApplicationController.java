@@ -32,4 +32,5 @@ public class ApplicationController {
     public String greetingSubmit(@ModelAttribute Greeting greeting) {
         return "result";
     }
+    
 }
