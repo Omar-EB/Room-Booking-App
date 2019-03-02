@@ -1,6 +1,9 @@
 package com.team.application;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,20 +18,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+@SessionAttributes(types = Unit.class)
 @Controller
 public class SubmissionController {
 
 	@Autowired
 	private UnitService unitService;
 	
-	@RequestMapping(method=RequestMethod.GET,value="/post-unit")
+	@GetMapping("/unit")
 	public String unitPage(Model model){
-		return "post-unit";
+		model.addAttribute(new Unit(0,"",0.0));
+		return "unit";
 	}
 	
-	@RequestMapping(method=RequestMethod.POST,value="/post-unit")
-	public void getUnit(@ModelAttribute Unit unit){
+	@PostMapping("/unit")
+	public String getUnit( Unit unit, SessionStatus status){
+		status.setComplete();
 		unitService.addUnit(unit);
+		return "result2";
 	}
 }

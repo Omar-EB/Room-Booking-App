@@ -1,5 +1,7 @@
 package com.team.application;
 
+import lombok.Data;
+@Data
 public class Unit {
 	
 	public int id;
