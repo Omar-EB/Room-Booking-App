@@ -17,4 +17,11 @@ public class UnitService {
 	public List<Unit> getAllUnits(){
 		return units;
 	}
+	
+	public Unit getUnit(int id) {
+		for (Unit unit : units) {
+			if (unit.getId() == id) return unit;
+		}
+		return null;
+	}
 }
