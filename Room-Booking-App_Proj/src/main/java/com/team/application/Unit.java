@@ -14,6 +14,7 @@ public class Unit {
 	public String name;
 	public double rating;
 	
+	public Unit() {}
 	public Unit(int id, String name, double rating) {
 		this.id=id;
 		this.name=name;
