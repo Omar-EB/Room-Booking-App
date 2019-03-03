@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@SessionAttributes(types = Unit.class)
 @Controller
 public class SubmissionController {
 
@@ -34,8 +33,7 @@ public class SubmissionController {
 	}
 	
 	@PostMapping("/unit")
-	public String getUnit( Unit unit, SessionStatus status){
-		status.setComplete();
+	public String getUnit( @ModelAttribute Unit unit){
 		unitService.addUnit(unit);
 		return "result2";
 	}
