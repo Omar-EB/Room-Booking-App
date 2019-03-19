@@ -27,8 +27,9 @@ public class RestfulController {
 	private UnitService unitService;
 	
 	@GetMapping("/units")
-	public List<Unit> getUnits(){
-		return unitService.getAllUnits();
+	public List<Unit> getUnits(@RequestParam(value = "description", required = false) String description){
+		if (description==null) 		return unitService.getAllUnits();
+		else return unitService.unitDescription(description);
 	}
 	
 	@GetMapping("/units/{id}")

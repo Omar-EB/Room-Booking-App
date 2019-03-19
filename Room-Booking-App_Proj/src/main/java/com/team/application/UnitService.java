@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.Query;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,42 +16,45 @@ public class UnitService {
 	
 	@Autowired
 	UnitRepository unitRepository;
-/*
-	private List<Unit> units = new ArrayList<Unit>();
-	 {
-		units.add(new Unit(1,"Unit-1",1.0));
-		units.add(new Unit(2,"Unit-2",2.0));
-		units.add(new Unit(3,"Unit-3",3.0));
-	}
-*/
 	public List<Unit> getAllUnits(){
-		
 		List<Unit> units = new ArrayList();
 		unitRepository.findAll().forEach(units :: add);
 		return units;
 	}
 	
 	public Unit getUnit(int id) {
-		/*
-			for (Unit unit : units) {
-				if (unit.getId() == id) return unit;
-			}
-			return null;
-		*/
 		return unitRepository.findById(id).get();
 	}
 	
 	public Unit addUnit(Unit unit) {
-		//units.add(unit);
 		return unitRepository.save(unit);
 	}
 	
 	public Unit updateUnit(Unit unit) {
-		//units.add(unit);
 		return unitRepository.save(unit);
 	}
 	
 	public void deleteUnit(int id) {
 		unitRepository.deleteById(id);
 	}
+	
+	public List<Unit> unitDescription(String description){
+		List<Unit> units = new ArrayList();
+		unitRepository.find(description).forEach(units :: add);
+		return units;
+		
+		/*
+		EntityManager em = Persistence.createEntityManagerFactory("com.team.application").createEntityManager();
+		Query q = em.createNativeQuery("SELECT a.firstname, a.lastname FROM Author a");
+		List<Object[]> authors = q.getResultList();
+		 
+		for (Object[] a : authors) {
+		    System.out.println("Author "
+		            + a[0]
+		            + " "
+		            + a[1]);
+		} */
+	}
+	
+	
 }
