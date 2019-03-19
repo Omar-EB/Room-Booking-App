@@ -37,14 +37,14 @@ public class UnitService {
 		return unitRepository.findById(id).get();
 	}
 	
-	public void addUnit(Unit unit) {
+	public Unit addUnit(Unit unit) {
 		//units.add(unit);
-		unitRepository.save(unit);
+		return unitRepository.save(unit);
 	}
 	
-	public void updateUnit(Unit unit) {
+	public Unit updateUnit(Unit unit) {
 		//units.add(unit);
-		unitRepository.save(unit);
+		return unitRepository.save(unit);
 	}
 	
 	public void deleteUnit(int id) {
