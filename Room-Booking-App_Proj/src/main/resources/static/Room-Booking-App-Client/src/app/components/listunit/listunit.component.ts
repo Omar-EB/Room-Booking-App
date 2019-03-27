@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {Unit} from '../../unit';
-import {UnitService} from '../../shared_service/unit.service'
+import { Unit } from '../../unit';
+import { UnitService } from '../../shared_service/unit.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-listunit',
@@ -10,7 +11,7 @@ import {UnitService} from '../../shared_service/unit.service'
 export class ListunitComponent implements OnInit {
 
   private units: Unit[];
-  constructor(private _unitService:UnitService) { }
+  constructor(private _unitService:UnitService, private _router:Router) { }
 
   ngOnInit() {
     this._unitService.getUnits().subscribe((units) => {
@@ -29,6 +30,17 @@ export class ListunitComponent implements OnInit {
     (error) => {
         console.log(error);
     });
+  }
+
+  updateUnit(unit:Unit){
+      this._unitService.setter(unit);
+      this._router.navigate(['/op']);
+  }
+
+  addUnit(){
+      let unit = new Unit();
+      this._unitService.setter(unit);
+      this._router.navigate(['/op']);
   }
 
 }

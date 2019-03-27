@@ -17,6 +17,7 @@ export class UnitService {
   private baseUrl:string = 'http://localhost:8080/units';
   private headers = new Headers({'Content-Type':'application/json'});
   private options = new RequestOptions({headers:this.headers});
+  private unit:Unit;
   constructor(private _http:Http) { 
   }
 
@@ -62,6 +63,14 @@ export class UnitService {
         catchError((error: HttpErrorResponse) => {
             return Observable.throw(error || 'SERVER ERROR')
         })
-    );  
+    );
+  }
+
+  setter(unit:Unit){
+      this.unit=unit;
+  }
+
+  getter(){
+      return this.unit;
   }
 }

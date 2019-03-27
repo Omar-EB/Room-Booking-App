@@ -13,10 +13,10 @@
                 <td>{{unit.rating}}</td>
                 <td>
                     <button class="btn btn-danger" (click)="deleteUnit(unit)" >Delete</button>
-                    <button class="btn btn-primary">Update</button>
+                    <button class="btn btn-primary" (click)="updateUnit(unit)">Update</button>
                 </td>
             </tr>
         </tbody>
     </table>
-    <button class="btn btn-primary">New Unit</button>
+    <button class="btn btn-primary" (click)="addUnit()">New Unit</button>
 </div>
