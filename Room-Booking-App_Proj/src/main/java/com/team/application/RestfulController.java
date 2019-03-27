@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -44,12 +45,12 @@ public class RestfulController {
 	}
 	
 	@PostMapping("/units")
-	public Unit saveUnit( Unit unit){
+	public Unit saveUnit( @RequestBody Unit unit){
 		return unitService.addUnit(unit);
 	}
 	
 	@PutMapping("/units")
-	public Unit updateUnit( Unit unit){
+	public Unit updateUnit( @RequestBody Unit unit){
 		return unitService.updateUnit(unit);
 	}
 }

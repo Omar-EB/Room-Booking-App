@@ -21,6 +21,7 @@ export class UnitFormComponent implements OnInit {
       if(this.unit.id==undefined){
         this._unitService.createUnit(this.unit).subscribe( (unit) => {
             console.log(unit);
+            console.log('create');
             this._router.navigate(['/']);
         }, (error) => {
             console.log(error);
@@ -28,6 +29,7 @@ export class UnitFormComponent implements OnInit {
       } else {
         this._unitService.updateUnit(this.unit).subscribe( (unit) => {
             console.log(unit);
+            console.log('update');
             this._router.navigate(['/']);
         }, (error) => {
             console.log(error);
