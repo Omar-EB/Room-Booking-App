@@ -5,13 +5,6 @@
     "version": "2.0.0",
     "configurations": [
         {
-            "name": "Launch Chrome New_configuration",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:4200/#",
-            "webRoot": "${workspaceFolder}"
-        },
-        {
             "name": "Launch Chrome Web_Client_Run",
             "type": "chrome",
             "request": "launch",
