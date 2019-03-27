@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Unit } from '../../unit';
 @Component({
   selector: 'app-unit-form',
   templateUrl: './unit-form.component.html',
@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UnitFormComponent implements OnInit {
 
+  private unit:Unit;
+  
   constructor() { }
 
   ngOnInit() {

@@ -8,6 +8,7 @@ import { UnitFormComponent } from './components/unit-form/unit-form.component';
 import { RouterModule, Routes } from '@angular/router';
 import { UnitService } from './shared_service/unit.service';
 import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
 
 const appRoutes:Routes = [
     {path:'', component:ListunitComponent},
@@ -22,6 +23,7 @@ const appRoutes:Routes = [
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
