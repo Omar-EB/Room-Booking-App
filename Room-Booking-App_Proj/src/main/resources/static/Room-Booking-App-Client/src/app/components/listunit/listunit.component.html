@@ -1,3 +1,22 @@
-<p>
-  listunit works!
-</p>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <th>id</th>
+            <th>name</th>
+            <th>rating</th>
+            <th>Operations</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let unit of units">
+                <td>{{unit.id}}</td>
+                <td>{{unit.name}}</td>
+                <td>{{unit.rating}}</td>
+                <td>
+                    <button class="btn btn-danger" (click)="deleteUnit(unit)" >Delete</button>
+                    <button class="btn btn-primary">Update</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-primary">New Unit</button>
+</div>

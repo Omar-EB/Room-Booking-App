@@ -13,7 +13,22 @@ export class ListunitComponent implements OnInit {
   constructor(private _unitService:UnitService) { }
 
   ngOnInit() {
-    this._unitService.getUnits().subscribe((units) => { console.log(units); this.units=units;} , (error) => {console.log(error)});
+    this._unitService.getUnits().subscribe((units) => {
+         console.log(units); 
+         this.units=units;
+        } , 
+        (error) => {
+            console.log(error);
+        });
+  }
+
+  deleteUnit(unit:Unit){
+    this._unitService.deletetUnit(unit.id).subscribe((data) => {
+        this.units.splice(this.units.indexOf(unit),1);
+    },
+    (error) => {
+        console.log(error);
+    });
   }
 
 }
