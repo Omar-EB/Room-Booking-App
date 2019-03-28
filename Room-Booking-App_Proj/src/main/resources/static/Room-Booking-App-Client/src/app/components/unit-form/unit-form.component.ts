@@ -22,7 +22,7 @@ export class UnitFormComponent implements OnInit {
         this._unitService.createUnit(this.unit).subscribe( (unit) => {
             console.log(unit);
             console.log('create');
-            this._router.navigate(['/']);
+            this._router.navigate(['/unittest/units']);
         }, (error) => {
             console.log(error);
         });
@@ -30,7 +30,7 @@ export class UnitFormComponent implements OnInit {
         this._unitService.updateUnit(this.unit).subscribe( (unit) => {
             console.log(unit);
             console.log('update');
-            this._router.navigate(['/']);
+            this._router.navigate(['/unittest/units']);
         }, (error) => {
             console.log(error);
         });

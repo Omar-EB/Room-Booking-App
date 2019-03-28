@@ -3,7 +3,6 @@ import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { HttpErrorResponse} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from "rxjs/operators";
-
 //import 'rxjs/add/operator/map';
 //import 'rxjs/add/operator/catch';
 //import 'rxjs/add/observable/throw';
@@ -21,8 +20,18 @@ export class UnitService {
   constructor(private _http:Http) { 
   }
 
+
   getUnits (){
     return this._http.get(this.baseUrl,this.options).pipe(
+        map((response:Response) => response.json()) , 
+        catchError((error: HttpErrorResponse) => {
+            return Observable.throw(error || 'SERVER ERROR')
+        })
+    );
+  }
+
+    getUnitsString (name:string){
+    return this._http.get(this.baseUrl+'?description='+name,this.options).pipe(
         map((response:Response) => response.json()) , 
         catchError((error: HttpErrorResponse) => {
             return Observable.throw(error || 'SERVER ERROR')

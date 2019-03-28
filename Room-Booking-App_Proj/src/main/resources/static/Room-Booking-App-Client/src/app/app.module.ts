@@ -11,7 +11,8 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
 const appRoutes:Routes = [
-    {path:'', component:ListunitComponent},
+    {path:'unittest/units', component:ListunitComponent},
+    {path: 'unittest/:id/units', component: ListunitComponent},
     {path:'op', component:UnitFormComponent}
 ]
 @NgModule({

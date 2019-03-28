@@ -9,3 +9,14 @@ insert into hotel values ('TopHill',5,'Hillside',346,'Quebec','QC','CA',4,'928-2
 insert into hotel values ('TopHill',6,'Mullberry',12,'San Antonio','TX','US',4,'120-594-2854',5);
 insert into hotel values ('TopHill',7,'Canal',26,'Columbus','OH','CA',2,'230-120-1755',5);
 insert into hotel values ('TopHill',8,'Summit',36,'Los Angelos','CA','US',4,'928-395-2857',5);
+
+insert into room values (1,1,'Sea',3,80,false,96);
+insert into room values (1,2,'Mountain',2,60,false,80);
+insert into room values (1,3,'Sea',4,100,true,120);
+insert into room values (1,4,'Sea',3,100,false,120);
+insert into room values (1,5,'Mountain',2,60,false,80);
+insert into room values (2,1,'Sea',3,65,false,96);
+insert into room values (2,2,'Sea',2,60,true,80);
+insert into room values (2,3,'Sea',4,70,true,120);
+insert into room values (2,4,'Sea',3,70,false,120);
+insert into room values (2,5,'Mountain',2,40,false,80);
