@@ -56,5 +56,28 @@ public class UnitService {
 		} */
 	}
 	
+	/* public List<Object> findHotelidByName(String hc_name){
+		EntityManager em = Persistence.createEntityManagerFactory("com.team.application").createEntityManager();
+		em.getTransaction().begin();
+
+			
+
+		List<Object[]> results = em.createQuery("SELECT p.firstName, p.lastName, n.phoneNumber FROM Hotel h, PhoneBookEntry n WHERE p.firstName = n.firstName AND p.lastName = n.lastName").getResultList();
+
+
+
+		for (Object[] result : results) {
+
+			log.info(result[0] + " " + result[1] + " - " + result[2]);
+
+		}
+
+
+
+		em.getTransaction().commit();
+
+		em.close();
+	} */
+	
 	
 }
