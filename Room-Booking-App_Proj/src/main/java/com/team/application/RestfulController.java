@@ -34,6 +34,11 @@ public class RestfulController {
 	@Autowired
 	private HotelService hotelService;
 	
+	 @RequestMapping("/")
+	 public String index() {
+		 return "BackEnd index page";
+	}
+	
 	@GetMapping("/units")
 	public List<Unit> getUnits(@RequestParam(value = "description", required = false) String description){
 		if (description==null) 		return unitService.getAllUnits();
