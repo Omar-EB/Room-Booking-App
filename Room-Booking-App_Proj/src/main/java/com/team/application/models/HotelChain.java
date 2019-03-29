@@ -1,16 +1,33 @@
 package com.team.application.models;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
-@Table(name = "HotelChain")
+@Table(name = "hotelchain")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class HotelChain {
 	
 	@Id
 	private String hc_name;
 	private int number_of_hotels;
+	
+    @OneToMany(mappedBy="hotelChain",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Hotel> hotels = new ArrayList<>();
+    //
 	
 	
 	public HotelChain() {}

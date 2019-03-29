@@ -8,10 +8,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Hotel")
+@Table(name = "hotel")
 public class Hotel {
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hc_name", nullable = false)
 	private HotelChain hotelChain;
 	
