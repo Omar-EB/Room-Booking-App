@@ -2,10 +2,14 @@ package com.team.application;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.team.application.models.Hotel;
+import com.team.application.services.HotelService;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +31,9 @@ public class RestfulController {
 	@Autowired
 	private UnitService unitService;
 	
+	@Autowired
+	private HotelService hotelService;
+	
 	@GetMapping("/units")
 	public List<Unit> getUnits(@RequestParam(value = "description", required = false) String description){
 		if (description==null) 		return unitService.getAllUnits();
@@ -36,6 +43,16 @@ public class RestfulController {
 	@GetMapping("/units/{id}")
 	public Unit getUnit(@PathVariable int id){
 		return unitService.getUnit(id);
+	}
+	
+	@GetMapping("/hotels")
+	public List<Hotel> gethotels(){
+		return hotelService.getAllHotels();
+	}
+	
+	@GetMapping("/hotels/id")
+	public int gethotelId(@RequestParam(value = "street_name", required = false) String street_name,@RequestParam(value = "street_number", required = false) int street_number,@RequestParam(value = "city", required = false) String city,@RequestParam(value = "state", required = false) String state,@RequestParam(value = "country", required = false) String country){
+		return hotelService.getHotelId(street_name,street_number,city,state,country);
 	}
 	
 	@DeleteMapping("/units/{id}")

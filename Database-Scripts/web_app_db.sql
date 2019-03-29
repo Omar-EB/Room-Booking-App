@@ -146,6 +146,18 @@ CREATE TABLE public.hotel (
 ALTER TABLE public.hotel OWNER TO postgres;
 
 --
+-- Name: hotel_chain; Type: TABLE; Schema: public; Owner: Web_App_User
+--
+
+CREATE TABLE public.hotel_chain (
+    hc_name character varying(255) NOT NULL,
+    number_of_hotels integer NOT NULL
+);
+
+
+ALTER TABLE public.hotel_chain OWNER TO "Web_App_User";
+
+--
 -- Name: hotelchain; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -257,6 +269,7 @@ ALTER TABLE public.unit OWNER TO postgres;
 --
 
 COPY public.centraloffice (hc_name, street_name, street_number, city, state, country, phone_number, email_address) FROM stdin;
+TopHill	Laurier	26	Ottawa	ON	CA	124-122-6789	test@tophill.ca
 \.
 
 
@@ -297,6 +310,22 @@ COPY public.employeerole (sin, role) FROM stdin;
 --
 
 COPY public.hotel (hc_name, hotel_id, street_name, street_number, city, state, country, rating, phone_number, number_of_rooms) FROM stdin;
+TopHill	1	Lincoln	25	Montreal	QC	CA	4	153-196-9274	5
+TopHill	2	Cedar	205	Houston	TX	US	3	698-294-0376	5
+TopHill	3	River	26	Edmonton	AB	CA	5	175-287-0193	5
+TopHill	4	Route9	212	New York	NY	US	3	109-583-2058	5
+TopHill	5	Hillside	346	Quebec	QC	CA	4	928-284-2856	5
+TopHill	6	Mullberry	12	San Antonio	TX	US	4	120-594-2854	5
+TopHill	7	Canal	26	Columbus	OH	CA	2	230-120-1755	5
+TopHill	8	Summit	36	Los Angelos	CA	US	4	928-395-2857	5
+\.
+
+
+--
+-- Data for Name: hotel_chain; Type: TABLE DATA; Schema: public; Owner: Web_App_User
+--
+
+COPY public.hotel_chain (hc_name, number_of_hotels) FROM stdin;
 \.
 
 
@@ -305,6 +334,7 @@ COPY public.hotel (hc_name, hotel_id, street_name, street_number, city, state, c
 --
 
 COPY public.hotelchain (hc_name, number_of_hotels) FROM stdin;
+TopHill	8
 \.
 
 
@@ -329,6 +359,16 @@ COPY public.reservationsarchive (hc_name, hotel_id, room_number, start_date, end
 --
 
 COPY public.room (hotel_id, room_number, view_type, capacity, price, extendable, area) FROM stdin;
+1	1	Sea	3	80	f	96
+1	2	Mountain	2	60	f	80
+1	3	Sea	4	100	t	120
+1	4	Sea	3	100	f	120
+1	5	Mountain	2	60	f	80
+2	1	Sea	3	65	f	96
+2	2	Sea	2	60	t	80
+2	3	Sea	4	70	t	120
+2	4	Sea	3	70	f	120
+2	5	Mountain	2	40	f	80
 \.
 
 
@@ -400,6 +440,14 @@ ALTER TABLE ONLY public.employee
 
 ALTER TABLE ONLY public.employeerole
     ADD CONSTRAINT employeerole_pkey PRIMARY KEY (sin, role);
+
+
+--
+-- Name: hotel_chain hotel_chain_pkey; Type: CONSTRAINT; Schema: public; Owner: Web_App_User
+--
+
+ALTER TABLE ONLY public.hotel_chain
+    ADD CONSTRAINT hotel_chain_pkey PRIMARY KEY (hc_name);
 
 
 --
@@ -552,6 +600,90 @@ ALTER TABLE ONLY public.roomamenities
 
 ALTER TABLE ONLY public.roomdamages
     ADD CONSTRAINT roomdamages_hotel_id_fkey FOREIGN KEY (hotel_id, room_number) REFERENCES public.room(hotel_id, room_number);
+
+
+--
+-- Name: TABLE centraloffice; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.centraloffice TO "Web_App_User";
+
+
+--
+-- Name: TABLE checkedin; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.checkedin TO "Web_App_User";
+
+
+--
+-- Name: TABLE customer; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.customer TO "Web_App_User";
+
+
+--
+-- Name: TABLE employee; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.employee TO "Web_App_User";
+
+
+--
+-- Name: TABLE employeerole; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.employeerole TO "Web_App_User";
+
+
+--
+-- Name: TABLE hotel; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.hotel TO "Web_App_User";
+
+
+--
+-- Name: TABLE hotelchain; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.hotelchain TO "Web_App_User";
+
+
+--
+-- Name: TABLE reservation; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.reservation TO "Web_App_User";
+
+
+--
+-- Name: TABLE reservationsarchive; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.reservationsarchive TO "Web_App_User";
+
+
+--
+-- Name: TABLE room; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.room TO "Web_App_User";
+
+
+--
+-- Name: TABLE roomamenities; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.roomamenities TO "Web_App_User";
+
+
+--
+-- Name: TABLE roomdamages; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.roomdamages TO "Web_App_User";
 
 
 --

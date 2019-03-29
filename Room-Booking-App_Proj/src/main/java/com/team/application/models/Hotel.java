@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "Hotel")
 public class Hotel {
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hc_name", nullable = false)
 	private HotelChain hotelChain;
 	
@@ -90,3 +90,29 @@ public class Hotel {
 	}
 
 }
+
+/*
+  private static void persistEntity(EntityManagerFactory emf) throws Exception {
+      System.out.println("-- Persisting entity --");
+      EntityManager em = emf.createEntityManager();
+
+      Employee e = new Employee(1L, "Mike", "IT");
+
+      CompositeTaskId cti = new CompositeTaskId(1L, 100L);
+      Task task = new Task(cti, e);
+      task.setTaskName("Coding");
+      task.setDate(new Date());
+
+      CompositeTaskId cti2 = new CompositeTaskId(1L, 200L);
+      Task task2 = new Task(cti2, e);
+      task2.setTaskName("Refactoring");
+      task2.setDate(new Date());
+
+      em.getTransaction().begin();
+      em.persist(e);
+      em.persist(task);
+      em.persist(task2);
+      em.getTransaction().commit();
+      em.close();
+  }
+  */
