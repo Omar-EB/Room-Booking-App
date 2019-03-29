@@ -101,6 +101,41 @@
             "request": "launch",
             "url": "http://localhost:4200/#",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (14)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (15)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (16)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (17)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (18)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }{

@@ -17,8 +17,8 @@ export class ListunitComponent implements OnInit {
   private id:number=-1;
   constructor(private _unitService:UnitService, private _router:Router,private route:ActivatedRoute) { }
 
-  ngOnInit() {
-    //this.route.paramMap.subscribe( (paramMap) =>{this.description = paramMap.get('description');});
+  ngOnInit() { 
+    this.route.paramMap.subscribe( (paramMap) =>{this.description = paramMap.get('description');});
     this.description = this.route.snapshot.queryParams["description"];
     var test = this.route.snapshot.paramMap.get('id');
     if(test!=null){
@@ -29,7 +29,7 @@ export class ListunitComponent implements OnInit {
     console.log(this.description);
     console.log(this.id);
     if(this.id==-1){
-        if (this.description==undefined){
+        if (this.description==undefined){ //*/
             this._unitService.getUnits().subscribe((units) => {
             console.log(units); 
             this.units=units;
@@ -37,7 +37,7 @@ export class ListunitComponent implements OnInit {
             (error) => {
                 console.log(error);
             });
-            console.log('description undefined');
+            console.log('description undefined'); ///*
         } else {
             this._unitService.getUnitsString(this.description).subscribe((units) => {
             console.log(units); 
@@ -57,7 +57,7 @@ export class ListunitComponent implements OnInit {
                 console.log(error);
             });
             console.log('id defined');
-    }
+    } //*/
   }
 
   deleteUnit(unit:Unit){
