@@ -2,8 +2,10 @@ package com.team.application.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "HotelChain")
 public class HotelChain {
 	
 	@Id
