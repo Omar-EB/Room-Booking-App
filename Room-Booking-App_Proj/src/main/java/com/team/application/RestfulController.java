@@ -2,7 +2,9 @@ package com.team.application;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.team.application.models.CentralOffice;
 import com.team.application.models.Hotel;
+import com.team.application.services.CentralOfficeService;
 import com.team.application.services.HotelService;
 
 import java.util.Arrays;
@@ -30,9 +32,10 @@ public class RestfulController {
 
 	@Autowired
 	private UnitService unitService;
-	
 	@Autowired
 	private HotelService hotelService;
+	@Autowired
+	private CentralOfficeService centralOfficeService;
 	
 	 @RequestMapping("/")
 	 public String index() {
@@ -58,6 +61,16 @@ public class RestfulController {
 	@GetMapping("/hotels/id")
 	public int gethotelId(@RequestParam(value = "street_name", required = false) String street_name,@RequestParam(value = "street_number", required = false) int street_number,@RequestParam(value = "city", required = false) String city,@RequestParam(value = "state", required = false) String state,@RequestParam(value = "country", required = false) String country){
 		return hotelService.getHotelId(street_name,street_number,city,state,country);
+	}
+	
+	@GetMapping("/centraloffices")
+	public List<CentralOffice> getCentralOffices(){
+		return centralOfficeService.getCentralOffices();
+	}
+	
+	@GetMapping("/centraloffices/{hc_name}")
+	public CentralOffice getCentralOfficebyName(@PathVariable String hc_name){
+		return centralOfficeService.getCentralOfficeByName(hc_name);
 	}
 	
 	@DeleteMapping("/units/{id}")
