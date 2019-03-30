@@ -1,14 +1,22 @@
 package com.team.application.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "hotel")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Hotel {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -17,6 +25,10 @@ public class Hotel {
 	
 	@Id
 	private int hotel_id;
+	
+	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Room> rooms = new ArrayList<>();
 	
 	private String street_name;
     private int street_number;
