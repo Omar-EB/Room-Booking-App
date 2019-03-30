@@ -14,17 +14,6 @@ public class Room {
 	@EmbeddedId
 	private RoomCompositeKey room_id;
 	
-	/*
-	 THIS MADE IT WORK
-	 @MapsId("hotel_id")
-	  @ManyToOne(optional = false)
-	  @JoinColumns(value = {
-	          @JoinColumn(name = "hotel_id", referencedColumnName = "hotel_id") }) 
-	 * */
-	
-/*	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "hotel_id", nullable = false) */
-	
 	@MapsId("hotel_id")
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "hotel_id", nullable = false) 

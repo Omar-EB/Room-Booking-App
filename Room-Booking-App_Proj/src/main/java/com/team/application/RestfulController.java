@@ -77,6 +77,7 @@ public class RestfulController {
 		return centralOfficeService.getCentralOfficeByName(hc_name);
 	}
 	
+	//for the real query, query hotels first, get their hotel_id 's then query rooms
 	@GetMapping("/rooms")
 	public List<Room> getRooms(){
 		return roomService.getAllRooms();
@@ -85,6 +86,11 @@ public class RestfulController {
 	@GetMapping("/rooms/{hotel_id}")
 	public List<Room> findRoomsByHotelId(@PathVariable int hotel_id){
 		return roomService.findRoomsByHotelId(hotel_id);
+	}
+	
+	@GetMapping("/rooms/query/{state}")
+	public List<Room> getRoomsQuery(@PathVariable String state){
+		return roomService.findRoomsByQuery(0,state);
 	}
 	
 	@DeleteMapping("/units/{id}")
