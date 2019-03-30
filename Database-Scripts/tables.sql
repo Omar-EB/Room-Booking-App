@@ -16,7 +16,7 @@ CREATE TABLE CentralOffice (
 	phone_number TEXT NOT NULL,
 	email_address TEXT NOT NULL,
 	PRIMARY KEY (street_name, street_number, city, state, country),
-	FOREIGN KEY (hc_name) REFERENCES hotelchain (hc_name),
+	FOREIGN KEY (hc_name) REFERENCES hotelchain (hc_name) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 	CHECK (street_number > 0)
 )
 
@@ -28,8 +28,9 @@ CREATE TABLE CheckedIn(
 	end_date TIMESTAMP,
 	payment FLOAT NOT NULL,
 	PRIMARY KEY (employee_sin, hotel_id, room_number, start_date, end_date),
-	FOREIGN KEY (employee_sin) REFERENCES employee (sin),
-	FOREIGN KEY (hotel_id,room_number,start_date,end_date) REFERENCES reservation (hotel_id,room_number,start_date,end_date),
+	FOREIGN KEY (employee_sin) REFERENCES employee (sin) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (hotel_id,room_number,start_date,end_date) REFERENCES reservation (hotel_id,room_number,start_date,end_date)
+	MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 	CHECK (payment > 0.00)
 )
 								 
@@ -89,8 +90,8 @@ CREATE TABLE Reservation (
 	customer_sin TEXT NOT NULL,
 	reservation_type BOOLEAN DEFAULT FALSE,
 	PRIMARY KEY (hotel_id, room_number, start_date, end_date),
-	FOREIGN KEY (hotel_id,room_number) REFERENCES room (hotel_id,room_number),
-	FOREIGN KEY (customer_sin) REFERENCES customer (sin)
+	FOREIGN KEY (hotel_id,room_number) REFERENCES room (hotel_id,room_number) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (customer_sin) REFERENCES customer (sin) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 )
 
 CREATE TABLE Customer (
@@ -117,7 +118,7 @@ CREATE TABLE Room (
 	extendable BOOLEAN DEFAULT FALSE,
 	area FLOAT NOT NULL,
 	PRIMARY KEY (hotel_id, room_number),
-	FOREIGN KEY (hotel_id) REFERENCES hotel (hotel_id),
+	FOREIGN KEY (hotel_id) REFERENCES hotel (hotel_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 	CHECK (room_number > 0),
 	CHECK (capacity > 0),
 	CHECK (price > 0.00),
@@ -129,7 +130,7 @@ CREATE TABLE RoomAmenities (
 	room_number INT,
 	amenity TEXT,
 	PRIMARY KEY (hotel_id, room_number, amenity),
-	FOREIGN KEY (hotel_id,room_numer) REFERENCES room (hotel_id,room_numer)
+	FOREIGN KEY (hotel_id,room_numer) REFERENCES room (hotel_id,room_numer) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 )
 
 CREATE TABLE RoomDamages (
@@ -137,5 +138,5 @@ CREATE TABLE RoomDamages (
 	room_number INT,
 	damage TEXT,
 	PRIMARY KEY (hotel_id, room_number, damage),
-	FOREIGN KEY (hotel_id,room_numer) REFERENCES room (hotel_id,room_numer)
+	FOREIGN KEY (hotel_id,room_numer) REFERENCES room (hotel_id,room_numer) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 )
