@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Unit } from '../../unit';
 import { Router } from '@angular/router';
-import { UnitService } from '../../shared_service/unit.service';
+import { UnitService } from '../../services/unit.service';
 @Component({
   selector: 'app-unit-form',
   templateUrl: './unit-form.component.html',

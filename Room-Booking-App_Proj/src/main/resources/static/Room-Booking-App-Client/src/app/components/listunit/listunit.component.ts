@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Unit } from '../../unit';
-import { UnitService } from '../../shared_service/unit.service';
+import { UnitService } from '../../services/unit.service';
 import { Router } from '@angular/router';
 
 import {ActivatedRoute} from '@angular/router';
