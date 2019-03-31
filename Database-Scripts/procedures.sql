@@ -127,3 +127,26 @@ AFTER INSERT ON reservation
 FOR EACH ROW
 EXECUTE PROCEDURE log_reservation();
 --------------------------------------------------------------------------------------------------
+select room.* from room,hotel,reservation where ((
+	room.hotel_id=hotel.hotel_id AND
+	hotel.rating=? 				 AND
+	hotel.city=?				 AND
+	hotel.state=?				 AND
+	hotel.country=?				 
+	) AND (
+	room.capacity=?				 AND
+	room.price<=?				 AND
+	room.area>=?				 
+  	) AND (
+		if not exists (
+			select 1 from reservation where (
+				(reservation.hotel_id=room.hotel_id AND reservation.room_id=room.room_id) AND (
+					(reservation.end_date>? AND reservation.start_date<=?) OR -- ?1 :start , ?2 : end
+					(reservation.start_date>=? AND reservation.start_date<?) OR -- ?1 :start , ?2 : end
+					(reservation.start<? AND reservation.end>?) -- ?1 :start , ?2 : end
+				)
+			);
+		)
+	)
+);
+--------------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package com.team.application.models;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -7,8 +8,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @Entity
 @Table(name = "room")
+@JsonInclude(Include.NON_NULL)
 public class Room {
 	
 	@EmbeddedId
@@ -21,7 +26,9 @@ public class Room {
 	
     private String view_type;
     private int capacity;
-    double price;
+    @Column(nullable = true)
+    //@JsonIgnore
+    Double price;
     boolean extendable;
     double area;
     
@@ -50,10 +57,10 @@ public class Room {
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 	public boolean isExtendable() {
