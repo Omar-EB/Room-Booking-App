@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.team.application.models.CentralOffice;
 import com.team.application.models.Hotel;
 import com.team.application.models.Room;
+import com.team.application.models.RoomAmenities;
 import com.team.application.services.CentralOfficeService;
 import com.team.application.services.HotelService;
 import com.team.application.services.RoomService;
+import com.team.application.services.RoomAmenitiesService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,8 @@ public class RestfulController {
 	private CentralOfficeService centralOfficeService;
 	@Autowired
 	private RoomService roomService;
+	@Autowired
+	private RoomAmenitiesService roomAmenitiesService;
 	
 	 @RequestMapping("/")
 	 public String index() {
@@ -91,6 +95,11 @@ public class RestfulController {
 	@GetMapping("/rooms/query/{state}")
 	public List<Room> getRoomsQuery(@PathVariable String state){
 		return roomService.findRoomsByQuery(0,state);
+	}
+	
+	@GetMapping("/rooms/{hotel_id}/{room_number}/amenities")
+	public List<RoomAmenities> findAmenetiesByHotelRoom(@PathVariable int hotel_id,@PathVariable int room_number){
+		return roomAmenitiesService.findAmenitiesByHotelRoom(hotel_id,room_number);
 	}
 	
 	@DeleteMapping("/units/{id}")

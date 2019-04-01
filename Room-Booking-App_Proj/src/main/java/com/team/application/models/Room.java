@@ -1,13 +1,19 @@
 package com.team.application.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -31,6 +37,10 @@ public class Room {
     Double price;
     boolean extendable;
     double area;
+    
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<RoomAmenities> amenities = new ArrayList<>();
     
     
 	public RoomCompositeKey getRoom_id() {
@@ -75,5 +85,4 @@ public class Room {
 	public void setArea(double area) {
 		this.area = area;
 	}
-	
 }

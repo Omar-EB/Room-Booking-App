@@ -20,7 +20,21 @@ export class UnitService {
   constructor(private _http:Http) { 
   }
 
+  /*
+  getData(): Observable<any> {
+       return this.http.get(this.url).map(res => res.json());
+}
 
+Now fetch client id:
+
+this.getData().subscribe(
+       res => {
+           let resources = res["resources"];
+           let resource = resources[0];
+           console.log(resource["client_id"]);
+       }
+   );
+  */
   getUnits (){
     return this._http.get(this.baseUrl,this.options).pipe(
         map((response:Response) => response.json()) , 

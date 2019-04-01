@@ -2,13 +2,13 @@ package com.team.application.models;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 public class RoomCompositeKey implements Serializable {
 
-	private static final long serialVersionUID = -6186756438480671973L;
+	private static final long serialVersionUID = 1L;
+	//private static final long serialVersionUID = -6186756438480671973L;
 	
 	private int hotel_id;
 	private int room_number;

@@ -1,12 +1,10 @@
 package com.team.application.repositories;
 
-import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.team.application.Unit;
 import com.team.application.models.Hotel;
 
 public interface HotelRepository extends CrudRepository<Hotel, Integer> {
