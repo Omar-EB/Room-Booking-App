@@ -20,35 +20,10 @@ CREATE TABLE CentralOffice (
 	CHECK (street_number > 0)
 )
 
-CREATE TABLE CheckedIn(
-	employee_sin TEXT,
-	hotel_id INT,
-	room_number INT,
-	start_date TIMESTAMP,
-	end_date TIMESTAMP,
-	payment FLOAT NOT NULL,
-	PRIMARY KEY (employee_sin, hotel_id, room_number, start_date, end_date),
-	FOREIGN KEY (employee_sin) REFERENCES employee (sin) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (hotel_id,room_number,start_date,end_date) REFERENCES reservation (hotel_id,room_number,start_date,end_date)
-	MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
-	CHECK (payment > 0.00)
-)
-								 
-CREATE TABLE ReservationsArchive (
-	hc_name TEXT,
-	hotel_id INT,
-	room_number INT,
-	start_date timestamp,
-	end_date timestamp,
-	customer_sin TEXT,
-	employee_sin TEXT,
-	reservation_type Boolean DEFAULT False ,
-	PRIMARY KEY (hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin)
-)
-								 
+
 create table Hotel (
 	hc_name text not null references HotelChain(hc_name),
-	hotel_id int primary key,
+	hotel_id serial primary key,
 	street_name TEXT not null,
 	street_number int not null, 
 	city TEXT not null,
@@ -60,51 +35,6 @@ create table Hotel (
 	check (rating <= 5 and rating >= 0),
 	check (number_of_rooms >= 0),
 	check (street_number > 0)
-)
-
-create table Employee (
-	hotel_id int not null references Hotel(hotel_id),
-	sin int primary key,
-	street_name TEXT not null,
-	street_number int not null, 
-	city TEXT not null,
-	state VARCHAR(2) not null,
-	country VARCHAR(2) not null,
-	given_name text not null,
-	family_name text not null,
-	check (street_number > 0)
-)
-
-create table EmployeeRole (
-	sin text not null references Employee(sin),
-	role text not null,
-	primary key (sin,role)
-)
-
-CREATE TABLE Reservation (
-	hotel_id INT,
-	room_number INT,
-	start_date TIMESTAMP,
-	end_date TIMESTAMP,
-	customer_sin TEXT NOT NULL,
-	reservation_type BOOLEAN DEFAULT FALSE,
-	PRIMARY KEY (hotel_id, room_number, start_date, end_date),
-	FOREIGN KEY (hotel_id,room_number) REFERENCES room (hotel_id,room_number) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (customer_sin) REFERENCES customer (sin) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
-)
-
-CREATE TABLE Customer (
-	sin TEXT,
-	given_name TEXT NOT NULL,
-	family_name TEXT NOT NULL,
-	street_name TEXT NOT NULL,
-	street_number INT NOT NULL,
-	city TEXT NOT NULL,
-	state VARCHAR(2) NOT NULL,
-	country VARCHAR(2) NOT NULL,
-	date_of_registration TIMESTAMP NOT NULL,
-	PRIMARY KEY (sin),
-	CHECK (street_number > 0)
 )
 
 
@@ -138,4 +68,78 @@ CREATE TABLE RoomDamages (
 	damage TEXT,
 	PRIMARY KEY (hotel_id, room_number, damage),
 	FOREIGN KEY (hotel_id,room_numer) REFERENCES room (hotel_id,room_numer) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+)
+
+CREATE TABLE Customer (
+	sin TEXT,
+	given_name TEXT NOT NULL,
+	family_name TEXT NOT NULL,
+	street_name TEXT NOT NULL,
+	street_number INT NOT NULL,
+	city TEXT NOT NULL,
+	state VARCHAR(2) NOT NULL,
+	country VARCHAR(2) NOT NULL,
+	date_of_registration TIMESTAMP NOT NULL SET DEFAULT CURRENT_TIMESTAMP(0),
+	PRIMARY KEY (sin),
+	CHECK (street_number > 0)
+)
+
+create table Employee (
+	hotel_id int not null references Hotel(hotel_id),
+	sin int primary key,
+	street_name TEXT not null,
+	street_number int not null, 
+	city TEXT not null,
+	state VARCHAR(2) not null,
+	country VARCHAR(2) not null,
+	given_name text not null,
+	family_name text not null,
+	check (street_number > 0)
+)
+
+create table EmployeeRole (
+	sin text not null references Employee(sin),
+	role text not null,
+	primary key (sin,role)
+)
+			 
+
+CREATE TABLE Reservation (
+	hotel_id INT,
+	room_number INT,
+	start_date TIMESTAMP,
+	end_date TIMESTAMP,
+	customer_sin TEXT NOT NULL,
+	reservation_type BOOLEAN DEFAULT FALSE,
+	CHECK (start_date <= end_date),
+	PRIMARY KEY (hotel_id, room_number, start_date, end_date),
+	FOREIGN KEY (hotel_id,room_number) REFERENCES room (hotel_id,room_number) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (customer_sin) REFERENCES customer (sin) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+)
+
+CREATE TABLE CheckedIn(
+	employee_sin TEXT,
+	hotel_id INT,
+	room_number INT,
+	start_date TIMESTAMP,
+	end_date TIMESTAMP,
+	payment FLOAT NOT NULL,
+	PRIMARY KEY (employee_sin, hotel_id, room_number, start_date, end_date),
+	FOREIGN KEY (employee_sin) REFERENCES employee (sin) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (hotel_id,room_number,start_date,end_date) REFERENCES reservation (hotel_id,room_number,start_date,end_date)
+	MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+	CHECK (payment > 0.00)
+)
+								 
+CREATE TABLE ReservationsArchive (
+	id serial,
+	hc_name TEXT,
+	hotel_id INT,
+	room_number INT,
+	start_date timestamp,
+	end_date timestamp,
+	customer_sin TEXT,
+	employee_sin TEXT,
+	reservation_type Boolean DEFAULT False ,
+	PRIMARY KEY (id)
 )

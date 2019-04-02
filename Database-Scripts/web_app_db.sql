@@ -37,13 +37,13 @@ CREATE FUNCTION public.check_managers_role() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-IF 'manager' NOT IN (SELECT ROLE FROM 
-	(SELECT * FROM employee, 
-		(SELECT * FROM hotel, 
+IF 'manager' NOT IN (SELECT lower(ROLE) FROM 
+	(SELECT employee.sin FROM employee, 
+		(SELECT hotel.hotel_id FROM hotel, 
 		 	(SELECT hotel_id FROM employee 
 			 WHERE employee.sin = OLD.sin LIMIT 1) AS e
 		WHERE e.hotel_id = hotel.hotel_id LIMIT 1) AS h
-	WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = e.sin)
+	WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = employees.sin)
 THEN 
 	RAISE EXCEPTION 'There must be at least one manager for every hotel';
 END IF;
@@ -53,25 +53,6 @@ $$;
 
 
 ALTER FUNCTION public.check_managers_role() OWNER TO postgres;
-
---
--- Name: check_reservation_dates_order(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.check_reservation_dates_order() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-IF NEW.end_date < NEW.start_date
-THEN 
-	RAISE EXCEPTION 'Reservation start date must be before end date';
-END IF;
-RETURN NEW;
-END
-$$;
-
-
-ALTER FUNCTION public.check_reservation_dates_order() OWNER TO postgres;
 
 --
 -- Name: check_reservation_dates_overlap(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -169,9 +150,10 @@ CREATE FUNCTION public.log_reservation() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 	BEGIN
-		INSERT INTO reservationsarchive VALUES(
+		INSERT INTO reservationsarchive(hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin, reservation_type) 
+		VALUES(
 			(SELECT hc_name FROM hotel WHERE hotel.hotel_id = NEW.hotel_id limit 1),
-			NEW.hotel_id, NEW.room_number, NEW.start_end, NEW.end_date, NEW.customer_sin,
+			NEW.hotel_id, NEW.room_number, NEW.start_date, NEW.end_date, NEW.customer_sin,
 			(SELECT employee_sin FROM checkedin WHERE NEW.hotel_id = checkedin.hotel_id AND
 											NEW.room_number = checkedin.room_number AND
 											NEW.start_date = checkedin.start_date AND
@@ -183,6 +165,35 @@ $$;
 
 
 ALTER FUNCTION public.log_reservation() OWNER TO postgres;
+
+--
+-- Name: update_reservation(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.update_reservation() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+	BEGIN
+		IF (TG_OP = 'DELETE') THEN
+			UPDATE reservation SET reservation_type = False 
+				WHERE reservation.hotel_id = OLD.hotel_id 
+					AND reservation.room_number = OLD.room_number 
+					AND reservation.start_date = OLD.start_date
+					AND reservation.end_date = OLD.end_date;
+			RETURN NULL;
+		ELSEIF (TG_OP = 'INSERT') THEN 
+			UPDATE reservation SET reservation_type = True
+				WHERE reservation.hotel_id = NEW.hotel_id 
+					AND reservation.room_number = NEW.room_number 
+					AND reservation.start_date = NEW.start_date
+					AND reservation.end_date = NEW.end_date;
+			RETURN NEW;
+		END IF;
+	END;
+$$;
+
+
+ALTER FUNCTION public.update_reservation() OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -237,7 +248,7 @@ CREATE TABLE public.customer (
     city text NOT NULL,
     state character varying(2) NOT NULL,
     country character varying(2) NOT NULL,
-    date_of_registration timestamp without time zone NOT NULL,
+    date_of_registration timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
     CONSTRAINT customer_street_number_check CHECK ((street_number > 0))
 );
 
@@ -256,7 +267,6 @@ CREATE TABLE public.employee (
     city text NOT NULL,
     state character varying(2) NOT NULL,
     country character varying(2) NOT NULL,
-    rating integer NOT NULL,
     given_name text NOT NULL,
     family_name text NOT NULL,
     CONSTRAINT employee_street_number_check CHECK ((street_number > 0))
@@ -291,8 +301,8 @@ CREATE TABLE public.hotel (
     country character varying(2) NOT NULL,
     rating integer NOT NULL,
     phone_number text NOT NULL,
-    number_of_rooms integer NOT NULL,
-    CONSTRAINT hotel_number_of_rooms_check CHECK ((number_of_rooms > 0)),
+    number_of_rooms integer DEFAULT 0 NOT NULL,
+    CONSTRAINT hotel_number_of_rooms_check CHECK ((number_of_rooms >= 0)),
     CONSTRAINT hotel_rating_check CHECK (((rating <= 5) AND (rating >= 0))),
     CONSTRAINT hotel_street_number_check CHECK ((street_number > 0))
 );
@@ -328,8 +338,8 @@ ALTER SEQUENCE public.hotel_id_seq OWNED BY public.hotel.hotel_id;
 
 CREATE TABLE public.hotelchain (
     hc_name text NOT NULL,
-    number_of_hotels integer NOT NULL,
-    CONSTRAINT hotelchain_number_of_hotels_check CHECK ((number_of_hotels > 0))
+    number_of_hotels integer DEFAULT 0 NOT NULL,
+    CONSTRAINT hotelchain_number_of_hotels_check CHECK ((number_of_hotels >= 0))
 );
 
 
@@ -345,7 +355,8 @@ CREATE TABLE public.reservation (
     start_date timestamp without time zone NOT NULL,
     end_date timestamp without time zone NOT NULL,
     customer_sin text NOT NULL,
-    reservation_type boolean DEFAULT false
+    reservation_type boolean DEFAULT false,
+    CONSTRAINT reservation_check CHECK ((start_date <= end_date))
 );
 
 
@@ -356,18 +367,41 @@ ALTER TABLE public.reservation OWNER TO postgres;
 --
 
 CREATE TABLE public.reservationsarchive (
-    hc_name text NOT NULL,
-    hotel_id integer NOT NULL,
-    room_number integer NOT NULL,
-    start_date timestamp without time zone NOT NULL,
-    end_date timestamp without time zone NOT NULL,
-    customer_sin text NOT NULL,
-    employee_sin text NOT NULL,
+    id integer NOT NULL,
+    hc_name text,
+    hotel_id integer,
+    room_number integer,
+    start_date timestamp without time zone,
+    end_date timestamp without time zone,
+    customer_sin text,
+    employee_sin text,
     reservation_type boolean DEFAULT false
 );
 
 
 ALTER TABLE public.reservationsarchive OWNER TO postgres;
+
+--
+-- Name: reservationsarchive_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.reservationsarchive_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.reservationsarchive_id_seq OWNER TO postgres;
+
+--
+-- Name: reservationsarchive_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.reservationsarchive_id_seq OWNED BY public.reservationsarchive.id;
+
 
 --
 -- Name: room; Type: TABLE; Schema: public; Owner: postgres
@@ -417,20 +451,6 @@ CREATE TABLE public.roomdamages (
 ALTER TABLE public.roomdamages OWNER TO postgres;
 
 --
--- Name: temp; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.temp (
-    id integer,
-    val integer,
-    start_date timestamp without time zone,
-    end_date timestamp without time zone
-);
-
-
-ALTER TABLE public.temp OWNER TO postgres;
-
---
 -- Name: unit; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -451,6 +471,13 @@ ALTER TABLE ONLY public.hotel ALTER COLUMN hotel_id SET DEFAULT nextval('public.
 
 
 --
+-- Name: reservationsarchive id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservationsarchive ALTER COLUMN id SET DEFAULT nextval('public.reservationsarchive_id_seq'::regclass);
+
+
+--
 -- Data for Name: centraloffice; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -464,6 +491,7 @@ TopHill	Laurier	26	Ottawa	ON	CA	124-122-6789	test@tophill.ca
 --
 
 COPY public.checkedin (employee_sin, hotel_id, room_number, start_date, end_date, payment) FROM stdin;
+253423627	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	100.00
 \.
 
 
@@ -472,6 +500,9 @@ COPY public.checkedin (employee_sin, hotel_id, room_number, start_date, end_date
 --
 
 COPY public.customer (sin, given_name, family_name, street_name, street_number, city, state, country, date_of_registration) FROM stdin;
+124532589	Quang-Vinh	Do	Craig Henry	31	Ottawa	ON	CA	2019-04-01 23:34:57
+122342564	Omar	Elboraey	Vanier	31	Ottawa	ON	CA	2019-04-01 23:34:57
+532346978	Joey	Jeon	Baseline	31	Ottawa	ON	CA	2019-04-01 23:34:57
 \.
 
 
@@ -479,7 +510,10 @@ COPY public.customer (sin, given_name, family_name, street_name, street_number, 
 -- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.employee (hotel_id, sin, street_name, street_number, city, state, country, rating, given_name, family_name) FROM stdin;
+COPY public.employee (hotel_id, sin, street_name, street_number, city, state, country, given_name, family_name) FROM stdin;
+1	153269837	Laurier	100	Ottawa	ON	CA	Mob	Psycho
+1	389129734	Marvel	100	Ottawa	ON	CA	Iron	Man
+1	253423627	Merivale	100	Ottawa	ON	CA	Reigen	Reigen
 \.
 
 
@@ -488,6 +522,11 @@ COPY public.employee (hotel_id, sin, street_name, street_number, city, state, co
 --
 
 COPY public.employeerole (sin, role) FROM stdin;
+153269837	manager
+389129734	Nurse
+389129734	UI Designer
+253423627	cook
+253423627	Waiter
 \.
 
 
@@ -496,14 +535,15 @@ COPY public.employeerole (sin, role) FROM stdin;
 --
 
 COPY public.hotel (hc_name, hotel_id, street_name, street_number, city, state, country, rating, phone_number, number_of_rooms) FROM stdin;
-TopHill	1	Lincoln	25	Montreal	QC	CA	4	153-196-9274	5
-TopHill	2	Cedar	205	Houston	TX	US	3	698-294-0376	5
-TopHill	3	River	26	Edmonton	AB	CA	5	175-287-0193	5
-TopHill	4	Route9	212	New York	NY	US	3	109-583-2058	5
-TopHill	5	Hillside	346	Quebec	QC	CA	4	928-284-2856	5
-TopHill	6	Mullberry	12	San Antonio	TX	US	4	120-594-2854	5
-TopHill	7	Canal	26	Columbus	OH	CA	2	230-120-1755	5
-TopHill	8	Summit	36	Los Angelos	CA	US	4	928-395-2857	5
+McDonalds	9	Street24	65	Ottawa	ON	CA	1	533-236-9762	0
+TopHill	1	Lincoln	25	Montreal	QC	CA	1	423-196-9274	5
+TopHill	2	Cedar	25	Montreal	QC	CA	2	543-236-9274	5
+TopHill	3	River	65	Montreal	QC	CA	3	953-236-9272	5
+TopHill	4	Route9	65	Ottawa	ON	CA	5	153-236-9752	5
+TopHill	5	Route10	65	Ottawa	ON	CA	2	153-246-9762	5
+TopHill	6	Manordale	65	Ottawa	ON	CA	4	553-236-9762	5
+TopHill	7	Algonquin	65	Ottawa	ON	CA	4	753-236-9762	5
+TopHill	8	Route9	65	Ottawa	ON	CA	4	953-236-9762	5
 \.
 
 
@@ -513,6 +553,7 @@ TopHill	8	Summit	36	Los Angelos	CA	US	4	928-395-2857	5
 
 COPY public.hotelchain (hc_name, number_of_hotels) FROM stdin;
 TopHill	8
+McDonalds	1
 \.
 
 
@@ -521,6 +562,7 @@ TopHill	8
 --
 
 COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_sin, reservation_type) FROM stdin;
+1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	t
 \.
 
 
@@ -528,7 +570,9 @@ COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_s
 -- Data for Name: reservationsarchive; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.reservationsarchive (hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin, reservation_type) FROM stdin;
+COPY public.reservationsarchive (id, hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin, reservation_type) FROM stdin;
+4	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	\N	f
+5	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	253423627	t
 \.
 
 
@@ -537,16 +581,46 @@ COPY public.reservationsarchive (hc_name, hotel_id, room_number, start_date, end
 --
 
 COPY public.room (hotel_id, room_number, view_type, capacity, price, extendable, area) FROM stdin;
-1	1	Sea	3	80.00	f	96.00
-1	2	Mountain	2	60.00	f	80.00
-1	3	Sea	4	100.00	t	120.00
-1	4	Sea	3	100.00	f	120.00
-1	5	Mountain	2	60.00	f	80.00
-2	1	Sea	3	65.00	f	96.00
-2	2	Sea	2	60.00	t	80.00
-2	3	Sea	4	70.00	t	120.00
-2	4	Sea	3	70.00	f	120.00
-2	5	Mountain	2	40.00	f	80.00
+1	100	Sea	3	80.00	f	96.00
+1	101	Sea	4	80.00	f	10.00
+1	103	Mountain	5	80.00	t	100.00
+1	200	Sea	8	80.00	f	453.00
+1	201	Mountain	9	20.00	t	42.00
+2	100	Sea	3	80.00	f	96.00
+2	101	Sea	4	80.00	f	10.00
+2	103	Mountain	5	80.00	t	100.00
+2	200	Volcano	8	80.00	f	453.00
+2	201	Sky	9	20.00	t	42.00
+3	100	Sea	3	80.00	f	96.00
+3	101	Sea	4	80.00	f	10.00
+3	103	Mountain	5	80.00	t	100.00
+3	200	Sea	8	80.00	f	453.00
+3	201	Mountain	9	20.00	t	42.00
+4	100	Sea	3	80.00	f	96.00
+4	101	Sea	4	80.00	f	10.00
+4	103	Mountain	5	80.00	t	100.00
+4	200	Sea	8	80.00	f	453.00
+4	201	Mountain	9	20.00	t	42.00
+5	100	Sea	3	80.00	f	96.00
+5	101	Sea	4	80.00	f	10.00
+5	103	Mountain	5	80.00	t	100.00
+5	200	Sea	8	80.00	f	453.00
+5	201	Sea	9	20.00	t	42.00
+6	100	Sea	3	80.00	f	96.00
+6	101	Sea	4	80.00	f	10.00
+6	103	Mountain	5	80.00	t	100.00
+6	200	Sea	8	80.00	f	453.00
+6	201	Mountain	9	20.00	t	42.00
+7	100	Sea	3	80.00	f	96.00
+7	101	Sea	4	80.00	f	10.00
+7	103	Mountain	5	80.00	t	100.00
+7	200	Mountain	8	80.00	f	453.00
+7	201	Mountain	9	20.00	t	42.00
+8	100	Sea	3	80.00	f	96.00
+8	101	Sea	4	80.00	f	10.00
+8	103	Mountain	5	80.00	t	100.00
+8	200	Mountain	8	80.00	f	453.00
+8	201	Sea	9	20.00	t	42.00
 \.
 
 
@@ -555,6 +629,9 @@ COPY public.room (hotel_id, room_number, view_type, capacity, price, extendable,
 --
 
 COPY public.roomamenities (hotel_id, room_number, amenity) FROM stdin;
+1	103	pool
+1	100	food
+1	103	wine
 \.
 
 
@@ -563,20 +640,9 @@ COPY public.roomamenities (hotel_id, room_number, amenity) FROM stdin;
 --
 
 COPY public.roomdamages (hotel_id, room_number, damage) FROM stdin;
-\.
-
-
---
--- Data for Name: temp; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.temp (id, val, start_date, end_date) FROM stdin;
-1	4	2015-07-15 00:00:00	2015-08-15 00:00:00
-4	5	2015-07-12 00:00:00	2015-07-13 00:00:00
-5	6	2015-08-12 00:00:00	2015-08-16 00:00:00
-\N	\N	\N	\N
-1	2	\N	\N
-\N	2	\N	\N
+1	100	mold
+1	101	mold
+1	101	bedbugs
 \.
 
 
@@ -598,7 +664,14 @@ COPY public.unit (id, name, rating) FROM stdin;
 -- Name: hotel_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.hotel_id_seq', 1, false);
+SELECT pg_catalog.setval('public.hotel_id_seq', 9, true);
+
+
+--
+-- Name: reservationsarchive_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 5, true);
 
 
 --
@@ -670,7 +743,7 @@ ALTER TABLE ONLY public.reservation
 --
 
 ALTER TABLE ONLY public.reservationsarchive
-    ADD CONSTRAINT reservationsarchive_pkey PRIMARY KEY (hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin);
+    ADD CONSTRAINT reservationsarchive_pkey PRIMARY KEY (id);
 
 
 --
@@ -713,13 +786,6 @@ CREATE TRIGGER check_managers AFTER DELETE OR UPDATE ON public.employeerole FOR 
 
 
 --
--- Name: reservation check_reservation_dates_order; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER check_reservation_dates_order BEFORE INSERT ON public.reservation FOR EACH ROW EXECUTE PROCEDURE public.check_reservation_dates_order();
-
-
---
 -- Name: reservation check_reservation_dates_overlap; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -744,21 +810,28 @@ CREATE TRIGGER decrement_room_number AFTER DELETE ON public.room FOR EACH ROW EX
 -- Name: hotel increment_hotel_number; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER increment_hotel_number AFTER DELETE ON public.hotel FOR EACH ROW EXECUTE PROCEDURE public.increment_hotel_num();
+CREATE TRIGGER increment_hotel_number AFTER INSERT ON public.hotel FOR EACH ROW EXECUTE PROCEDURE public.increment_hotel_num();
 
 
 --
 -- Name: room increment_room_number; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER increment_room_number AFTER DELETE ON public.room FOR EACH ROW EXECUTE PROCEDURE public.increment_room_num();
+CREATE TRIGGER increment_room_number AFTER INSERT ON public.room FOR EACH ROW EXECUTE PROCEDURE public.increment_room_num();
 
 
 --
 -- Name: reservation log_reservation; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER log_reservation AFTER INSERT ON public.reservation FOR EACH ROW EXECUTE PROCEDURE public.log_reservation();
+CREATE TRIGGER log_reservation AFTER INSERT OR UPDATE ON public.reservation FOR EACH ROW EXECUTE PROCEDURE public.log_reservation();
+
+
+--
+-- Name: checkedin update_reservation; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER update_reservation AFTER INSERT OR DELETE ON public.checkedin FOR EACH ROW EXECUTE PROCEDURE public.update_reservation();
 
 
 --
@@ -903,13 +976,6 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.hotelchain TO "Web_App_User";
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.reservation TO "Web_App_User";
-
-
---
--- Name: TABLE reservationsarchive; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.reservationsarchive TO "Web_App_User";
 
 
 --

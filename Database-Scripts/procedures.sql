@@ -53,13 +53,13 @@ EXECUTE PROCEDURE increment_hotel_num();
 CREATE FUNCTION check_managers_role()
 	RETURNS TRIGGER AS $BODY$
 BEGIN
-IF 'manager' NOT IN (SELECT ROLE FROM 
-	(SELECT * FROM employee, 
-		(SELECT * FROM hotel, 
+IF 'manager' NOT IN (SELECT lower(ROLE) FROM 
+	(SELECT employee.sin FROM employee, 
+		(SELECT hotel.hotel_id FROM hotel, 
 		 	(SELECT hotel_id FROM employee 
 			 WHERE employee.sin = OLD.sin LIMIT 1) AS e
 		WHERE e.hotel_id = hotel.hotel_id LIMIT 1) AS h
-	WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = e.sin)
+	WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = employees.sin)
 THEN 
 	RAISE EXCEPTION 'There must be at least one manager for every hotel';
 END IF;
@@ -89,29 +89,40 @@ CREATE TRIGGER check_reservation
 BEFORE INSERT ON reservation
 FOR EACH ROW 
 EXECUTE PROCEDURE check_reservation_dates();
---------------------------------------------------------------------------------------------------------
-CREATE FUNCTION check_reservation_dates_order()
+-----------------------------------------------------------------------------------------------
+CREATE FUNCTION update_reservation()
 RETURNS TRIGGER AS $BODY$
-BEGIN
-IF NEW.end_date < NEW.start_date
-THEN 
-	RAISE EXCEPTION 'Reservation start date must be before end date';
-END IF;
-RETURN NEW;
-END
+	BEGIN
+		IF (TG_OP = 'DELETE') THEN
+			UPDATE reservation SET reservation_type = False 
+				WHERE reservation.hotel_id = OLD.hotel_id 
+					AND reservation.room_number = OLD.room_number 
+					AND reservation.start_date = OLD.start_date
+					AND reservation.end_date = OLD.end_date;
+			RETURN NULL;
+		ELSEIF (TG_OP = 'INSERT') THEN 
+			UPDATE reservation SET reservation_type = True
+				WHERE reservation.hotel_id = NEW.hotel_id 
+					AND reservation.room_number = NEW.room_number 
+					AND reservation.start_date = NEW.start_date
+					AND reservation.end_date = NEW.end_date;
+			RETURN NEW;
+		END IF;
+	END;
 $BODY$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_reservation_dates_order
-BEFORE INSERT ON reservation
-FOR EACH ROW 
-EXECUTE PROCEDURE check_reservation_dates_order();
+CREATE TRIGGER update_reservation
+AFTER INSERT OR DELETE ON checkedin
+FOR EACH ROW
+EXECUTE PROCEDURE update_reservation();
 ------------------------------------------------------------------------------------------------
 CREATE FUNCTION log_reservation()
 RETURNS TRIGGER AS $BODY$
 	BEGIN
-		INSERT INTO reservationsarchive VALUES(
+		INSERT INTO reservationsarchive(hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin, reservation_type) 
+		VALUES(
 			(SELECT hc_name FROM hotel WHERE hotel.hotel_id = NEW.hotel_id limit 1),
-			NEW.hotel_id, NEW.room_number, NEW.start_end, NEW.end_date, NEW.customer_sin,
+			NEW.hotel_id, NEW.room_number, NEW.start_date, NEW.end_date, NEW.customer_sin,
 			(SELECT employee_sin FROM checkedin WHERE NEW.hotel_id = checkedin.hotel_id AND
 											NEW.room_number = checkedin.room_number AND
 											NEW.start_date = checkedin.start_date AND
@@ -121,9 +132,8 @@ RETURNS TRIGGER AS $BODY$
 	END;
 $BODY$ LANGUAGE plpgsql;
 
-
 CREATE TRIGGER log_reservation
-AFTER INSERT ON reservation
+AFTER INSERT OR UPDATE ON reservation
 FOR EACH ROW
 EXECUTE PROCEDURE log_reservation();
 --------------------------------------------------------------------------------------------------
