@@ -1,28 +1,84 @@
-insert into hotelchain values ('TopHill',8);
+
+-- HOTEL CHAIN
+insert into hotelchain values ('TopHill');
+insert into hotelchain values ('McDonalds');
+
+
+-- CENTRAL OFFICE
 insert into centraloffice values ('TopHill','Laurier',26,'Ottawa','ON','CA','124-122-6789','test@tophill.ca');
 
-insert into hotel values ('TopHill',1,'Lincoln',25,'Montreal','QC','CA',4,'153-196-9274',5);
-insert into hotel values ('TopHill',2,'Cedar',205,'Houston','TX','US',3,'698-294-0376',5);
-insert into hotel values ('TopHill',3,'River',26,'Edmonton','AB','CA',5,'175-287-0193',5);
-insert into hotel values ('TopHill',4,'Route9',212,'New York','NY','US',3,'109-583-2058',5);
-insert into hotel values ('TopHill',5,'Hillside',346,'Quebec','QC','CA',4,'928-284-2856',5);
-insert into hotel values ('TopHill',6,'Mullberry',12,'San Antonio','TX','US',4,'120-594-2854',5);
-insert into hotel values ('TopHill',7,'Canal',26,'Columbus','OH','CA',2,'230-120-1755',5);
-insert into hotel values ('TopHill',8,'Summit',36,'Los Angelos','CA','US',4,'928-395-2857',5);
 
-insert into room values (1,1,'Sea',3,80,false,96);
-insert into room values (1,2,'Mountain',2,60,false,80);
-insert into room values (1,3,'Sea',4,100,true,120);
-insert into room values (1,4,'Sea',3,100,false,120);
-insert into room values (1,5,'Mountain',2,60,false,80);
-insert into room values (2,1,'Sea',3,65,false,96);
-insert into room values (2,2,'Sea',2,60,true,80);
-insert into room values (2,3,'Sea',4,70,true,120);
-insert into room values (2,4,'Sea',3,70,false,120);
-insert into room values (2,5,'Mountain',2,40,false,80);
+-- HOTEL  
+alter sequence hotel_id_seq restart;
+
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Lincoln', 25, 'Montreal', 'QC', 'CA', 1, '423-196-9274');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Cedar', 25, 'Montreal', 'QC', 'CA', 2, '543-236-9274');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'River', 65, 'Montreal', 'QC', 'CA', 3, '953-236-9272');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Route9', 65, 'Ottawa', 'ON', 'CA', 5, '153-236-9752');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Route10', 65, 'Ottawa', 'ON', 'CA', 2, '153-246-9762');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Manordale', 65, 'Ottawa', 'ON', 'CA', 4, '553-236-9762');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Algonquin', 65, 'Ottawa', 'ON', 'CA', 4, '753-236-9762');
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('TopHill', 'Route9', 65, 'Ottawa', 'ON', 'CA', 4, '953-236-9762');
+
+
+insert into hotel(hc_name, street_name, street_number, city, state, country, rating, phone_number) 
+	values ('McDonalds', 'Street24', 65, 'Ottawa', 'ON', 'CA', 1, '533-236-9762');
 
 
 
-insert into roomamenities values(1,1,'amenety-1.1.2');
-insert into roomamenities values(1,1,'amenety-1.1.3');
-insert into roomamenities values(1,2,'amenety-1.2.1');
+-- ROOM
+insert into room values (1, 100, 'Sea', 3, 80, false, 96);
+insert into room values (1, 101, 'Sea', 4, 80, false, 10);
+insert into room values (1, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (1, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (1, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (2, 100, 'Sea', 3, 80, false, 96);
+insert into room values (2, 101, 'Sea', 4, 80, false, 10);
+insert into room values (2, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (2, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (2, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (3, 100, 'Sea', 3, 80, false, 96);
+insert into room values (3, 101, 'Sea', 4, 80, false, 10);
+insert into room values (3, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (3, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (3, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (4, 100, 'Sea', 3, 80, false, 96);
+insert into room values (4, 101, 'Sea', 4, 80, false, 10);
+insert into room values (4, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (4, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (4, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (5, 100, 'Sea', 3, 80, false, 96);
+insert into room values (5, 101, 'Sea', 4, 80, false, 10);
+insert into room values (5, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (5, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (5, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (6, 100, 'Sea', 3, 80, false, 96);
+insert into room values (6, 101, 'Sea', 4, 80, false, 10);
+insert into room values (6, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (6, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (6, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (7, 100, 'Sea', 3, 80, false, 96);
+insert into room values (7, 101, 'Sea', 4, 80, false, 10);
+insert into room values (7, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (7, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (7, 201, 'Sky', 9, 20, True, 42);
+
+insert into room values (8, 100, 'Sea', 3, 80, false, 96);
+insert into room values (8, 101, 'Sea', 4, 80, false, 10);
+insert into room values (8, 103, 'Mountain', 5, 80, True, 100);
+insert into room values (8, 200, 'Volcano', 8, 80, false, 453);
+insert into room values (8, 201, 'Sky', 9, 20, True, 42);

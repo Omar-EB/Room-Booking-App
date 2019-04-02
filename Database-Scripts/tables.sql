@@ -1,9 +1,9 @@
 CREATE TABLE hotelchain
 (
     hc_name text NOT NULL,
-    number_of_hotels integer NOT NULL,
+    number_of_hotels integer NOT NULL DEFAULT 0,
     PRIMARY KEY (hc_name),
-    CHECK (number_of_hotels > 0)
+    CHECK (number_of_hotels >= 0)
 )
 
 CREATE TABLE CentralOffice (
@@ -56,9 +56,9 @@ create table Hotel (
 	country VARCHAR(2) not null,
 	rating int not null,
 	phone_number text not null,
-	number_of_rooms int not null,
+	number_of_rooms int not null default 0,
 	check (rating <= 5 and rating >= 0),
-	check (number_of_rooms > 0),
+	check (number_of_rooms >= 0),
 	check (street_number > 0)
 )
 
@@ -70,7 +70,6 @@ create table Employee (
 	city TEXT not null,
 	state VARCHAR(2) not null,
 	country VARCHAR(2) not null,
-	rating int not null,
 	given_name text not null,
 	family_name text not null,
 	check (street_number > 0)

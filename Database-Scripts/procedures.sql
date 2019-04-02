@@ -7,7 +7,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 create trigger increment_room_number
-	after delete on room
+	after insert on room
 	for each row
 EXECUTE PROCEDURE increment_room_num();
 ----------------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ create trigger decrement_hotel_number
 	after delete on hotel
 	for each row
 EXECUTE PROCEDURE decrement_hotel_num();
-
+-------------------------------------------------------------------------------------------------------------
 CREATE FUNCTION increment_hotel_num() RETURNS trigger AS $$
 BEGIN
 update hotelchain
@@ -46,7 +46,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 create trigger increment_hotel_number
-	after delete on hotel
+	after insert on hotel
 	for each row
 EXECUTE PROCEDURE increment_hotel_num();
 -----------------------------------------------------------------------------------------------
