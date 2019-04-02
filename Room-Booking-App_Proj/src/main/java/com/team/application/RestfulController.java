@@ -3,11 +3,15 @@ package com.team.application;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.application.models.CentralOffice;
+import com.team.application.models.Employee;
+import com.team.application.models.EmployeeRole;
 import com.team.application.models.Hotel;
 import com.team.application.models.Room;
 import com.team.application.models.RoomAmenities;
 import com.team.application.models.RoomDamages;
 import com.team.application.services.CentralOfficeService;
+import com.team.application.services.EmployeeRoleService;
+import com.team.application.services.EmployeeService;
 import com.team.application.services.HotelService;
 import com.team.application.services.RoomService;
 import com.team.application.services.RoomAmenitiesService;
@@ -48,6 +52,10 @@ public class RestfulController {
 	private RoomAmenitiesService roomAmenitiesService;
 	@Autowired
 	private RoomDamagesService roomDamagesService;
+	@Autowired
+	private EmployeeService employeeService;
+	@Autowired
+	private EmployeeRoleService employeeRoleService;
 	
 	@RequestMapping("/")
 	public String index() {
@@ -109,6 +117,22 @@ public class RestfulController {
 	@GetMapping("/rooms/{hotel_id}/{room_number}/damages")
 	public List<RoomDamages> findDamagesByHotelRoom(@PathVariable int hotel_id,@PathVariable int room_number){
 		return roomDamagesService.findDamagesByHotelRoom(hotel_id,room_number);
+	}
+	
+	@GetMapping("/employees")
+	public List<Employee> findEmployees(@RequestParam(value = "hotel_id", required=false) Integer hotel_id ){
+		if (hotel_id == null) return employeeService.getAllEmployees();
+		else return employeeService.findEmployeesbyHotelId(hotel_id);
+	}
+	
+	@GetMapping("hotel/{id}/roles")
+	public List<EmployeeRole> findEmployeeRolesById(@PathVariable int id){
+		return employeeRoleService.getEmployeeRolesbyHotelId(id);
+	}
+	
+	@GetMapping("employees/{sin}/roles")
+	public List<EmployeeRole> findEmployeeRolesBySIN(@PathVariable String sin){
+		return employeeRoleService.getEmployeeRolesbySIN(sin);
 	}
 	
 	@DeleteMapping("/units/{id}")
