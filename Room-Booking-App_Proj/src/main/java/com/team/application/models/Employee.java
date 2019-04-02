@@ -15,7 +15,7 @@ public class Employee {
 	private Hotel hotel;
 	
 	@Id
-	private Integer sin;
+	private String sin;
 	
 	private String given_name;
 	private String family_name;
@@ -32,10 +32,10 @@ public class Employee {
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 	}
-	public Integer getSin() {
+	public String getSin() {
 		return sin;
 	}
-	public void setSin(Integer sin) {
+	public void setSin(String sin) {
 		this.sin = sin;
 	}
 	public String getGiven_name() {
