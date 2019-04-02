@@ -30,6 +30,10 @@ public class Hotel {
     @JsonIgnore
     private List<Room> rooms = new ArrayList<>();
 	
+	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Employee> employees = new ArrayList<>();
+	
 	private String street_name;
     private int street_number;
     private String city ;

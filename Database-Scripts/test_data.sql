@@ -20,3 +20,9 @@ insert into room values (2,2,'Sea',2,60,true,80);
 insert into room values (2,3,'Sea',4,70,true,120);
 insert into room values (2,4,'Sea',3,70,false,120);
 insert into room values (2,5,'Mountain',2,40,false,80);
+
+
+
+insert into roomamenities values(1,1,'amenety-1.1.2');
+insert into roomamenities values(1,1,'amenety-1.1.3');
+insert into roomamenities values(1,2,'amenety-1.2.1');

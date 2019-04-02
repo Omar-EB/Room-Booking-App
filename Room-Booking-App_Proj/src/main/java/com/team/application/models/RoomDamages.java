@@ -11,18 +11,16 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "roomamenities")
-@IdClass(RoomAmenitiesCompositeKey.class)
-public class RoomAmenities {
+@Table(name = "roomdamages")
+@IdClass(RoomDamagesCompositeKey.class)
+public class RoomDamages {
 	
-	/*@EmbeddedId
-	private RoomAmenitiesCompositeKey room_amenity_Id;*/
 	@Id
 	private Integer hotel_id;
 	@Id
 	private Integer room_number;
 	@Id
-	private String amenity;
+	private String damage;
 	
 	@MapsId("room_number")
 	@ManyToOne(optional = false)
@@ -30,15 +28,6 @@ public class RoomAmenities {
 			@JoinColumn(name = "hotel_id", nullable = false),
 			@JoinColumn(name = "room_number", nullable = false) })
 	private Room room;
-
-
-/*	public RoomAmenitiesCompositeKey getRoom_amenity_Id() {
-		return room_amenity_Id;
-	}
-
-	public void setRoom_amenity_Id(RoomAmenitiesCompositeKey room_amenity_Id) {
-		this.room_amenity_Id = room_amenity_Id;
-	} */
 
 	public Room getRoom() {
 		return room;
@@ -64,12 +53,12 @@ public class RoomAmenities {
 		this.room_number = room_number;
 	}
 
-	public String getAmenity() {
-		return amenity;
+	public String getDamage() {
+		return damage;
 	}
 
-	public void setAmenity(String amenity) {
-		this.amenity = amenity;
+	public void setDamage(String damage) {
+		this.damage = damage;
 	}
 
 }

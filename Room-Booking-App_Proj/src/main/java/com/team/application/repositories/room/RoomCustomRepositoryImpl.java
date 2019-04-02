@@ -15,10 +15,11 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 	    @PersistenceContext
 	    private EntityManager entityManager;
 
-	    public List<Room> roomQuery(double max_price, String state,String country, int hotel_id){
+	    @SuppressWarnings("unchecked")
+		public List<Room> roomQuery(double max_price, String state,String country, int hotel_id){
 	    	String query = "Select room.* from room,hotel where room.hotel_id=hotel.hotel_id AND hotel.state=?;";
 	    	Query q = entityManager.createNativeQuery(query,Room.class);
 	    	q.setParameter(1, state);
-	    	return q.getResultList();
+	    	return (List<Room>) q.getResultList();
 	    }
 }

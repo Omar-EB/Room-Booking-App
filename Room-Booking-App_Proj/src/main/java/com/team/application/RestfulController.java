@@ -6,10 +6,12 @@ import com.team.application.models.CentralOffice;
 import com.team.application.models.Hotel;
 import com.team.application.models.Room;
 import com.team.application.models.RoomAmenities;
+import com.team.application.models.RoomDamages;
 import com.team.application.services.CentralOfficeService;
 import com.team.application.services.HotelService;
 import com.team.application.services.RoomService;
 import com.team.application.services.RoomAmenitiesService;
+import com.team.application.services.RoomDamagesService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,10 +46,12 @@ public class RestfulController {
 	private RoomService roomService;
 	@Autowired
 	private RoomAmenitiesService roomAmenitiesService;
+	@Autowired
+	private RoomDamagesService roomDamagesService;
 	
-	 @RequestMapping("/")
-	 public String index() {
-		 return "BackEnd index page";
+	@RequestMapping("/")
+	public String index() {
+		return "BackEnd index page";
 	}
 	
 	@GetMapping("/units")
@@ -100,6 +104,11 @@ public class RestfulController {
 	@GetMapping("/rooms/{hotel_id}/{room_number}/amenities")
 	public List<RoomAmenities> findAmenetiesByHotelRoom(@PathVariable int hotel_id,@PathVariable int room_number){
 		return roomAmenitiesService.findAmenitiesByHotelRoom(hotel_id,room_number);
+	}
+	
+	@GetMapping("/rooms/{hotel_id}/{room_number}/damages")
+	public List<RoomDamages> findDamagesByHotelRoom(@PathVariable int hotel_id,@PathVariable int room_number){
+		return roomDamagesService.findDamagesByHotelRoom(hotel_id,room_number);
 	}
 	
 	@DeleteMapping("/units/{id}")
