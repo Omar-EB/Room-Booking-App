@@ -46,6 +46,7 @@
 	        <artifactId>spring-boot-starter-thymeleaf</artifactId>
 	        <version>2.1.2.RELEASE</version>
     	</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jadira.usertype/usertype.core -->
 	</dependencies>
 
 	<build>

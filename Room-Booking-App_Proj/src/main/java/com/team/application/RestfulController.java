@@ -2,32 +2,16 @@ package com.team.application;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.team.application.models.CentralOffice;
-import com.team.application.models.Employee;
-import com.team.application.models.EmployeeRole;
-import com.team.application.models.Hotel;
-import com.team.application.models.Room;
-import com.team.application.models.RoomAmenities;
-import com.team.application.models.RoomDamages;
-import com.team.application.services.CentralOfficeService;
-import com.team.application.services.EmployeeRoleService;
-import com.team.application.services.EmployeeService;
-import com.team.application.services.HotelService;
-import com.team.application.services.RoomService;
-import com.team.application.services.RoomAmenitiesService;
-import com.team.application.services.RoomDamagesService;
+import com.team.application.models.*;
+import com.team.application.services.*;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,6 +40,10 @@ public class RestfulController {
 	private EmployeeService employeeService;
 	@Autowired
 	private EmployeeRoleService employeeRoleService;
+	@Autowired
+	private CustomerService customerService;
+	@Autowired 
+	ReservationService reservationService;
 	
 	@RequestMapping("/")
 	public String index() {
@@ -119,20 +107,42 @@ public class RestfulController {
 		return roomDamagesService.findDamagesByHotelRoom(hotel_id,room_number);
 	}
 	
+	
+	@GetMapping("/rooms/{hotel_id}/reservations")
+	public List<Reservation> findReservationsByHotelId(@PathVariable int hotel_id){
+		return reservationService.findReservationsByHotelId(hotel_id);
+	}
+	
+	@GetMapping("/rooms/{hotel_id}/{room_number}/reservations")
+	public List<Reservation> findReservationsByRoomlId(@PathVariable int hotel_id,@PathVariable int room_number){
+		return reservationService.findReservationsByRoomlId(hotel_id,room_number);
+	}
+	
 	@GetMapping("/employees")
 	public List<Employee> findEmployees(@RequestParam(value = "hotel_id", required=false) Integer hotel_id ){
 		if (hotel_id == null) return employeeService.getAllEmployees();
 		else return employeeService.findEmployeesbyHotelId(hotel_id);
 	}
 	
-	@GetMapping("hotel/{id}/roles")
-	public List<EmployeeRole> findEmployeeRolesById(@PathVariable int id){
-		return employeeRoleService.getEmployeeRolesbyHotelId(id);
+	@GetMapping("/hotel/{hotel_id}/roles")
+	public List<EmployeeRole> findEmployeeRolesById(@PathVariable int hotel_id){
+		return employeeRoleService.getEmployeeRolesbyHotelId(hotel_id);
 	}
 	
-	@GetMapping("employees/{sin}/roles")
+	@GetMapping("/employees/{sin}/roles")
 	public List<EmployeeRole> findEmployeeRolesBySIN(@PathVariable String sin){
 		return employeeRoleService.getEmployeeRolesbySIN(sin);
+	}
+	
+	@GetMapping("/customers")
+	public List<Customer> getAllCustomers(@RequestParam(required=false,value="sin") String sin){
+		if (sin==null) return customerService.getAllCustomers();
+		else return customerService.findCustomerbyId(sin);
+	}
+	
+	@GetMapping("/hotel/{hotel_id}/reservations")
+	public List<Reservation> findReservationsByHotelId(@PathVariable Integer hotel_id){
+		return reservationService.findReservationsByHotelId(hotel_id);
 	}
 	
 	@DeleteMapping("/units/{id}")
