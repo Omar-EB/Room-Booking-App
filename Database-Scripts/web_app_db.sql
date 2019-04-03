@@ -55,15 +55,17 @@ $$;
 ALTER FUNCTION public.check_managers_role() OWNER TO postgres;
 
 --
--- Name: check_reservation_dates_overlap(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: check_reservation_dates(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.check_reservation_dates_overlap() RETURNS trigger
+CREATE FUNCTION public.check_reservation_dates() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-IF EXISTS (SELECT * FROM reservation WHERE NOT ((NEW.start_date < reservation.start_date AND NEW.end_date < reservation.start_date) OR
-		  									(NEW.start_date > reservation.end_date AND NEW.end_date > reservation.end_date)))
+IF EXISTS (SELECT * FROM reservation 
+			WHERE NOT ((NEW.start_date < reservation.start_date AND NEW.end_date < reservation.start_date) OR
+		  				(NEW.start_date > reservation.end_date AND NEW.end_date > reservation.end_date)) AND
+						NEW.hotel_id = reservation.hotel_id AND NEW.room_number = reservation.room_number)
 THEN 
 	RAISE EXCEPTION 'Reservation dates cannot overlap';
 END IF;
@@ -72,7 +74,7 @@ END
 $$;
 
 
-ALTER FUNCTION public.check_reservation_dates_overlap() OWNER TO postgres;
+ALTER FUNCTION public.check_reservation_dates() OWNER TO postgres;
 
 --
 -- Name: decrement_hotel_num(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -563,6 +565,8 @@ McDonalds	1
 
 COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_sin, reservation_type) FROM stdin;
 1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	t
+2	100	2019-04-15 18:00:00	2019-04-20 18:00:00	124532589	f
+2	100	2019-02-15 18:00:00	2019-03-20 18:00:00	124532589	f
 \.
 
 
@@ -573,6 +577,8 @@ COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_s
 COPY public.reservationsarchive (id, hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin, reservation_type) FROM stdin;
 4	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	\N	f
 5	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	253423627	t
+6	TopHill	2	100	2019-04-15 18:00:00	2019-04-20 18:00:00	124532589	\N	f
+7	TopHill	2	100	2019-02-15 18:00:00	2019-03-20 18:00:00	124532589	\N	f
 \.
 
 
@@ -671,7 +677,7 @@ SELECT pg_catalog.setval('public.hotel_id_seq', 9, true);
 -- Name: reservationsarchive_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 5, true);
+SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 7, true);
 
 
 --
@@ -786,10 +792,10 @@ CREATE TRIGGER check_managers AFTER DELETE OR UPDATE ON public.employeerole FOR 
 
 
 --
--- Name: reservation check_reservation_dates_overlap; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: reservation check_reservation; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER check_reservation_dates_overlap BEFORE INSERT ON public.reservation FOR EACH ROW EXECUTE PROCEDURE public.check_reservation_dates_overlap();
+CREATE TRIGGER check_reservation BEFORE INSERT ON public.reservation FOR EACH ROW EXECUTE PROCEDURE public.check_reservation_dates();
 
 
 --
