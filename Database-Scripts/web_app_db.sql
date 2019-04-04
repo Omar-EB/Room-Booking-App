@@ -290,6 +290,20 @@ CREATE TABLE public.employeerole (
 ALTER TABLE public.employeerole OWNER TO postgres;
 
 --
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: Web_App_User
+--
+
+CREATE SEQUENCE public.hibernate_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.hibernate_sequence OWNER TO "Web_App_User";
+
+--
 -- Name: hotel; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -440,6 +454,24 @@ CREATE TABLE public.roomamenities (
 ALTER TABLE public.roomamenities OWNER TO postgres;
 
 --
+-- Name: roomcapacities; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.roomcapacities AS
+ SELECT h.hc_name,
+    h.street_name,
+    h.street_number,
+    h.city,
+    h.state,
+    h.country,
+    r.capacity
+   FROM (public.hotel h
+     JOIN public.room r ON ((r.hotel_id = h.hotel_id)));
+
+
+ALTER TABLE public.roomcapacities OWNER TO postgres;
+
+--
 -- Name: roomdamages; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -451,6 +483,21 @@ CREATE TABLE public.roomdamages (
 
 
 ALTER TABLE public.roomdamages OWNER TO postgres;
+
+--
+-- Name: roomsperarea; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.roomsperarea AS
+ SELECT hotel.city,
+    hotel.state,
+    hotel.country,
+    sum(hotel.number_of_rooms) AS sum
+   FROM public.hotel
+  GROUP BY hotel.city, hotel.state, hotel.country;
+
+
+ALTER TABLE public.roomsperarea OWNER TO postgres;
 
 --
 -- Name: unit; Type: TABLE; Schema: public; Owner: postgres
@@ -567,6 +614,7 @@ COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_s
 1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	t
 2	100	2019-04-15 18:00:00	2019-04-20 18:00:00	124532589	f
 2	100	2019-02-15 18:00:00	2019-03-20 18:00:00	124532589	f
+1	100	2019-06-16 18:00:00	2019-06-29 18:00:00	124532589	f
 \.
 
 
@@ -579,6 +627,7 @@ COPY public.reservationsarchive (id, hc_name, hotel_id, room_number, start_date,
 5	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	253423627	t
 6	TopHill	2	100	2019-04-15 18:00:00	2019-04-20 18:00:00	124532589	\N	f
 7	TopHill	2	100	2019-02-15 18:00:00	2019-03-20 18:00:00	124532589	\N	f
+8	TopHill	1	100	2019-06-16 18:00:00	2019-06-29 18:00:00	124532589	\N	f
 \.
 
 
@@ -667,6 +716,13 @@ COPY public.unit (id, name, rating) FROM stdin;
 
 
 --
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: Web_App_User
+--
+
+SELECT pg_catalog.setval('public.hibernate_sequence', 1, false);
+
+
+--
 -- Name: hotel_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -677,7 +733,7 @@ SELECT pg_catalog.setval('public.hotel_id_seq', 9, true);
 -- Name: reservationsarchive_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 7, true);
+SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 8, true);
 
 
 --
@@ -774,6 +830,14 @@ ALTER TABLE ONLY public.roomamenities
 
 ALTER TABLE ONLY public.roomdamages
     ADD CONSTRAINT roomdamages_pkey PRIMARY KEY (hotel_id, room_number, damage);
+
+
+--
+-- Name: checkedin uk_jod1fe9hpw4444kqwqdhhueyn; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.checkedin
+    ADD CONSTRAINT uk_jod1fe9hpw4444kqwqdhhueyn UNIQUE (hotel_id, room_number, start_date, end_date);
 
 
 --
