@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.team.application.models.keys.RoomDamagesCompositeKey;
+
 
 @Entity
 @Table(name = "roomdamages")
@@ -29,6 +31,7 @@ public class RoomDamages {
 			@JoinColumn(name = "room_number", nullable = false) })
 	private Room room;
 
+	
 	public Room getRoom() {
 		return room;
 	}

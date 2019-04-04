@@ -1,6 +1,7 @@
 package com.team.application.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,12 @@ public class RoomService {
 		return results;
 	}
 	
-	public List<Room> findRoomsByHotelId(int id) {
+	public List<Room> findRoomsByHotelId(Integer id) {
 		return roomRepository.findRoomsByHotelId(id);
 	}
 	
-	public List<Room> findRoomsByQuery(int id,String state) {
-		return roomRepository.roomQuery(0,state,null,id);
+	public List<Room> findRoomsByQuery(String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end) {
+		return roomRepository.roomQuery(city,state,country,rating,capacity,price,area,start,end);
 	}
 
 }

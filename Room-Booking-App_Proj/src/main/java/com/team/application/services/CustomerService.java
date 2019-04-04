@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.team.application.models.Customer;
-import com.team.application.repositories.room.CustomerRepository;
+import com.team.application.repositories.CustomerRepository;
 
 @Service
 public class CustomerService {

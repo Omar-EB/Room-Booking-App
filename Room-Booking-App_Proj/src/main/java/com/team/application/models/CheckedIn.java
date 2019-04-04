@@ -2,7 +2,6 @@ package com.team.application.models;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,21 +16,19 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.team.application.models.keys.ReservationCompositeKey;
+import com.team.application.models.keys.CheckedInCompositeKey;
 
 
 @Entity
-@Table(name="reservation")
-@IdClass(ReservationCompositeKey.class)
-public class Reservation {
-	
+@Table(name="checkedin")
+@IdClass(CheckedInCompositeKey.class)
+public class CheckedIn {
 	@Id
 	private Integer hotel_id;
 	
 	@Id
 	private Integer room_number;
-	//, columnDefinition= "TIMESTAMP WITHOUT TIME ZONE"
+	
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "start_date")
@@ -42,26 +39,34 @@ public class Reservation {
 	@Column(name = "end_date")
 	private Date end_date;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "customer_sin",referencedColumnName="sin", nullable = false) 
-	private Customer customer;
-	
-	//true for booking, false for renting, default renting
-	private Boolean reservation_type;
-	
-	@MapsId("room_number")
-	@ManyToOne(optional = false)
+	@Id
+	private String employee_sin;
+
+	@MapsId("start_date")
+    @OneToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
 		@JoinColumn(name = "hotel_id", nullable = false),
-		@JoinColumn(name = "room_number", nullable = false) })	
-	private Room room;
-	/*
-    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    @JsonIgnore
-    private CheckedIn checked_in;
-    */
-
+		@JoinColumn(name = "room_number", nullable = false),
+		@JoinColumn(name = "start_date", nullable = false),
+		@JoinColumn(name = "end_date", nullable = false)
+	})
+	private Reservation reservation;
 	
+	@MapsId("employee_sin")
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_sin", nullable = false)
+	private Employee employee;
+	
+	private Double payment;
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
 	public Integer getHotel_id() {
 		return hotel_id;
 	}
@@ -88,36 +93,34 @@ public class Reservation {
 
 	public Date getEnd_date() {
 		return end_date;
-	} 
-
-	
+	}
 
 	public void setEnd_date(Date end_date) {
 		this.end_date = end_date;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public Reservation getReservation() {
+		return reservation;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setReservation(Reservation reservation) {
+		this.reservation = reservation;
 	}
 
-	public Boolean getReservation_type() {
-		return reservation_type;
+	public Double getPayment() {
+		return payment;
 	}
 
-	public void setReservation_type(Boolean reservation_type) {
-		this.reservation_type = reservation_type;
+	public void setPayment(Double payment) {
+		this.payment = payment;
 	}
 
-	public Room getRoom() {
-		return room;
+	public String getEmployee_sin() {
+		return employee_sin;
 	}
 
-	public void setRoom(Room room) {
-		this.room = room;
+	public void setEmployee_sin(String employee_sin) {
+		this.employee_sin = employee_sin;
 	}
 
 }

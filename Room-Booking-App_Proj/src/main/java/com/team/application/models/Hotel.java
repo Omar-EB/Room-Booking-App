@@ -3,8 +3,11 @@ package com.team.application.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,24 +27,25 @@ public class Hotel {
 	private HotelChain hotelChain;
 	
 	@Id
-	private int hotel_id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer hotel_id;
 	
-	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Room> rooms = new ArrayList<>();
 	
-	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Employee> employees = new ArrayList<>();
 	
 	private String street_name;
-    private int street_number;
+    private Integer street_number;
     private String city ;
     private String state ;
     private String country ;
-    private int rating ;
+    private Integer rating ;
     private String phone_number ;
-    private int  number_of_rooms ;
+    private Integer  number_of_rooms ;
 
 	
     public HotelChain getHotelChain() {
@@ -50,10 +54,10 @@ public class Hotel {
 	public void setHotelChain(HotelChain hotelChain) {
 		this.hotelChain = hotelChain;
 	}
-	public int getHotel_id() {
+	public Integer getHotel_id() {
 		return hotel_id;
 	}
-	public void setHotel_id(int hotel_id) {
+	public void setHotel_id(Integer hotel_id) {
 		this.hotel_id = hotel_id;
 	}
 	public String getStreet_name() {
@@ -62,10 +66,10 @@ public class Hotel {
 	public void setStreet_name(String street_name) {
 		this.street_name = street_name;
 	}
-	public int getStreet_number() {
+	public Integer getStreet_number() {
 		return street_number;
 	}
-	public void setStreet_number(int street_number) {
+	public void setStreet_number(Integer street_number) {
 		this.street_number = street_number;
 	}
 	public String getCity() {
@@ -86,10 +90,10 @@ public class Hotel {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	public int getRating() {
+	public Integer getRating() {
 		return rating;
 	}
-	public void setRating(int rating) {
+	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 	public String getPhone_number() {
@@ -98,10 +102,10 @@ public class Hotel {
 	public void setPhone_number(String phone_number) {
 		this.phone_number = phone_number;
 	}
-	public int getNumber_of_rooms() {
+	public Integer getNumber_of_rooms() {
 		return number_of_rooms;
 	}
-	public void setNumber_of_rooms(int number_of_rooms) {
+	public void setNumber_of_rooms(Integer number_of_rooms) {
 		this.number_of_rooms = number_of_rooms;
 	}
 
@@ -109,7 +113,7 @@ public class Hotel {
 
 /*
   private static void persistEntity(EntityManagerFactory emf) throws Exception {
-      System.out.println("-- Persisting entity --");
+      System.out.prIntegerln("-- Persisting entity --");
       EntityManager em = emf.createEntityManager();
 
       Employee e = new Employee(1L, "Mike", "IT");

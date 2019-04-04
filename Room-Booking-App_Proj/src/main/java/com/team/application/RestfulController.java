@@ -5,10 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.team.application.models.*;
 import com.team.application.services.*;
 
-
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +44,11 @@ public class RestfulController {
 	@Autowired
 	private CustomerService customerService;
 	@Autowired 
-	ReservationService reservationService;
+	private ReservationService reservationService;
+	@Autowired
+	private CheckedInService checkedInService;
+	@Autowired 
+	private ReservationService reservationsArchiveService;
 	
 	@RequestMapping("/")
 	public String index() {
@@ -88,34 +93,60 @@ public class RestfulController {
 	}
 	
 	@GetMapping("/rooms/{hotel_id}")
-	public List<Room> findRoomsByHotelId(@PathVariable int hotel_id){
+	public List<Room> findRoomsByHotelId(@PathVariable Integer hotel_id){
 		return roomService.findRoomsByHotelId(hotel_id);
 	}
 	
-	@GetMapping("/rooms/query/{state}")
-	public List<Room> getRoomsQuery(@PathVariable String state){
-		return roomService.findRoomsByQuery(0,state);
+	//example: localhost:8080/rooms/query?city=Montreal&state=QC&country=CA&start=2019-04-01T10:00&end=2019-04-02T10:00 --- OPTIONAL: &rating=?&capacity=?&price=?&area=?
+	@GetMapping("/rooms/query")
+	public List<Room> getRoomsQuery(
+			@RequestParam(value="city",required=true) String city,
+			@RequestParam(value="state",required=true) String state,
+			@RequestParam(value="country",required=true) String country,
+			@RequestParam(value="rating",required=false) Integer rating,
+			@RequestParam(value="capacity",required=false) Integer capacity,
+			@RequestParam(value="price",required=false) Double price,
+			@RequestParam(value="area",required=false) Double area,
+			@RequestParam(value="start",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
+			@RequestParam(value="end",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end)
+	{
+		return roomService.findRoomsByQuery(city,state,country,rating,capacity,price,area,start,end);
 	}
 	
 	@GetMapping("/rooms/{hotel_id}/{room_number}/amenities")
-	public List<RoomAmenities> findAmenetiesByHotelRoom(@PathVariable int hotel_id,@PathVariable int room_number){
+	public List<RoomAmenities> findAmenetiesByHotelRoom(@PathVariable Integer hotel_id,@PathVariable Integer room_number){
 		return roomAmenitiesService.findAmenitiesByHotelRoom(hotel_id,room_number);
 	}
 	
 	@GetMapping("/rooms/{hotel_id}/{room_number}/damages")
-	public List<RoomDamages> findDamagesByHotelRoom(@PathVariable int hotel_id,@PathVariable int room_number){
+	public List<RoomDamages> findDamagesByHotelRoom(@PathVariable Integer hotel_id,@PathVariable Integer room_number){
 		return roomDamagesService.findDamagesByHotelRoom(hotel_id,room_number);
 	}
 	
 	
 	@GetMapping("/rooms/{hotel_id}/reservations")
-	public List<Reservation> findReservationsByHotelId(@PathVariable int hotel_id){
+	public List<Reservation> findReservationsByHotelId(@PathVariable Integer hotel_id){
 		return reservationService.findReservationsByHotelId(hotel_id);
 	}
 	
 	@GetMapping("/rooms/{hotel_id}/{room_number}/reservations")
-	public List<Reservation> findReservationsByRoomlId(@PathVariable int hotel_id,@PathVariable int room_number){
+	public List<Reservation> findReservationsByRoomlId(@PathVariable Integer hotel_id,@PathVariable Integer room_number){
 		return reservationService.findReservationsByRoomlId(hotel_id,room_number);
+	}
+	
+	@GetMapping("/rooms/reservations")
+	public List<Reservation> findReservations(){
+		return reservationService.getAllReservations();
+	}
+	
+	@GetMapping("/rooms/{hotel_id}/{room_number}/checkins")
+	public List<CheckedIn> findCheckInsByRoomlId(@PathVariable Integer hotel_id,@PathVariable Integer room_number){
+		return checkedInService.findCheckInsByRoom(hotel_id, room_number);
+	}
+	
+	@GetMapping("/rooms/checkins")
+	public List<CheckedIn> findCheckIns(){
+		return checkedInService.getAllCheckIns();
 	}
 	
 	@GetMapping("/employees")
@@ -125,7 +156,7 @@ public class RestfulController {
 	}
 	
 	@GetMapping("/hotel/{hotel_id}/roles")
-	public List<EmployeeRole> findEmployeeRolesById(@PathVariable int hotel_id){
+	public List<EmployeeRole> findEmployeeRolesById(@PathVariable Integer hotel_id){
 		return employeeRoleService.getEmployeeRolesbyHotelId(hotel_id);
 	}
 	
@@ -140,9 +171,9 @@ public class RestfulController {
 		else return customerService.findCustomerbyId(sin);
 	}
 	
-	@GetMapping("/hotel/{hotel_id}/reservations")
-	public List<Reservation> findReservationsByHotelId(@PathVariable Integer hotel_id){
-		return reservationService.findReservationsByHotelId(hotel_id);
+	@GetMapping("/rooms/{hotel_id}/{room_number}/{amenity}")
+	public List<RoomAmenities> findAmenetiesByKey(@PathVariable Integer hotel_id,@PathVariable Integer room_number,@PathVariable String amenity){
+		return roomAmenitiesService.findAmenityById(hotel_id,room_number,amenity);
 	}
 	
 	@DeleteMapping("/units/{id}")

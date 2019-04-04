@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.team.application.models.keys.CentralOfficeCompositeKey;
+
 @Entity
 @Table(name = "centraloffice")
 public class CentralOffice {

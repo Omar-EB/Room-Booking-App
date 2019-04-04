@@ -1,5 +1,6 @@
 package com.team.application.repositories.room;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -16,10 +17,75 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 	    private EntityManager entityManager;
 
 	    @SuppressWarnings("unchecked")
-		public List<Room> roomQuery(double max_price, String state,String country, int hotel_id){
-	    	String query = "Select room.* from room,hotel where room.hotel_id=hotel.hotel_id AND hotel.state=?;";
+		public List<Room> roomQuery(String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end){
+
+	    	String query = 
+	    			"SELECT room.*	from	room,hotel,reservation	WHERE ((" + 
+	    			"	room.hotel_id=hotel.hotel_id	AND" + 
+	    			"	hotel.city=?	AND" + 
+	    			"	hotel.state=?	AND" + 
+	    			"	hotel.country=?	" +
+	    			")									" ;
+	    	Object[] parameters = new Object[4];
+	    	int paramCounter=0;
+	    	if(!(rating == null && capacity == null && price == null && area == null)) {
+	    		query+="	 AND	(";
+	    		
+		    	if(capacity!=null) {
+		    		parameters[paramCounter++]=capacity;
+		   			query+="	room.capacity>=?";
+		   		}
+		    		
+		   		if(price!=null) {
+		   			if(paramCounter>0) query+= "	AND";
+		   			parameters[paramCounter++]=price;
+	    			query+="	room.price<=?";
+	    		}
+		    		
+		    	if(area!=null) {
+		    		if(paramCounter>0) query+= "	AND";
+		   			parameters[paramCounter++]=area;
+		   			query+="	room.area>=?";
+		   		}
+		    		
+		    	if(rating!=null) {
+		    		if(paramCounter>0) query+= "	AND";
+		   			parameters[paramCounter++]=rating;
+		   			query+="	hotel.rating>=?";
+		   		}
+		    		
+		    	query+="	)";		
+	    	} else {
+	    		//skip
+	    	}
+	    	query+=
+	    	"	AND ( "+ 
+	    	"	NOT EXISTS (" + 
+	    	"			SELECT 1 FROM reservation WHERE (" + 
+	    	"				(reservation.hotel_id=room.hotel_id AND reservation.room_number=room.room_number) AND (" + 
+	    	"					(reservation.start_date<=? AND reservation.end_date>?) OR" + //-- start
+	    	"					(reservation.start_date<? AND reservation.end_date>=?) OR" + //-- end
+	    	"					(reservation.start_date>=? AND reservation.end_date<=?)" + //-- ?1 :start , ?2 : end
+	    	"				)" + 
+	    	"			)" + 
+	    	"		)" + 
+	    	"	)"+
+	    	"	);";
 	    	Query q = entityManager.createNativeQuery(query,Room.class);
-	    	q.setParameter(1, state);
+	    	q.setParameter(1, city);
+	    	q.setParameter(2, state);
+	    	q.setParameter(3, country);
+	    	for (int i=0;i<parameters.length && parameters[i]!=null;i++) {
+	    		q.setParameter(4+i, parameters[i]);
+	    	}
+	    	paramCounter+=4;
+	    	q.setParameter(paramCounter++, start);
+	    	q.setParameter(paramCounter++, start);
+	    	q.setParameter(paramCounter++, end);
+	    	q.setParameter(paramCounter++, end);
+	    	q.setParameter(paramCounter++, start);
+	    	q.setParameter(paramCounter++, end);
+	    	
 	    	return (List<Room>) q.getResultList();
 	    }
 }

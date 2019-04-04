@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.team.application.models.CentralOffice;
-import com.team.application.models.CentralOfficeCompositeKey;
 import com.team.application.models.Hotel;
+import com.team.application.models.keys.CentralOfficeCompositeKey;
 import com.team.application.repositories.CentralOfficeRepository;
 import com.team.application.repositories.HotelRepository;
 

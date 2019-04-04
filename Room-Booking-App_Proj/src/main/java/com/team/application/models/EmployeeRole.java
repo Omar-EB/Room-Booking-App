@@ -7,6 +7,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.team.application.models.keys.EmployeeRoleCompositeKey;
+
 @Entity
 @Table(name="employeerole")
 public class EmployeeRole {

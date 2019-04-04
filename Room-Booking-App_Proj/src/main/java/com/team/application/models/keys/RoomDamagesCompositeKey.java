@@ -1,4 +1,4 @@
-package com.team.application.models;
+package com.team.application.models.keys;
 
 import java.io.Serializable;
 
@@ -6,18 +6,13 @@ public class RoomDamagesCompositeKey implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	//@Column(name="hotel_id")
-	protected Integer hotel_id;
-	//@Column(name="room_number")
-	protected Integer room_number;
-	
-	//might be better outside of the composite key
-	protected String damage;
+	private Integer hotel_id;
+	private Integer room_number;
+	private String damage;
 
 	public RoomDamagesCompositeKey() {}
 
 	public RoomDamagesCompositeKey(Integer hotel_id, Integer room_number, String damage) {
-		super();
 		this.hotel_id = hotel_id;
 		this.room_number = room_number;
 		this.damage = damage;

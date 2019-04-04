@@ -11,7 +11,7 @@ import com.team.application.models.EmployeeRole;
 public interface EmployeeRoleRepository extends CrudRepository<EmployeeRole, Integer> {
 	
 	@Query("SELECT er FROM EmployeeRole er WHERE er.employee.hotel.hotel_id = :hotel_id")
-	public List<EmployeeRole> getEmployeeRolesbyHotelId(@Param("hotel_id") int hotel_id);
+	public List<EmployeeRole> getEmployeeRolesbyHotelId(@Param("hotel_id") Integer hotel_id);
 	
 	@Query("SELECT er FROM EmployeeRole er WHERE er.employee.sin = :sin")
 	public List<EmployeeRole> getEmployeeRolesbySIN(@Param("sin") String sin);

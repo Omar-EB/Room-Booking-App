@@ -3,6 +3,7 @@ package com.team.application.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -16,10 +17,11 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.team.application.models.keys.RoomCompositeKey;
 
 @Entity
 @Table(name = "room")
-@JsonInclude(Include.NON_NULL)
+//@JsonInclude(Include.NON_NULL)
 public class Room {
 	
 	@EmbeddedId
@@ -31,17 +33,22 @@ public class Room {
 	private Hotel hotel;
 	
     private String view_type;
-    private int capacity;
-    @Column(nullable = true)
-    //@JsonIgnore
+    private Integer capacity;
     Double price;
-    boolean extendable;
-    double area;
+    Boolean extendable;
+    Double area;
     
-	@OneToMany(mappedBy="room",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<RoomAmenities> amenities = new ArrayList<>();
-    
+	
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<RoomDamages> damages = new ArrayList<>();
+	
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Reservation> reservations = new ArrayList<>();
     
 	public RoomCompositeKey getRoom_id() {
 		return room_id;
@@ -61,10 +68,10 @@ public class Room {
 	public void setView_type(String view_type) {
 		this.view_type = view_type;
 	}
-	public int getCapacity() {
+	public Integer getCapacity() {
 		return capacity;
 	}
-	public void setCapacity(int capacity) {
+	public void setCapacity(Integer capacity) {
 		this.capacity = capacity;
 	}
 	public Double getPrice() {
@@ -73,16 +80,16 @@ public class Room {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public boolean isExtendable() {
+	public Boolean isExtendable() {
 		return extendable;
 	}
-	public void setExtendable(boolean extendable) {
+	public void setExtendable(Boolean extendable) {
 		this.extendable = extendable;
 	}
-	public double getArea() {
+	public Double getArea() {
 		return area;
 	}
-	public void setArea(double area) {
+	public void setArea(Double area) {
 		this.area = area;
 	}
 }

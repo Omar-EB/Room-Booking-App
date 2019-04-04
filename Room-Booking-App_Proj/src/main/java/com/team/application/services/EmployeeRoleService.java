@@ -17,7 +17,7 @@ public class EmployeeRoleService {
 	@Autowired
 	private EmployeeRoleRepository employeeRoleRepository;
 	
-	public List<EmployeeRole> getEmployeeRolesbyHotelId(int hotel_id){
+	public List<EmployeeRole> getEmployeeRolesbyHotelId(Integer hotel_id){
 		return employeeRoleRepository.getEmployeeRolesbyHotelId(hotel_id);
 	}
 	

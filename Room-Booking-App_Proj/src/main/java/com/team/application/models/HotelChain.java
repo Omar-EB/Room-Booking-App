@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -22,9 +23,9 @@ public class HotelChain {
 	
 	@Id
 	private String hc_name;
-	private int number_of_hotels;
+	private Integer number_of_hotels;
 	
-    @OneToMany(mappedBy="hotelChain",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="hotelChain",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Hotel> hotels = new ArrayList<>();
     //
@@ -33,7 +34,7 @@ public class HotelChain {
 	public HotelChain() {}
 	
 	
-	public HotelChain(String hc_name, int number_of_hotels) {
+	public HotelChain(String hc_name, Integer number_of_hotels) {
 		this.hc_name = hc_name;
 		this.number_of_hotels = number_of_hotels;
 	}
@@ -49,12 +50,12 @@ public class HotelChain {
 	}
 
 
-	public int getNumber_of_hotels() {
+	public Integer getNumber_of_hotels() {
 		return number_of_hotels;
 	}
 
 
-	public void setNumber_of_hotels(int number_of_hotels) {
+	public void setNumber_of_hotels(Integer number_of_hotels) {
 		this.number_of_hotels = number_of_hotels;
 	}
 }

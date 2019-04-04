@@ -1,4 +1,4 @@
-package com.team.application.models;
+package com.team.application.models.keys;
 
 import java.io.Serializable;
 

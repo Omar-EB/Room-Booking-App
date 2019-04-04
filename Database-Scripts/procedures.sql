@@ -76,8 +76,10 @@ EXECUTE PROCEDURE check_managers_role();
 CREATE FUNCTION check_reservation_dates()
 RETURNS TRIGGER AS $BODY$
 BEGIN
-IF EXISTS (SELECT * FROM reservation WHERE NOT ((NEW.start_date < reservation.start_date AND NEW.end_date < reservation.start_date) OR
-		  									(NEW.start_date > reservation.end_date AND NEW.end_date > reservation.end_date)))
+IF EXISTS (SELECT * FROM reservation 
+			WHERE NOT ((NEW.start_date < reservation.start_date AND NEW.end_date < reservation.start_date) OR
+		  				(NEW.start_date > reservation.end_date AND NEW.end_date > reservation.end_date)) AND
+						NEW.hotel_id = reservation.hotel_id AND NEW.room_number = reservation.room_number)
 THEN 
 	RAISE EXCEPTION 'Reservation dates cannot overlap';
 END IF;
@@ -160,3 +162,10 @@ select room.* from room,hotel,reservation where ((
 	)
 );
 --------------------------------------------------------------------------------------------------
+SELECT p.name, e.city, e.category, e.num_rooms, s.price
+From hotel e
+INNER JOIN room s on e.hotel_id = s.hotel_id
+INNER JOIN hotelchain p on s.chain_id = p.chain_id
+WHERE s.room_num NOT IN (SELECT room_num FROM reservation WHERE NOT (('2019-04-10' < reservation.from_date AND '2019-04-12' < reservation.from_date) OR
+		  				('2019-04-10' > reservation.to_date AND '2019-04-13' > reservation.to_date)) AND
+						1 = reservation.hotel_id AND 1 = reservation.room_num)

@@ -20,7 +20,7 @@ public class RoomDamagesService {
 		return results;
 	}
 	
-	public List<RoomDamages> findDamagesByHotelRoom(int hotel_id,int room_number) {
+	public List<RoomDamages> findDamagesByHotelRoom(Integer hotel_id,Integer room_number) {
 		return roomDamagesRepository.findDamagesByHotelRoom(hotel_id,room_number);
 	}
 }

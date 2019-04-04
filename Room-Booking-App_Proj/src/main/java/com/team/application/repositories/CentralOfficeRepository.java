@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.team.application.models.CentralOffice;
-import com.team.application.models.CentralOfficeCompositeKey;
+import com.team.application.models.keys.CentralOfficeCompositeKey;
 
 public interface CentralOfficeRepository extends CrudRepository<CentralOffice, CentralOfficeCompositeKey> {
 	

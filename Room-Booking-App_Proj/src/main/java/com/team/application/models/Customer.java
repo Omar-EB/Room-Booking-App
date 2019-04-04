@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ public class Customer {
     private String state ;
     private String country ;
     
-    @OneToMany(mappedBy="customer",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="customer",cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
     @JsonIgnore
     private List<Reservation> reservations = new ArrayList<>();
     

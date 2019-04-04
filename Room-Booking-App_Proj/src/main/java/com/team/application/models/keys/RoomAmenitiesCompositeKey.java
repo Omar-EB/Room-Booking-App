@@ -1,23 +1,16 @@
-package com.team.application.models;
+package com.team.application.models.keys;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
-//@Embeddable
 public class RoomAmenitiesCompositeKey implements Serializable {
 
 	
 	private static final long serialVersionUID = 1L;
 	
-	//@Column(name="hotel_id")
-	protected Integer hotel_id;
-	//@Column(name="room_number")
-	protected Integer room_number;
-	
-	//might be better outside of the composite key
-	protected String amenity;
+	private Integer hotel_id;
+	private Integer room_number;
+	private String amenity;
 
 	public RoomAmenitiesCompositeKey() {}
 
@@ -64,26 +57,4 @@ public class RoomAmenitiesCompositeKey implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
-/*	public Integer getHotel_id() {
-		return hotel_id;
-	}
-	public void setHotel_id(Integer hotel_id) {
-		this.hotel_id = hotel_id;
-	}
-	public Integer getRoom_number() {
-		return room_number;
-	}
-	public void setRoom_number(Integer room_number) {
-		this.room_number = room_number;
-	}
-	public String getAmenity() {
-		return amenity;
-	}
-	public void setAmenity(String amenity) {
-		this.amenity = amenity;
-	}
-*/
-
 }

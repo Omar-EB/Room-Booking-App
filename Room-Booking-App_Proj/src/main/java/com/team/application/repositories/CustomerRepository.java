@@ -1,4 +1,4 @@
-package com.team.application.repositories.room;
+package com.team.application.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 

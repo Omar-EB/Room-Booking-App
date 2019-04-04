@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.team.application.models.Room;
-import com.team.application.models.RoomCompositeKey;
+import com.team.application.models.keys.RoomCompositeKey;
 
 public interface RoomRepository extends CrudRepository<Room, RoomCompositeKey> , RoomCustomRepository {
 	

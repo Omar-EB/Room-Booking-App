@@ -9,14 +9,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.team.application.models.keys.RoomAmenitiesCompositeKey;
+
 
 @Entity
 @Table(name = "roomamenities")
 @IdClass(RoomAmenitiesCompositeKey.class)
 public class RoomAmenities {
 	
-	/*@EmbeddedId
-	private RoomAmenitiesCompositeKey room_amenity_Id;*/
 	@Id
 	private Integer hotel_id;
 	@Id
@@ -31,14 +31,6 @@ public class RoomAmenities {
 			@JoinColumn(name = "room_number", nullable = false) })
 	private Room room;
 
-
-/*	public RoomAmenitiesCompositeKey getRoom_amenity_Id() {
-		return room_amenity_Id;
-	}
-
-	public void setRoom_amenity_Id(RoomAmenitiesCompositeKey room_amenity_Id) {
-		this.room_amenity_Id = room_amenity_Id;
-	} */
 
 	public Room getRoom() {
 		return room;

@@ -1,35 +1,31 @@
-package com.team.application.models;
+package com.team.application.models.keys;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Calendar;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+public class CheckedInCompositeKey implements Serializable {
 
-import org.hibernate.annotations.Type;
-
-public class ReservationCompositeKey implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
 	private Integer hotel_id;
 	
 	private Integer room_number;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	//@Type(type="org.jadira.usertype.dateandtime.legacyjdk.PersistentDate")
+	//@Temporal(TemporalType.TIMESTAMP)
 	private Date start_date;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	//@Type(type="org.jadira.usertype.dateandtime.legacyjdk.PersistentDate")
+	//@Temporal(TemporalType.TIMESTAMP)
 	private Date end_date;
+	
+	private String employee_sin;
 
-	
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((employee_sin == null) ? 0 : employee_sin.hashCode());
 		result = prime * result + ((end_date == null) ? 0 : end_date.hashCode());
 		result = prime * result + ((hotel_id == null) ? 0 : hotel_id.hashCode());
 		result = prime * result + ((room_number == null) ? 0 : room_number.hashCode());
@@ -45,7 +41,12 @@ public class ReservationCompositeKey implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ReservationCompositeKey other = (ReservationCompositeKey) obj;
+		CheckedInCompositeKey other = (CheckedInCompositeKey) obj;
+		if (employee_sin == null) {
+			if (other.employee_sin != null)
+				return false;
+		} else if (!employee_sin.equals(other.employee_sin))
+			return false;
 		if (end_date == null) {
 			if (other.end_date != null)
 				return false;

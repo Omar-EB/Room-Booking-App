@@ -1,4 +1,4 @@
-package com.team.application.models;
+package com.team.application.models.keys;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ public class CentralOfficeCompositeKey implements Serializable {
 	private static final long serialVersionUID = 4170464573512963118L;
 	
 	private String street_name;
-    private int street_number;
+    private Integer street_number;
     private String city ;
     private String state ;
     private String country ;
@@ -21,10 +21,10 @@ public class CentralOfficeCompositeKey implements Serializable {
 	public void setStreet_name(String street_name) {
 		this.street_name = street_name;
 	}
-	public int getStreet_number() {
+	public Integer getStreet_number() {
 		return street_number;
 	}
-	public void setStreet_number(int street_number) {
+	public void setStreet_number(Integer street_number) {
 		this.street_number = street_number;
 	}
 	public String getCity() {

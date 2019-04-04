@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.team.application.models.Reservation;
-import com.team.application.repositories.ReservationReposirtory;
+import com.team.application.repositories.ReservationRepository;
 
 @Service
 public class ReservationService {
 	
 	@Autowired
-	private ReservationReposirtory reservationRepository;
+	private ReservationRepository reservationRepository;
 	
 	public List<Reservation> getAllReservations(){
 		List<Reservation> results = new ArrayList();
