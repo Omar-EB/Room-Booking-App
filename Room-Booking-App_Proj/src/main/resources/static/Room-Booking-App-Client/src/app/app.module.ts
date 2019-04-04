@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { UnitService } from './services/unit.service';
 import { ApiService } from './services/api.service';
@@ -13,6 +14,7 @@ import { EmployeeComponent } from './components/employee/employee.component';
 import { SearchComponent } from './components/search/search.component';
 import { ListunitComponent } from './components/listunit/listunit.component';
 import { UnitFormComponent } from './components/unit-form/unit-form.component';
+import { AdminComponent } from './components/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -22,12 +24,14 @@ import { UnitFormComponent } from './components/unit-form/unit-form.component';
     HomeComponent,
     EmployeeComponent,
     SearchComponent,
+    AdminComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpModule,
+    NgbModule
   ],
   providers: [UnitService, ApiService],
   bootstrap: [AppComponent]

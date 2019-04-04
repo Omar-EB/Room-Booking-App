@@ -1,8 +1,10 @@
+import { Customer } from './customer.model';
+
 export class Reservation {
-    hotel_id: number;
-    room_number: number;
-    start_date: Date;
-    end_date: Date;
-    customer_sin: string;
-    reservation_type: boolean;
+    hotelId: number;
+    roomNumber: number;
+    startDate: Date;
+    endDate: Date;
+    reservationType: boolean;
+    customer: Customer;
 }

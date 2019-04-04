@@ -21,4 +21,8 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['search']);
   }
 
+  goToAdmin() {
+    this.router.navigate(['admin']);
+  }
+
 }
