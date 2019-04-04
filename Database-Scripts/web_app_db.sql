@@ -1063,10 +1063,24 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.roomamenities TO "Web_App_User
 
 
 --
+-- Name: TABLE roomcapacities; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT ON TABLE public.roomcapacities TO "Web_App_User";
+
+
+--
 -- Name: TABLE roomdamages; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.roomdamages TO "Web_App_User";
+
+
+--
+-- Name: TABLE roomsperarea; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT ON TABLE public.roomsperarea TO "Web_App_User";
 
 
 --
