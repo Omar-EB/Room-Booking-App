@@ -35,6 +35,7 @@ public class Reservation {
 	
 	@Id
 	private Integer room_number;
+	
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "start_date")
@@ -52,7 +53,7 @@ public class Reservation {
 	//true for booking, false for renting, default renting
 	private Boolean reservation_type;
 	
-	@MapsId("room_number")
+	@MapsId //("room_number")
 	@ManyToOne(optional = false)
 	@JoinColumns({
 		@JoinColumn(name = "hotel_id", nullable = false),
@@ -61,7 +62,7 @@ public class Reservation {
 	
 	// One to Many due to Database design mistake, future fix to make it One to One (must add joined columns in this case)
 	@MapsId
-	@OneToMany(mappedBy="reservation",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="reservation",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private List<CheckedIn> check_ins = new ArrayList<>();
 
@@ -92,9 +93,7 @@ public class Reservation {
 
 	public Date getEnd_date() {
 		return end_date;
-	} 
-
-	
+	}
 
 	public void setEnd_date(Date end_date) {
 		this.end_date = end_date;
