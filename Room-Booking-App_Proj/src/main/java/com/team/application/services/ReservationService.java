@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.team.application.models.Reservation;
+import com.team.application.models.keys.ReservationCompositeKey;
 import com.team.application.repositories.ReservationRepository;
 
 @Service
@@ -25,8 +26,14 @@ public class ReservationService {
 		return reservationRepository.findReservationsByHotelId(id);
 	}
 	
-	public List<Reservation> findReservationsByRoomlId(Integer hotel_id,Integer room_number) {
+	public List<Reservation> findReservationsByRoomId(Integer hotel_id,Integer room_number) {
 		return reservationRepository.findReservationsByRoom(hotel_id,room_number);
+	}
+	
+	public List<Reservation> findReservationsById(ReservationCompositeKey key) {
+		List<Reservation> result = new ArrayList();
+		result.add( reservationRepository.findById(key).get());
+		return result;
 	}
 
 }

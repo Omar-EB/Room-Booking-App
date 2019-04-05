@@ -13,10 +13,10 @@ public class CheckedInCompositeKey implements Serializable {
 	
 	private Integer room_number;
 	
-	//@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date start_date;
 	
-	//@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date end_date;
 	
 	private String employee_sin;

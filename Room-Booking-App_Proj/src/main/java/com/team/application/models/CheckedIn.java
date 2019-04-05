@@ -1,10 +1,12 @@
 package com.team.application.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -12,10 +14,14 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.annotations.Parameter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team.application.models.keys.CheckedInCompositeKey;
 
 
@@ -23,6 +29,7 @@ import com.team.application.models.keys.CheckedInCompositeKey;
 @Table(name="checkedin")
 @IdClass(CheckedInCompositeKey.class)
 public class CheckedIn {
+
 	@Id
 	private Integer hotel_id;
 	
@@ -31,19 +38,20 @@ public class CheckedIn {
 	
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "start_date")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date start_date;
 	
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "end_date")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date end_date;
 	
 	@Id
 	private String employee_sin;
 
-	@MapsId("start_date")
-    @OneToOne(fetch = FetchType.LAZY)
+	// Many to One due to Database design mistake, future fix to make it One to One (leave joined columns)
+    @MapsId
+    @ManyToOne(optional = false)
 	@JoinColumns({
 		@JoinColumn(name = "hotel_id", nullable = false),
 		@JoinColumn(name = "room_number", nullable = false),
@@ -53,8 +61,9 @@ public class CheckedIn {
 	private Reservation reservation;
 	
 	@MapsId("employee_sin")
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_sin", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY,optional=false)
+    //@JoinColumn(name = "employee_sin", nullable = false)
+	@PrimaryKeyJoinColumn
 	private Employee employee;
 	
 	private Double payment;

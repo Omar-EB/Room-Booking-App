@@ -21,8 +21,13 @@ public class EmployeeService {
 		return results;
 	}
 	
-	public List<Employee> findEmployeesbyHotelId(int hotel_id) {
+	public List<Employee> findEmployeesbyHotelId(Integer hotel_id) {
 		return employeeRepository.findEmployeesbyHotelId(hotel_id);
 	}
 
+	public List<Employee> findEmployeeById(String id) {
+		List<Employee> result = new ArrayList();
+		result.add(employeeRepository.findById(id).get());
+		return result;
+	}
 }

@@ -16,15 +16,44 @@ public class ReservationCompositeKey implements Serializable {
 	private Integer room_number;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	//@Column(name = "end_date", columnDefinition= "TIMESTAMP WITHOUT TIME ZONE")
 	private Date start_date;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	//@Column(name = "end_date", columnDefinition= "TIMESTAMP WITHOUT TIME ZONE")
 	private Date end_date;
 
 	
-	
+	public Integer getHotel_id() {
+		return hotel_id;
+	}
+
+	public void setHotel_id(Integer hotel_id) {
+		this.hotel_id = hotel_id;
+	}
+
+	public Integer getRoom_number() {
+		return room_number;
+	}
+
+	public void setRoom_number(Integer room_number) {
+		this.room_number = room_number;
+	}
+
+	public Date getStart_date() {
+		return start_date;
+	}
+
+	public void setStart_date(Date start_date) {
+		this.start_date = start_date;
+	}
+
+	public Date getEnd_date() {
+		return end_date;
+	}
+
+	public void setEnd_date(Date end_date) {
+		this.end_date = end_date;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

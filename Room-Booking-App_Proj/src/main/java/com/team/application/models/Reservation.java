@@ -1,6 +1,7 @@
 package com.team.application.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,7 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,7 +34,6 @@ public class Reservation {
 	
 	@Id
 	private Integer room_number;
-	//, columnDefinition= "TIMESTAMP WITHOUT TIME ZONE"
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "start_date")
@@ -55,11 +57,12 @@ public class Reservation {
 		@JoinColumn(name = "hotel_id", nullable = false),
 		@JoinColumn(name = "room_number", nullable = false) })	
 	private Room room;
-	/*
-    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+	
+	// One to Many due to Database design mistake, future fix to make it One to One (must add joined columns in this case)
+	@MapsId
+	@OneToMany(mappedBy="reservation",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private CheckedIn checked_in;
-    */
+    private List<CheckedIn> check_ins;
 
 	
 	public Integer getHotel_id() {

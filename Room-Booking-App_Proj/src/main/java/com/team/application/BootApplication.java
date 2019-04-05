@@ -25,7 +25,7 @@ public class BootApplication extends WebMvcConfigurerAdapter {
 	
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new DateTimeConverter("yyyy-MM-dd'T'HH:mm"));
+        registry.addConverter(new DateTimeConverter("yyyy-MM-dd'T'HH:mm:ss"));
     }
 	
     @Bean
