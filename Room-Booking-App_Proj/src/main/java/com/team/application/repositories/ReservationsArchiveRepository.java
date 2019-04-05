@@ -12,4 +12,8 @@ public interface ReservationsArchiveRepository extends CrudRepository<Reservatio
 
 	@Query("SELECT arc FROM ReservationsArchive arc WHERE arc.hotel_id = :hotel_id AND arc.room_number= :room_number")
 	public List<ReservationsArchive> findArchivesByRoom(@Param("hotel_id") Integer hotel_Id, @Param("room_number") Integer room_number);
+
+	@Query("SELECT arc FROM ReservationsArchive arc WHERE arc.hotel_id = :hotel_id")
+	public List<ReservationsArchive> findArchivesByHotel(@Param("hotel_id") Integer hotel_Id);
+
 }

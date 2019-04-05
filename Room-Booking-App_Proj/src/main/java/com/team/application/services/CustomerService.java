@@ -2,6 +2,7 @@ package com.team.application.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,17 +14,25 @@ import com.team.application.repositories.CustomerRepository;
 public class CustomerService {
 	
 	@Autowired
-	private CustomerRepository customerRpository;
+	private CustomerRepository customerRepository;
 
 	public List<Customer> getAllCustomers(){
 		List<Customer> results = new ArrayList();
-		customerRpository.findAll().forEach(results :: add);
+		customerRepository.findAll().forEach(results :: add);
 		return results;
 	}
 	
 	public List<Customer> findCustomerbyId(String sin) {
-		List<Customer> results = new ArrayList();
-		results.add(customerRpository.findById(sin).get());
-		return results;
+		try {
+			List<Customer> results = new ArrayList();
+			results.add(customerRepository.findById(sin).get());
+			return results;
+		} catch (NoSuchElementException exception) {
+			return new ArrayList<Customer>();
+		}
+	}
+	
+	public Customer addCustomer(Customer customer) {
+		return customerRepository.save(customer);
 	}
 }

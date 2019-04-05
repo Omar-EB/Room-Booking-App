@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -36,8 +37,21 @@ public class Customer {
     private List<Reservation> reservations = new ArrayList<>();
     
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(insertable = false, updatable = false)
     private Date date_of_registration;
     
+    
+	public Customer(String sin, String given_name, String family_name, String street_name, Integer street_number,
+			String city, String state, String country) {
+		this.sin = sin;
+		this.given_name = given_name;
+		this.family_name = family_name;
+		this.street_name = street_name;
+		this.street_number = street_number;
+		this.city = city;
+		this.state = state;
+		this.country = country;
+	}
 	public String getSin() {
 		return sin;
 	}

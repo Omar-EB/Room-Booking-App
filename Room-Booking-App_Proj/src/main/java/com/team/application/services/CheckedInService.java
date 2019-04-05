@@ -27,14 +27,6 @@ public class CheckedInService {
 	@Autowired
 	private CheckedInRepository checkedInRepository;
 	
-	@Autowired
-	private ReservationService reservationService;
-	
-	@Autowired
-	private EmployeeService employeeService;
-	
-	
-	
 	public List<CheckedIn> getAllCheckIns(){
 		/*
 		List<CheckedIn> results = new ArrayList();
@@ -49,7 +41,7 @@ public class CheckedInService {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void reservationCheckIn(Integer hotel_id, Integer room_number,Date start_date,Date end_date,String employee_sin,Double payment) throws ParseException{
+	public void reservationCheckIn(Integer hotel_id, Integer room_number,Date start_date,Date end_date,String employee_sin,Double payment, ReservationService reservationService, EmployeeService employeeService) throws ParseException{
 		
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));

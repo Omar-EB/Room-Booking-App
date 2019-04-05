@@ -3,13 +3,13 @@ package com.team.application;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.application.models.*;
-import com.team.application.models.keys.ReservationCompositeKey;
 import com.team.application.repositories.display.DisplayRepository;
 import com.team.application.services.*;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -54,7 +54,7 @@ public class RestfulController {
 	@Autowired
 	private CheckedInService checkedInService;
 	@Autowired 
-	private ReservationService reservationsArchiveService;
+	private ReservationsArchiveService reservationsArchiveService;
 	
 	@RequestMapping("/")
 	public String index() {
@@ -116,6 +116,7 @@ public class RestfulController {
 			@RequestParam(value="start",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
 			@RequestParam(value="end",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date)
 	{
+		
 		return roomService.findRoomsByQuery(city,state,country,rating,capacity,price,area,start_date,end_date);
 	}
 	
@@ -182,17 +183,19 @@ public class RestfulController {
 		return roomAmenitiesService.findAmenityById(hotel_id,room_number,amenity);
 	}
 	
-	//example: localhost:8080/rooms/checkin/1/100/153269837?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00&payment=107.8
-	@GetMapping("/rooms/checkin/{hotel_id}/{room_number}/{employee_sin}")
-	public String reservationCheckIn(@PathVariable Integer hotel_id,
-								@PathVariable Integer room_number,
-								@PathVariable String employee_sin,
-								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
-								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
-								@RequestParam(value="payment",required=true) Double payment) throws ParseException
-	{
-		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment);
-		return "Success!";	
+	@GetMapping("rooms/archives")
+	public List<ReservationsArchive> getAllArchives(){
+		return reservationsArchiveService.getAllArchives();
+	}
+	
+	@GetMapping("rooms/{hotel_id}/archives")
+	public List<ReservationsArchive> getArchivesByHotel(@PathVariable Integer hotel_id){
+		return reservationsArchiveService.getArchivesByHotel(hotel_id);
+	}
+	
+	@GetMapping("rooms/{hotel_id}/{room_number}/archives")
+	public List<ReservationsArchive> getArchivesByRoom(@PathVariable Integer hotel_id,@PathVariable Integer room_number){
+		return reservationsArchiveService.getArchivesByRoom(hotel_id,room_number);
 	}
 	
 	@GetMapping("/cities")
@@ -205,11 +208,51 @@ public class RestfulController {
 		return displayRepository.getHotelChainNames();
 	}
 	
+	
+	//turn this into post mapping
+	//example: localhost:8080/rooms/checkin/1/100/153269837?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00&payment=107.8
+	@GetMapping("/rooms/checkin/{hotel_id}/{room_number}/{employee_sin}")
+	public String reservationCheckIn(@PathVariable Integer hotel_id,
+								@PathVariable Integer room_number,
+								@PathVariable String employee_sin,
+								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
+								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
+								@RequestParam(value="payment",required=true) Double payment) throws ParseException
+	{
+		
+		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
+		return "Success!";	
+	}
+	
+	//example: localhost:8080/reservation?start=2021-01-20T10:00:00&end=2021-01-26T18:30:00
+	//include the rest of the data in the request body as json
+	@PostMapping("/reservation")
+	public Boolean reserveRoom(
+			@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
+			@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
+			@RequestBody Map<String,Object> json) 
+	{
+		Integer hotel_id = (Integer) json.get("hotel_id");
+		Integer room_number = (Integer) json.get("room_number");
+		String customer_sin = (String) json.get("customer_sin");
+		String given_name = (String) json.get("given_name");
+		String family_name = (String) json.get("family_name");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+
+	    Reservation reservation = reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
+		return new Boolean(reservation!=null);
+	}
+	
 	@DeleteMapping("/units/{id}")
 	public boolean deleteUnit(@PathVariable int id){
 		unitService.deleteUnit(id);
 		return true;
 	}
+	
 	
 	@PostMapping("/units")
 	public Unit saveUnit( @RequestBody Unit unit){

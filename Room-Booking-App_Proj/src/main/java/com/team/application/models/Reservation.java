@@ -1,5 +1,6 @@
 package com.team.application.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class Reservation {
 	@MapsId
 	@OneToMany(mappedBy="reservation",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<CheckedIn> check_ins;
+    private List<CheckedIn> check_ins = new ArrayList<>();
 
 	
 	public Integer getHotel_id() {
