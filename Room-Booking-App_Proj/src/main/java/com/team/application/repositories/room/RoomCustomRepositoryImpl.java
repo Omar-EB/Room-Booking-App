@@ -62,7 +62,7 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 	    	"	AND ( "+ 
 	    	"	NOT EXISTS (" + 
 	    	"			SELECT 1 FROM reservation WHERE (" + 
-	    	"				(reservation.hotel_id=room.hotel_id AND reservation.room_number=room.room_number) AND (" + 
+	    	"				(reservation.hotel_id=room.hotel_id AND reservation.room_number=room.room_number ) AND (" + 
 	    	"					(reservation.start_date<=? AND reservation.end_date>?) OR" + //-- start
 	    	"					(reservation.start_date<? AND reservation.end_date>=?) OR" + //-- end
 	    	"					(reservation.start_date>=? AND reservation.end_date<=?)" + //-- ?1 :start , ?2 : end
@@ -70,22 +70,22 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 	    	"			)" + 
 	    	"		)" + 
 	    	"	)"+
-	    	"	);";
-	    	Query q = entityManager.createNativeQuery(query,Room.class);
-	    	q.setParameter(1, city);
-	    	q.setParameter(2, state);
-	    	q.setParameter(3, country);
+	    	"	) GROUP BY room.hotel_id,room.room_number ;";
+	    	Query nativeQuery = entityManager.createNativeQuery(query,Room.class);
+	    	nativeQuery.setParameter(1, city);
+	    	nativeQuery.setParameter(2, state);
+	    	nativeQuery.setParameter(3, country);
 	    	for (int i=0;i<parameters.length && parameters[i]!=null;i++) {
-	    		q.setParameter(4+i, parameters[i]);
+	    		nativeQuery.setParameter(4+i, parameters[i]);
 	    	}
 	    	paramCounter+=4;
-	    	q.setParameter(paramCounter++, start);
-	    	q.setParameter(paramCounter++, start);
-	    	q.setParameter(paramCounter++, end);
-	    	q.setParameter(paramCounter++, end);
-	    	q.setParameter(paramCounter++, start);
-	    	q.setParameter(paramCounter++, end);
+	    	nativeQuery.setParameter(paramCounter++, start);
+	    	nativeQuery.setParameter(paramCounter++, start);
+	    	nativeQuery.setParameter(paramCounter++, end);
+	    	nativeQuery.setParameter(paramCounter++, end);
+	    	nativeQuery.setParameter(paramCounter++, start);
+	    	nativeQuery.setParameter(paramCounter++, end);
 	    	
-	    	return (List<Room>) q.getResultList();
+	    	return (List<Room>) nativeQuery.getResultList();
 	    }
 }

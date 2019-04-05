@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.team.application.models.*;
 import com.team.application.models.keys.ReservationCompositeKey;
+import com.team.application.repositories.display.DisplayRepository;
 import com.team.application.services.*;
 
 import java.text.ParseException;
@@ -27,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @CrossOrigin(origins="http://localhost:4200",allowedHeaders="*")
 public class RestfulController {
 
+	@Autowired 
+	private DisplayRepository displayRepository;
+	
 	@Autowired
 	private UnitService unitService;
 	@Autowired
@@ -189,6 +193,16 @@ public class RestfulController {
 	{
 		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment);
 		return "Success!";	
+	}
+	
+	@GetMapping("/cities")
+	public List<Object[]> getAllCities(){
+		return displayRepository.getCities();
+	}
+	
+	@GetMapping("/hotelchains")
+	public List<Object> getHotelChainNames(){
+		return displayRepository.getHotelChainNames();
 	}
 	
 	@DeleteMapping("/units/{id}")
