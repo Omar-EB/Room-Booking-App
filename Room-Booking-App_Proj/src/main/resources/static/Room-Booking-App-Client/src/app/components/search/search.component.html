@@ -8,9 +8,9 @@
             Start Date
             <input type="datetime-local" 
                     class = 'form-control'
-                    name="startDate" value="2019-00-00T00:00"
+                    name="startDate" value="0000-00-00T00:00"
                     min="0000-00-00T00:00"
-                    [(ngModel)] = 'startDate'>
+                    [(ngModel)] ="startDate">
           </label>
         </div>
         <div class = 'row'>
@@ -18,14 +18,34 @@
             End Date
             <input type="datetime-local" 
                     class = 'form-control'
-                    name="endDate" value="2019-00-00T00:00"
-                    min="0000-00-00T00:00" [(ngModel)] = 'endDate'>
+                    name="endDate" value="0000-00-00T00:00"
+                    min="0000-00-00T00:00"
+                    [(ngModel)] = 'endDate'>
           </label>     
+        </div>
+        <div class = 'row'>
+          <label>
+            City
+            <input class = 'form-control' type = 'text' name = 'city' [(ngModel)] = 'city'>
+          </label>
+        </div>
+        <div class = 'row'>
+          <label>
+            State
+            <input class = 'form-control' type = 'text' maxlength = '2' name = 'state' [(ngModel)] = 'state'>
+          </label>
+        </div>
+        <div class = 'row'>
+          <label>
+            Country
+            <input class = 'form-control' type = 'text' maxlength = '2' name = 'country' [(ngModel)] = 'country'>
+          </label>
         </div>
         <div class = 'row'>     
           <label>
-              Rating
+              Rating (min)
               <select class = 'form-control' name = 'rating' [(ngModel)] = 'rating'>
+                <option value = 'undefined'></option>
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
@@ -36,19 +56,19 @@
         </div>
         <div class = 'row'>
           <label>
-            Room Capacity (# people) (minimum)
+            Room Capacity (# people) (min)
             <input class = 'form-control' min = 0 type = 'number' name = 'roomCapacity' [(ngModel)] = 'roomCapacity'>
           </label>
         </div>
         <div class = 'row'>
           <label>
-            Area (ft^2) (minimum)
+            Area (ft^2) (min)
             <input class = 'form-control' min = 0 type = 'number' name = 'area' [(ngModel)] = 'area'>
           </label>
         </div>
         <div class = 'row'>
           <label>
-            Price ($) (maximum)
+            Price ($) (max)
             <input class = 'form-control' min = 0 type = 'number' name = 'price' [(ngModel)] = 'price'>
           </label>
         </div>
@@ -62,6 +82,7 @@
       <table class = 'table table-striped'>
         <thead>
           <th>Hotel Chain</th>
+          <th>Hotel ID</th>
           <th>Address</th>
           <th>Room Number</th>
           <th>View Type</th>
@@ -73,6 +94,7 @@
         <tbody>
           <tr *ngFor = 'let room of rooms'>
             <td>{{room.hotel.hotelChain.hcName}}</td>
+            <td>{{room.hotel.hotelId}}</td>
             <td>{{room.hotel.getAddress()}}</td>
             <td>{{room.roomNumber}}</td>
             <td>{{room.viewType}}</td>
@@ -87,6 +109,11 @@
       </table>
     </div>
 
+  </div>
+  <div class = 'row'>
+    <div class = 'col-md-12'>
+      <button type = 'button' class = 'btn btn-primary' (click) = 'onBack()'>Back</button>
+    </div>
   </div>
 </div>
 
@@ -103,49 +130,7 @@
         <div class = 'row'>
           <label>
             SIN 
-            <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customer.sin'>
-          </label>
-        </div>
-        <div class = 'row'>
-          <label>
-            Given Name
-            <input type = 'text' class = 'form-control' name = 'givenName' [(ngModel)] = 'customer.givenName'>
-          </label>     
-        </div>
-        <div class = 'row'>     
-          <label>
-              Family name
-              <input type = 'text' class = ' form-control' name = 'familyName' [(ngModel)] = 'customer.familyName'>
-            </label>         
-        </div>
-        <div class = 'row'>
-          <label>
-            Street Name
-            <input type = 'text' class = 'form-control' name = 'streetName' [(ngModel)] = 'customer.streetName'>
-          </label>
-        </div>
-        <div class = 'row'>
-          <label>
-            Street Number
-            <input type = 'number' min = 0 class = 'form-control' name = 'streetNumber' [(ngModel)] = 'customer.streetNumber'>
-          </label>
-        </div>
-        <div class = 'row'>
-          <label>
-            City
-            <input type = 'text' class = 'form-control' name = 'city' [(ngModel)] ='customer.city'>
-          </label>
-        </div>
-        <div class = 'row'>
-          <label>
-            State
-            <input type = 'text' maxlength = 2 class = 'form-control' name = 'state' [(ngModel)] ='customer.state'>
-          </label>
-        </div>
-        <div class = 'row'>
-          <label>
-            Country
-            <input type = 'text' maxlength = 2 class = 'form-control' name = 'country' [(ngModel)] ='customer.country'>
+            <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customerSin'>
           </label>
         </div>
       </form>

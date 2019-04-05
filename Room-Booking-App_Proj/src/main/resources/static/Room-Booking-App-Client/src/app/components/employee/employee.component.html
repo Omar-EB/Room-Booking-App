@@ -1,3 +1,60 @@
-<p>
-  employee works!
-</p>
+<div class = 'container'>
+  <div class = 'row'>
+      <div class = 'col-md-12'>
+        <table class = 'table table-striped'>
+          <thead>
+            <th>Hotel Id</th>
+            <th>Room Number</th>
+            <th>Room Number</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reservation Type</th>
+            <th>Customer Sin</th>
+            <th></th>
+          </thead>
+          <tbody>
+            <tr *ngFor = 'let reservation of reservations'>
+              <td>{{reservation.hotelId}}</td>
+              <td>{{reservation.roomNumber}}</td>
+              <td>{{reservation.startDate}}</td>
+              <td>{{reservation.endDate}}</td>
+              <td>{{reservation.reservationType ? 'Renting' : 'Booking'}}</td>
+              <td>{{reservation.customerSin}}</td>
+              <td *ngIf = '!reservation.Type'>
+                <button type = 'button' class = 'btn btn-primary' (click) = 'open(checkin, reservation)'>Check in</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+  <div class = 'row'>
+    <div class = 'col-md-12'>
+      <button type = 'button' class = 'btn btn-primary' (click) = 'onBack()'>Back</button>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #checkin let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Check In</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <h6>Customer Information</h6>
+      <form (ngSubmit) = 'onSearch()'>
+          <div class = 'row'>
+            <label>
+              SIN 
+              <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customerSin'>
+            </label>
+          </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="bookRoom(modal)">Check In</button>
+    </div>
+  </ng-template>
