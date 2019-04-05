@@ -40,6 +40,7 @@ public class Customer {
     @Column(insertable = false, updatable = false)
     private Date date_of_registration;
     
+    public Customer () {}
     
 	public Customer(String sin, String given_name, String family_name, String street_name, Integer street_number,
 			String city, String state, String country) {
