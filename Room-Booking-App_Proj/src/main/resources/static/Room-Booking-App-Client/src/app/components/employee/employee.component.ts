@@ -126,9 +126,8 @@ export class EmployeeComponent implements OnInit {
     }
 
     this.setCheckInInfo();
-    this.apiService.createCheckIn(this.checkIn)
+    this.apiService.createCheckIn(this.getCheckInParams())
       .subscribe(checkInJson => {
-        console.log(checkInJson);
         this.checkIn = new CheckIn();
         this.selectedReservation.reservationType = true;
       },
@@ -144,6 +143,17 @@ export class EmployeeComponent implements OnInit {
     this.checkIn.roomNumber = this.selectedReservation.roomNumber;
     this.checkIn.startDate = this.selectedReservation.startDate;
     this.checkIn.endDate = this.selectedReservation.endDate;
+  }
+
+  private getCheckInParams(): {} {
+    const checkInParams: any = {};
+    checkInParams.hotel_id = this.checkIn.hotelId;
+    checkInParams.room_number = this.checkIn.roomNumber;
+    checkInParams.start_date = this.checkIn.startDate;
+    checkInParams.end_date = this.checkIn.endDate;
+    checkInParams.employee_sin = this.checkIn.employeeSin;
+    checkInParams.payment = this.checkIn.payment;
+    return checkInParams;
   }
 
   private checkPaymentForm(): boolean {

@@ -8,4 +8,5 @@ export class Room {
     price: number;
     extendable: boolean;
     area: number;
+    amenities: string[] = [];
 }

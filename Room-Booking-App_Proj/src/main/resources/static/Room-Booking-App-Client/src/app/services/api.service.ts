@@ -50,6 +50,11 @@ export class ApiService {
     return this.httpClient.get<Room[]>(getUrl, {params: searchParameters});
   }
 
+  public getRoomAmenities(roomNumber: number, hotelId: number): Observable<[]> {
+    const getUrl = this.baseUrl + 'rooms/' + hotelId + '/' + roomNumber + '/amenities';
+    return this.httpClient.get<[]>(getUrl);
+  }
+
   public getCustomers(): Observable<Customer[]> {
     const getUrl = this.baseUrl + 'customers';
     return this.httpClient.get<Customer[]>(getUrl);
@@ -71,10 +76,12 @@ export class ApiService {
     return this.httpClient.post<Reservation>(putUrl, reservationParams, {params: params});
   }
 
-  public createCheckIn(checkIn: CheckIn): Observable<CheckIn> {
+  public createCheckIn(checkInParams): Observable<CheckIn> {
     const putUrl = this.baseUrl + 'rooms/checkin/';
-    const params = {start: checkIn.startDate.toISOString(), end: checkIn.endDate.toISOString(), payment: '' + checkIn.payment};
-    return this.httpClient.post<CheckIn>(putUrl, checkIn, {params: params});
+    const params = {start: checkInParams.start_date.toISOString(), 
+                    end: checkInParams.end_date.toISOString(), 
+                    payment: '' + checkInParams.payment};
+    return this.httpClient.post<CheckIn>(putUrl, checkInParams, {params: params});
   }
 
 

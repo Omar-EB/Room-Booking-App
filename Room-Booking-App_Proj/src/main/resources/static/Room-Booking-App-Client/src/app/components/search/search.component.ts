@@ -70,6 +70,27 @@ export class SearchComponent implements OnInit {
       });
   }
 
+  // private getRoomAmenities(): void {
+  //   for (let i = 0; i < this.rooms.length; i++) {
+  //     this.apiService.getRoomAmenities(this.rooms[i].roomNumber, this.rooms[i].hotel.hotelId)
+  //       .subscribe(amenityJson => {
+  //         const hotelId = amenityJson[0]
+  //         const amenities = [];
+  //         for (const amenity of amenityJson) {
+  //           amenities.push(amenity);
+  //         }
+  //         for (let i = 0; i < this.rooms.length; i++) {
+  //           if (this.rooms[i].hotel.hotelId == amenityJson.hotel_id && this.rooms[i].roomNumber == amenityJson.room_number) {
+  //             this.rooms[i].amenities = amenities;
+  //           }
+  //         }
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // }
+
   private getHotelChainNames(): void {
     this.apiService.getHotelChainNames()
       .subscribe(hotelChainNames => {
@@ -142,7 +163,7 @@ export class SearchComponent implements OnInit {
         window.alert('Successfully booked');
         const newRooms = [];
         for (const room of this.rooms) {
-          if (room.hotel.hotelId != this.selectedRoom.hotel.hotelId && room.roomNumber != this.selectedRoom.roomNumber) {
+          if (room.hotel.hotelId != this.selectedRoom.hotel.hotelId || room.roomNumber != this.selectedRoom.roomNumber) {
             newRooms.push(room);
           }
         }
