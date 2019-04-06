@@ -1,8 +1,8 @@
-export class Checkin {
-    employee_sin: string;
-    hotel_id: number;
-    room_number: number;
-    start_date: Date;
-    end_date: Date;
+export class CheckIn {
+    employeeSin: string;
+    hotelId: number;
+    roomNumber: number;
+    startDate: Date;
+    endDate: Date;
     payment: number;
 }

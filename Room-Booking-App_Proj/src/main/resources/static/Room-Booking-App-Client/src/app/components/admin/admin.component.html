@@ -1,3 +1,146 @@
-<p>
-  admin works!
-</p>
+<div class = 'container'>
+  <div class = 'row'>
+    <div class = 'col-md-12'>
+      <button type = 'button' class = 'btn btn-primary' (click) = 'onBack()'>Back</button>
+    </div>
+  </div>
+  <div class = 'row'>
+    <div class = 'col-md-12'>
+      <ngb-tabset>
+
+        <ngb-tab title = 'Customers'>
+          <ng-template ngbTabContent>
+            <table class = 'table table-striped'>
+              <thead>
+                <th>SIN</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th></th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr *ngFor = 'let customer of customers'>
+                  <td>{{customer.sin}}</td>
+                  <td>{{customer.getName()}}</td>
+                  <td>{{customer.getAddress()}}</td>
+                  <td>
+                    <button class = 'btn btn-primary' (click)='onUpdateCustomer(customer)'>Update</button>
+                  </td>
+                  <td>
+                    <button class = 'btn btn-danger' (click)='onDeleteCustomer(customer)'>Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class = 'btn btn-primary' (click)='return'>Add Customer</button>
+          </ng-template>
+        </ngb-tab>
+
+        <ngb-tab title = 'Employees'>
+          <ng-template ngbTabContent>
+            <table class = 'table table-striped'>
+              <thead>
+                <th>SIN</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Hotel Chain</th>
+                <th>Hotel ID</th>
+                <th></th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr *ngFor = 'let employee of employees'>
+                  <td>{{employee.sin}}</td>
+                  <td>{{employee.getName()}}</td>
+                  <td>{{employee.getAddress()}}</td>
+                  <td>{{employee.hotel.hotelChain.hcName}}</td>
+                  <td>{{employee.hotel.hotelId}}</td>
+                  <td>
+                    <button class = 'btn btn-primary' (click)='onUpdateEmployee(employee)'>Update</button>
+                  </td>
+                  <td>
+                    <button class = 'btn btn-danger' (click)='onDeleteEmployee(employee)'>Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class = 'btn btn-primary' (click)='return'>Add Employee</button>
+          </ng-template>
+        </ngb-tab>
+
+        <ngb-tab title = 'Hotels'>
+          <ng-template ngbTabContent>
+            <table class = 'table table-striped'>
+              <thead>
+                <th>Hotel Chain</th>
+                <th>Hotel ID</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Rating</th>
+                <th>Number of Rooms</th>
+                <th></th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr *ngFor = 'let hotel of hotels'>
+                  <td>{{hotel.hotelChain.hcName}}</td>
+                  <td>{{hotel.hotelId}}</td>
+                  <td>{{hotel.getAddress()}}</td>
+                  <td>{{hotel.phoneNumber}}</td>
+                  <td>{{hotel.rating}}</td>
+                  <td>{{hotel.numberOfRooms}}</td>
+                  <td>
+                    <button class = 'btn btn-primary' (click)='onUpdateHotel(hotel)'>Update</button>
+                  </td>
+                  <td>
+                    <button class = 'btn btn-danger' (click)='onDeleteHotel(hotel)'>Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class = 'btn btn-primary' (click)='return'>Add Hotel</button>
+          </ng-template>
+        </ngb-tab>
+
+        <ngb-tab title = 'Rooms'>
+          <ng-template ngbTabContent>
+            <table class = 'table table-striped'>
+              <thead>
+                <th>Hotel Chain</th>
+                <th>Hotel ID</th>
+                <th>Address</th>
+                <th>Room Number</th>
+                <th>View Type</th>
+                <th>Price ($ CAD)</th>
+                <th>Extendable</th>
+                <th>Area (ft^2)</th>
+                <th></th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr *ngFor = 'let room of rooms'>
+                  <td>{{room.hotel.hotelChain.hcName}}</td>
+                  <td>{{room.hotel.hotelId}}</td>
+                  <td>{{room.hotel.getAddress()}}</td>
+                  <td>{{room.roomNumber}}</td>
+                  <td>{{room.viewType}}</td>
+                  <td>{{room.price}}</td>
+                  <td>{{room.extendable ? 'Yes' : 'No'}}</td>
+                  <td>{{room.area}}</td>
+                  <td>
+                    <button class = 'btn btn-primary' (click)='onUpdateRoom(room)'>Update</button>
+                  </td>
+                  <td>
+                    <button class = 'btn btn-danger' (click)='onDeleteRoom(room)'>Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class = 'btn btn-primary' (click)='return'>Add Room</button>
+          </ng-template>
+        </ngb-tab>
+
+      </ngb-tabset>
+    </div>
+  </div> 
+</div>

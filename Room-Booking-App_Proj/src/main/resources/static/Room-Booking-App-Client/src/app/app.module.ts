@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 import { UnitService } from './services/unit.service';
 import { ApiService } from './services/api.service';
@@ -33,7 +34,8 @@ import { AdminComponent } from './components/admin/admin.component';
     FormsModule,
     HttpModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    NgMultiSelectDropDownModule.forRoot()
   ],
   providers: [UnitService, ApiService],
   bootstrap: [AppComponent]

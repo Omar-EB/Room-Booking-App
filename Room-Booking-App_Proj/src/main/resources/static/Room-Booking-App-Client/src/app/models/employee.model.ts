@@ -1,11 +1,21 @@
+import { Hotel } from './hotel.model';
+
 export class Employee {
     sin: string;
-    given_name: string;
-    family_name: string;
-    street_name: string;
-    street_number: number;
+    givenName: string;
+    familyName: string;
+    streetName: string;
+    streetNumber: number;
     city: string;
     state: string;
     country: string;
-    hotel_id: number;
+    hotel: Hotel;
+
+    public getName(): string {
+        return this.givenName + ' ' + this.familyName;
+    }
+
+    public getAddress(): string {
+        return this.streetNumber + ' ' + this.streetName + ', ' + this.city + ', ' + this.state + ', ' + this.country;
+    }
 }

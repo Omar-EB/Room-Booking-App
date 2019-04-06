@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-// import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 import { Room } from '../../models/room.model';
 import { Hotel } from '../../models/hotel.model';
@@ -18,6 +17,8 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
+  private hotelChains: string[];
+  private hotelChain: string;
   private startDate: string;
   private endDate: string;
   private city: string;
@@ -30,6 +31,19 @@ export class SearchComponent implements OnInit {
 
   private customerSin: string;
 
+
+  // private customer: Customer;
+  // Integer hotel_id = (Integer) json.get("hotel_id");
+  // Integer room_number = (Integer) json.get("room_number");
+  // String customer_sin = (String) json.get("customer_sin");
+  // String given_name = (String) json.get("given_name");
+  // String family_name = (String) json.get("family_name");
+  // String street_name = (String) json.get("street_name");
+  //   Integer street_number = (Integer) json.get("street_number");
+  //   String city = (String) json.get("city");
+  //   String state = (String) json.get("state");
+  //   String country = (String) json.get("country");
+
   private rooms: Room[];
   private selectedRoom: Room;
 
@@ -41,8 +55,8 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     this.rooms = [];
+    this.getHotelChainNames();
   }
-
 
   public onBack(): void {
     this.location.back();
@@ -54,6 +68,10 @@ export class SearchComponent implements OnInit {
     }
     this.apiService.getRoomsSearch(this.getSearchParams())
       .subscribe(roomsJson => {
+        if (roomsJson.length == 0) {
+          window.alert('No results found for given search');
+          return;
+        }
         this.rooms = [];
         for (const roomJson of roomsJson) {
           this.rooms.push(this.apiService.parseToRoom(roomJson));
@@ -62,6 +80,16 @@ export class SearchComponent implements OnInit {
       (error) => {
         console.log(error);
       });
+  }
+
+  private getHotelChainNames(): void {
+    this.apiService.getHotelChainNames()
+      .subscribe(hotelChainNames => {
+        this.hotelChains = hotelChainNames;
+      },
+      (error) => {
+        console.log(error);
+      })
   }
 
   private getSearchParams() {
@@ -87,7 +115,10 @@ export class SearchComponent implements OnInit {
   }
 
   private checkSearchFormValid(): boolean {
-    if (this.startDate == undefined) {
+    if (!this.hotelChain) {
+      window.alert('Hotel Chain missing');
+      return false;
+    } else if (this.startDate == undefined) {
       window.alert('Start date missing');
       return false;
     } else if (this.endDate == undefined) {
@@ -114,18 +145,24 @@ export class SearchComponent implements OnInit {
     });
   }
 
-  public bookRoom(modal): void {
+  public onBookRoom(modal): void {
     if (!this.checkBookFormValid()) {
       return;
     }
-
     this.apiService.createReservation(this.getBookParams())
-      .subscribe(reservationJson => {
+      .subscribe(reservation => {
+        console.log(reservation);
         window.alert('Successfully booked');
-        this.rooms = [];
+        const newRooms = [];
+        for (const room of this.rooms) {
+          if (room.hotel.hotelId != this.selectedRoom.hotel.hotelId && room.roomNumber != this.selectedRoom.roomNumber) {
+            newRooms.push(room);
+          }
+        }
+        this.rooms = newRooms;
       },
       (error) => {
-        window.alert(error);
+        window.alert('Error in booking');
         console.log(error);
       }
     );

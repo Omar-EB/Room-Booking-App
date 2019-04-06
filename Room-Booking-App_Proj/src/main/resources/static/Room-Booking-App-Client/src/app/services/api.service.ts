@@ -9,6 +9,8 @@ import { Hotel } from '../models/hotel.model';
 import { HotelChain } from '../models/hotelchain.model';
 import { Reservation } from '../models/reservation.model';
 import { Customer } from '../models/customer.model';
+import { CheckIn } from '../models/checkin.model';
+import { Employee } from '../models/employee.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,38 +25,56 @@ export class ApiService {
     private http: Http,
     private httpClient: HttpClient) { }
 
-  getRooms(): Observable<Room[]> {
+  public getHotelChainNames(): Observable<string[]> {
+    const getUrl = this.baseUrl + 'hotelchains';
+    return this.httpClient.get<string[]>(getUrl);
+  }
+
+  public getHotels(): Observable<Hotel[]> {
+    const getUrl = this.baseUrl + 'hotels';
+    return this.httpClient.get<Hotel[]>(getUrl);
+  }
+
+  public getRooms(): Observable<Room[]> {
     const getUrl = this.baseUrl + 'rooms';
     return this.httpClient.get<Room[]>(getUrl);
   }
 
-  getRoomsSearch(searchParameters): Observable<Room[]> {
+  public getRoomsSearch(searchParameters): Observable<Room[]> {
     const getUrl = this.baseUrl + 'rooms/query';
     return this.httpClient.get<Room[]>(getUrl, {params: searchParameters});
   }
 
-  getReservations(): Observable<Reservation[]> {
+  public getCustomers(): Observable<Customer[]> {
+    const getUrl = this.baseUrl + 'customers';
+    return this.httpClient.get<Customer[]>(getUrl);
+  }
+
+  public getEmployees(): Observable<Employee[]> {
+    const getUrl = this.baseUrl + 'employees';
+    return this.httpClient.get<Employee[]>(getUrl);
+  }
+
+  public getReservations(): Observable<Reservation[]> {
     const getUrl = this.baseUrl + 'rooms/reservations';
     return this.httpClient.get<Reservation[]>(getUrl);
   }
 
-  createReservation(reservationParams): Observable<Reservation> {
+  public createReservation(reservationParams): Observable<Reservation> {
     const putUrl = this.baseUrl + 'reservation';
     const params = {start: reservationParams.start, end: reservationParams.end};
     return this.httpClient.post<Reservation>(putUrl, reservationParams, {params: params});
   }
 
-  // createUnit(){
-  //   return this._http.post(this.baseUrl, JSON.stringify(unit),this.options).pipe(
-  //       map((response:Response) => response.json()) , 
-  //       catchError((error: HttpErrorResponse) => {
-  //           return Observable.throw(error || 'SERVER ERROR')
-  //       })
-  //   );  
-  // }
+  public createCheckIn(checkIn: CheckIn): Observable<CheckIn> {
+    const putUrl = this.baseUrl + 'checkin/' + checkIn.hotelId + '/' + checkIn.roomNumber + '/' + checkIn.employeeSin;
+    console.log(putUrl);
+    const params = {start: checkIn.startDate.toISOString(), end: checkIn.endDate.toISOString(), payment: '' + checkIn.payment};
+    return this.httpClient.post<CheckIn>(putUrl, {}, {params: params});
+  }
 
 
-  parseToRoom(roomJson: any): Room {
+  public parseToRoom(roomJson: any): Room {
     const room = new Room();
     room.hotel = this.parseToHotel(roomJson.hotel);
     room.roomNumber = roomJson.room_id.room_number;
@@ -66,7 +86,7 @@ export class ApiService {
     return room;
   }
 
-  parseToHotel(hotelJson: any): Hotel {
+  public parseToHotel(hotelJson: any): Hotel {
     const hotel = new Hotel();
     hotel.hotelChain = this.parseToHotelChain(hotelJson.hotelChain);
     hotel.hotelId = hotelJson.hotel_id;
@@ -81,25 +101,26 @@ export class ApiService {
     return hotel;
   }
 
-  parseToHotelChain(hotelChainJson: any): HotelChain {
+  public parseToHotelChain(hotelChainJson: any): HotelChain {
     const hotelChain = new HotelChain();
     hotelChain.hcName = hotelChainJson.hc_name;
     hotelChain.numberOfHotels = hotelChainJson.number_of_hotels;
     return hotelChain;
   }
 
-  parseToReservation(reservationJson: any): Reservation {
+  public parseToReservation(reservationJson: any): Reservation {
     const reservation = new Reservation();
     reservation.hotelId = reservationJson.hotel_id;
     reservation.roomNumber = reservationJson.room_number;
+    reservation.room = this.parseToRoom(reservationJson.room);
     reservation.startDate = new Date(reservationJson.start_date);
-    reservation.endDate = new Date(reservationJson.endDate);
+    reservation.endDate = new Date(reservationJson.end_date);
     reservation.reservationType = reservationJson.reservation_type;
     reservation.customer = this.parseToCustomer(reservationJson.customer);
     return reservation;
   }
 
-  parseToCustomer(customerJson: any): Customer {
+  public parseToCustomer(customerJson: any): Customer {
     const customer = new Customer();
     customer.sin = customerJson.sin;
     customer.givenName = customerJson.given_name;
@@ -110,6 +131,20 @@ export class ApiService {
     customer.state = customerJson.state;
     customer.country = customerJson.country;
     return customer;
+  }
+
+  public parseToEmployee(employeeJson: any): Employee {
+    const employee = new Employee();
+    employee.sin = employeeJson.sin;
+    employee.givenName = employeeJson.given_name;
+    employee.familyName = employeeJson.family_name;
+    employee.streetName = employeeJson.street_name;
+    employee.streetNumber = employeeJson.street_number;
+    employee.city = employeeJson.city;
+    employee.state = employeeJson.state;
+    employee.country = employeeJson.country;
+    employee.hotel = this.parseToHotel(employeeJson.hotel);
+    return employee;
   }
 
 }
