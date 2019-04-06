@@ -6,4 +6,6 @@ import com.team.application.models.Room;
 
 public interface RoomCustomRepository {
 	public List<Room> roomQuery(String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end);
+
+	public List<Room> roomsInHotelQuery(Integer hotel_id, Integer capacity, Double price, Double area, Date start,Date end);
 }

@@ -53,7 +53,6 @@ public class Reservation {
 	private Customer customer;
 	
 	//true for renting, false for booking, default booking
-	//@ColumnDefault("false")
 	private Boolean reservation_type= new Boolean(false);
 	
 	@MapsId //("room_number")

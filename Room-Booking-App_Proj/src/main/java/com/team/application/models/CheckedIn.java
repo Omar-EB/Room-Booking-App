@@ -60,10 +60,10 @@ public class CheckedIn {
 	})
 	private Reservation reservation;
 	
-	@MapsId("employee_sin")
+	@MapsId//("employee_sin")
 	@ManyToOne(fetch = FetchType.LAZY,optional=false)
-    //@JoinColumn(name = "employee_sin", nullable = false)
-	@PrimaryKeyJoinColumn
+    @JoinColumn(name = "employee_sin", nullable = false)
+	//@PrimaryKeyJoinColumn
 	private Employee employee;
 	
 	private Double payment;

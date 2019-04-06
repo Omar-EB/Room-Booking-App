@@ -11,6 +11,9 @@ import com.team.application.models.keys.ReservationCompositeKey;
 
 public interface ReservationRepository extends CrudRepository<Reservation, ReservationCompositeKey> {
 
+	@Query("SELECT rs FROM Reservation rs WHERE rs.room.hotel.hotel_id = :hotel_id AND rs.customer.sin = :customer_sin")
+	public List<Reservation> findReservationsByHotelAndCustomer(@Param("hotel_id") Integer hotel_Id, @Param("customer_sin") String customer_sin);
+	
 	@Query("SELECT rs FROM Reservation rs WHERE rs.room.hotel.hotel_id = :hotel_id")
 	public List<Reservation> findReservationsByHotelId(@Param("hotel_id") Integer hotel_Id);
 	

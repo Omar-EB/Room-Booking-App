@@ -31,7 +31,7 @@ public class Employee {
     private List<EmployeeRole> employee_roles;
 	
 	
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<CheckedIn> checked_in;
 	

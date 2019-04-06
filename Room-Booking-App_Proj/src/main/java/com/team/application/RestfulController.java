@@ -3,13 +3,17 @@ package com.team.application;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.application.models.*;
+import com.team.application.models.keys.ReservationCompositeKey;
 import com.team.application.repositories.display.DisplayRepository;
 import com.team.application.services.*;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -77,9 +81,11 @@ public class RestfulController {
 		return hotelService.getAllHotels();
 	}
 	
+	//example: localhost:8080/hotels/id?employee_sin=153269837   : returns the hotel_id of the hotel where the employee works
 	@GetMapping("/hotels/id")
-	public int gethotelId(@RequestParam(value = "street_name", required = false) String street_name,@RequestParam(value = "street_number", required = false) int street_number,@RequestParam(value = "city", required = false) String city,@RequestParam(value = "state", required = false) String state,@RequestParam(value = "country", required = false) String country){
-		return hotelService.getHotelId(street_name,street_number,city,state,country);
+	public int gethotelId(@RequestParam(value = "street_name", required = false) String street_name,@RequestParam(value = "street_number", required = false) Integer street_number,@RequestParam(value = "city", required = false) String city,@RequestParam(value = "state", required = false) String state,@RequestParam(value = "country", required = false) String country,@RequestParam(value = "employee_sin", required = false) String employee_sin ){
+		if (employee_sin==null)return hotelService.getHotelId(street_name,street_number,city,state,country);
+		return employeeService.getHotelId(employee_sin);
 	}
 	
 	@GetMapping("/centraloffices")
@@ -92,7 +98,6 @@ public class RestfulController {
 		return centralOfficeService.getCentralOfficeByName(hc_name);
 	}
 	
-	//for the real query, query hotels first, get their hotel_id 's then query rooms
 	@GetMapping("/rooms")
 	public List<Room> getRooms(){
 		return roomService.getAllRooms();
@@ -103,7 +108,7 @@ public class RestfulController {
 		return roomService.findRoomsByHotelId(hotel_id);
 	}
 	
-	//example: localhost:8080/rooms/query?city=Montreal&state=QC&country=CA&start=2019-04-01T10:00&end=2019-04-02T10:00 --- OPTIONAL: &rating=?&capacity=?&price=?&area=?
+	//example: localhost:8080/rooms/query?city=Montreal&state=QC&country=CA&start=2019-04-01T10:00:00&end=2019-04-02T10:00:00 --- OPTIONAL: &rating=?&capacity=?&price=?&area=?
 	@GetMapping("/rooms/query")
 	public List<Room> roomQuery(
 			@RequestParam(value="city",required=true) String city,
@@ -118,6 +123,20 @@ public class RestfulController {
 	{
 		
 		return roomService.findRoomsByQuery(city,state,country,rating,capacity,price,area,start_date,end_date);
+	}
+	
+	//example: localhost:8080/rooms/1/query?start=2019-04-01T10:00:00&end=2019-04-02T10:00:00 --- OPTIONAL: capacity=?&price=?&area=?
+	@GetMapping("/rooms/{hotel_id}/query")
+	public List<Room> roomsInHotelQuery(
+			@PathVariable Integer hotel_id,
+			@RequestParam(value="capacity",required=false) Integer capacity,
+			@RequestParam(value="price",required=false) Double price,
+			@RequestParam(value="area",required=false) Double area,
+			@RequestParam(value="start",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
+			@RequestParam(value="end",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date)
+	{
+		
+		return roomService.findRoomsInHotelByQuery(hotel_id,capacity,price,area,start_date,end_date);
 	}
 	
 	@GetMapping("/rooms/{hotel_id}/{room_number}/amenities")
@@ -136,7 +155,12 @@ public class RestfulController {
 		return reservationService.findReservationsByHotelId(hotel_id);
 	}
 	
-	@GetMapping("/rooms/{hotel_id}/{room_number}/reservations")
+	@GetMapping("/rooms/{hotel_id}/{customer_sin}/customer/reservations")
+	public List<Reservation> findReservationsByHotelAndCustomer(@PathVariable Integer hotel_id,@PathVariable String customer_sin){
+		return reservationService.findReservationsByHotelAndCustomer(hotel_id,customer_sin);
+	}
+	
+	@GetMapping("/rooms/{hotel_id}/{room_number}/room/reservations")
 	public List<Reservation> findReservationsByRoomlId(@PathVariable Integer hotel_id,@PathVariable Integer room_number){
 		return reservationService.findReservationsByRoomId(hotel_id,room_number);
 	}
@@ -151,10 +175,11 @@ public class RestfulController {
 		return checkedInService.findCheckInsByRoom(hotel_id, room_number);
 	}
 	
+	/*
 	@GetMapping("/rooms/checkins")
 	public List<CheckedIn> findCheckIns(){
 		return checkedInService.getAllCheckIns();
-	}
+	} */
 	
 	@GetMapping("/employees")
 	public List<Employee> findEmployees(@RequestParam(value = "hotel_id", required=false) Integer hotel_id ){
@@ -207,27 +232,12 @@ public class RestfulController {
 	public List<Object> getHotelChainNames(){
 		return displayRepository.getHotelChainNames();
 	}
+
 	
-	
-	//turn this into post mapping
-	//example: localhost:8080/rooms/checkin/1/100/153269837?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00&payment=107.8
-	@GetMapping("/rooms/checkin/{hotel_id}/{room_number}/{employee_sin}")
-	public String reservationCheckIn(@PathVariable Integer hotel_id,
-								@PathVariable Integer room_number,
-								@PathVariable String employee_sin,
-								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
-								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
-								@RequestParam(value="payment",required=true) Double payment) throws ParseException
-	{
-		
-		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
-		return "Success!";	
-	}
-	
-	//example: localhost:8080/reservation?start=2021-01-20T10:00:00&end=2021-01-26T18:30:00
+	//example: localhost:8080/rooms/reservation?start=2021-01-20T10:00:00&end=2021-01-26T18:30:00
 	//include the rest of the data in the request body as json
-	@PostMapping("/reservation")
-	public Boolean reserveRoom(
+	@PostMapping("/rooms/reservation")
+	public String reserveRoom(
 			@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
 			@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
 			@RequestBody Map<String,Object> json)  throws ParseException
@@ -243,9 +253,53 @@ public class RestfulController {
 	    String state = (String) json.get("state");
 	    String country = (String) json.get("country");
 
-	    Reservation reservation = reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
-		return new Boolean(reservation!=null);
+	    reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
+		return "Reservation complete.";
 	}
+	
+	//example: localhost:8080/rooms/checkin?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00
+	//include the rest of the data in the request body as json
+	//case where the checkin is linked to a pre-booked reservation
+	@PostMapping("/rooms/checkin")
+	public String checkIn(
+								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
+								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
+								@RequestBody Map<String,Object> json) throws ParseException
+	{
+		Integer hotel_id = (Integer) json.get("hotel_id");
+		Integer room_number = (Integer) json.get("room_number");
+		String employee_sin = (String) json.get("employee_sin");
+		Double payment = (Double) json.get("payment");
+		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
+		return "Check-In complete.";	
+	}
+	
+	//example: localhost:8080/rooms/checkin?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00
+	//include the rest of the data in the request body as json
+	//case where the checkin is made through a walk-in
+	@PostMapping("/rooms/reservation/checkin")
+	public String reserveAndCheckIn(
+								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
+								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
+								@RequestBody Map<String,Object> json) throws ParseException
+	{
+		Integer hotel_id = (Integer) json.get("hotel_id");
+		Integer room_number = (Integer) json.get("room_number");
+		String employee_sin = (String) json.get("employee_sin");
+		Double payment = (Double) json.get("payment");
+		String customer_sin = (String) json.get("customer_sin");
+		String given_name = (String) json.get("given_name");
+		String family_name = (String) json.get("family_name");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
+	    checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
+		return "Reservation and Check-In complete.";	
+	}
+	
 	
 	@DeleteMapping("/units/{id}")
 	public boolean deleteUnit(@PathVariable int id){

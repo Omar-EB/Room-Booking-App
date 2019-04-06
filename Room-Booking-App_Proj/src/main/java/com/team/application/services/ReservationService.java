@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,22 @@ public class ReservationService {
 	public List<Reservation> findReservationsByHotelId(Integer id) {
 		return reservationRepository.findReservationsByHotelId(id);
 	}
+	public List<Reservation> findReservationsByHotelAndCustomer(Integer hotel_id,String customer_sin) {
+		return reservationRepository.findReservationsByHotelAndCustomer(hotel_id,customer_sin);
+	}
 	
 	public List<Reservation> findReservationsByRoomId(Integer hotel_id,Integer room_number) {
 		return reservationRepository.findReservationsByRoom(hotel_id,room_number);
 	}
 	
 	public List<Reservation> findReservationsById(ReservationCompositeKey key) {
-		List<Reservation> result = new ArrayList();
-		result.add( reservationRepository.findById(key).get());
-		return result;
+		try {
+			List<Reservation> result = new ArrayList();
+			result.add( reservationRepository.findById(key).get());
+			return result;
+		} catch (NoSuchElementException exception) {
+			return new ArrayList<Reservation>();
+		}
 	}
 	
 	public Reservation reserveRoom( Integer hotel_id,

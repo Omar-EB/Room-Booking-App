@@ -30,4 +30,8 @@ public class EmployeeService {
 		result.add(employeeRepository.findById(id).get());
 		return result;
 	}
+	
+	public Integer getHotelId(String employee_sin) {
+		return employeeRepository.findHotelId(employee_sin);
+	}
 }

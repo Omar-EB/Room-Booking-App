@@ -28,11 +28,6 @@ public class CheckedInService {
 	private CheckedInRepository checkedInRepository;
 	
 	public List<CheckedIn> getAllCheckIns(){
-		/*
-		List<CheckedIn> results = new ArrayList();
-		checkedInRepository.findAll().forEach(results :: add);
-		return results;
-		*/
 		return checkedInRepository.findAllCheckIns();
 	}
 	
@@ -55,9 +50,7 @@ public class CheckedInService {
 		//additions below necessary for date creation through parser
 		key.setStart_date(format.parse((1900+start_date.getYear())+"-"+(1+start_date.getMonth())+"-"+start_date.getDate()+"T"+start_date.getHours()+":"+start_date.getMinutes()+":"+start_date.getSeconds()));
 		key.setEnd_date(format.parse((1900+end_date.getYear())+"-"+(1+end_date.getMonth())+"-"+end_date.getDate()+"T"+end_date.getHours()+":"+end_date.getMinutes()+":"+end_date.getSeconds()));
-		
-		Reservation reservation = reservationService.findReservationsById(key).get(0);
-		
+		Reservation reservation = reservationService.findReservationsById(key).get(0);	
 		Employee employee = employeeService.findEmployeeById(employee_sin).get(0);
 		CheckedIn checkin = new CheckedIn();
 		checkin.setEmployee(employee);
