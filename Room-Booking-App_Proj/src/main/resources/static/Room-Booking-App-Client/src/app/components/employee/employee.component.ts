@@ -20,8 +20,6 @@ export class EmployeeComponent implements OnInit {
 
   private checkIn: CheckIn;
 
-  private hotelChains: string[];
-  private hotelChain: string;
   private hotelId: number;
   private startDate: string;
   private endDate: string;
@@ -47,7 +45,6 @@ export class EmployeeComponent implements OnInit {
     this.reservations = [];
     this.rooms = [];
     this.getReservations();
-    this.getHotelChainNames();
   }
 
   public onBack(): void {
@@ -61,6 +58,10 @@ export class EmployeeComponent implements OnInit {
     }
     this.apiService.getRoomsByHotelIdSearch(this.getSearchParams())
       .subscribe(roomsJson => {
+        if (roomsJson.length == 0 ) {
+          window.alert('No rooms found for search');
+          return;
+        }
         this.rooms = [];
         for (const roomJson of roomsJson) {
           this.rooms.push(this.apiService.parseToRoom(roomJson));
@@ -69,16 +70,6 @@ export class EmployeeComponent implements OnInit {
       (error) => {
         console.log(error);
       });
-  }
-
-  private getHotelChainNames(): void {
-    this.apiService.getHotelChainNames()
-      .subscribe(hotelChainNames => {
-        this.hotelChains = hotelChainNames;
-      },
-      (error) => {
-        console.log(error);
-      })
   }
 
   private getSearchParams() {
@@ -102,10 +93,7 @@ export class EmployeeComponent implements OnInit {
   }
 
   private checkSearchFormValid(): boolean {
-    if (!this.hotelChain) {
-      window.alert('Hotel Chain missing');
-      return false;
-    } else if (this.startDate == undefined) {
+    if (this.startDate == undefined) {
       window.alert('Start date missing');
       return false;
     } else if (this.endDate == undefined) {
@@ -171,6 +159,7 @@ export class EmployeeComponent implements OnInit {
   private getReservations(): void {
     this.apiService.getReservations()
       .subscribe(reservationsJson => {
+        this.reservations = [];
         for (const reservationJson of reservationsJson) {
           this.reservations.push(this.apiService.parseToReservation(reservationJson));
         }

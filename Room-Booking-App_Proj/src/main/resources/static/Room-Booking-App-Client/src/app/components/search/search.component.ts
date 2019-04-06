@@ -103,6 +103,7 @@ export class SearchComponent implements OnInit {
 
   private getSearchParams() {
     const searchParams: any = {}
+    searchParams.hc_name = this.hotelChain;
     searchParams.start = this.startDate + ':00';
     searchParams.end = this.endDate + ':00';
     searchParams.city = this.city;

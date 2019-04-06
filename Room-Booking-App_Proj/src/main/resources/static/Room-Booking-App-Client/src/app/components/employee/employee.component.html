@@ -49,14 +49,6 @@
                 <form (ngSubmit) = 'onSearch()'>
                   <div class = 'row'>
                     <label>
-                      Hotel Chain
-                      <select class = 'form-control' name = 'hotelChain' [(ngModel)] = 'hotelChain'>
-                        <option *ngFor = 'let hotelChain of hotelChains' [ngValue] = 'hotelChain'>{{hotelChain}}</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div class = 'row'>
-                    <label>
                       Hotel ID
                       <input type = 'number' class = 'form-control' min = '0' name = 'hotelId' [(ngModel)] = 'hotelId'>
                     </label>
