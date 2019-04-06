@@ -21,6 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team.application.models.keys.ReservationCompositeKey;
 
@@ -50,8 +52,9 @@ public class Reservation {
 	@JoinColumn(name = "customer_sin",referencedColumnName="sin", nullable = false) 
 	private Customer customer;
 	
-	//true for booking, false for renting, default renting
-	private Boolean reservation_type;
+	//true for renting, false for booking, default booking
+	//@ColumnDefault("false")
+	private Boolean reservation_type= new Boolean(false);
 	
 	@MapsId //("room_number")
 	@ManyToOne(optional = false)

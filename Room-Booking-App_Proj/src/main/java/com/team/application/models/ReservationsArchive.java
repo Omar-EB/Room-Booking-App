@@ -28,7 +28,7 @@ public class ReservationsArchive {
 	private String customer_sin;
 	private String employee_sin;
 	
-	//true for booking, false for renting, default renting
+	//true for renting, false for booking, default booking
 	private Boolean reservation_type;
 
 	

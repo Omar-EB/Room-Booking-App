@@ -230,7 +230,7 @@ public class RestfulController {
 	public Boolean reserveRoom(
 			@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
 			@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
-			@RequestBody Map<String,Object> json) 
+			@RequestBody Map<String,Object> json)  throws ParseException
 	{
 		Integer hotel_id = (Integer) json.get("hotel_id");
 		Integer room_number = (Integer) json.get("room_number");
