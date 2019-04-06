@@ -108,9 +108,10 @@ public class RestfulController {
 		return roomService.findRoomsByHotelId(hotel_id);
 	}
 	
-	//example: localhost:8080/rooms/query?city=Montreal&state=QC&country=CA&start=2019-04-01T10:00:00&end=2019-04-02T10:00:00 --- OPTIONAL: &rating=?&capacity=?&price=?&area=?
+	//example: localhost:8080/rooms/query?hc_name=TopHill&city=Montreal&state=QC&country=CA&start=2019-04-01T10:00:00&end=2019-04-02T10:00:00 --- OPTIONAL: &rating=?&capacity=?&price=?&area=?
 	@GetMapping("/rooms/query")
 	public List<Room> roomQuery(
+			@RequestParam(value="hc_name",required=false) String hc_name,
 			@RequestParam(value="city",required=true) String city,
 			@RequestParam(value="state",required=true) String state,
 			@RequestParam(value="country",required=true) String country,
@@ -122,7 +123,7 @@ public class RestfulController {
 			@RequestParam(value="end",required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date)
 	{
 		
-		return roomService.findRoomsByQuery(city,state,country,rating,capacity,price,area,start_date,end_date);
+		return roomService.findRoomsByQuery(hc_name,city,state,country,rating,capacity,price,area,start_date,end_date);
 	}
 	
 	//example: localhost:8080/rooms/1/query?start=2019-04-01T10:00:00&end=2019-04-02T10:00:00 --- OPTIONAL: capacity=?&price=?&area=?

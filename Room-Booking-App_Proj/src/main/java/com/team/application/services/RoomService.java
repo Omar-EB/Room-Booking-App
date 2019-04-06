@@ -29,8 +29,8 @@ public class RoomService {
 		return roomRepository.findRoomsByHotelId(id);
 	}
 	
-	public List<Room> findRoomsByQuery(String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end) {
-		return roomRepository.roomQuery(city,state,country,rating,capacity,price,area,start,end);
+	public List<Room> findRoomsByQuery(String hc_name, String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end) {
+		return roomRepository.roomQuery(hc_name,city,state,country,rating,capacity,price,area,start,end);
 	}
 	
 	public List<Room> findRoomsInHotelByQuery(Integer hotel_id,Integer capacity, Double price, Double area, Date start,Date end){

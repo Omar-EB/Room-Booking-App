@@ -17,7 +17,7 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 	    private EntityManager entityManager;
 
 	    @SuppressWarnings("unchecked")
-		public List<Room> roomQuery(String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end){
+		public List<Room> roomQuery(String hc_name, String city, String state, String country, Integer rating, Integer capacity, Double price, Double area, Date start,Date end){
 
 	    	String query = 
 	    			"SELECT room.*	from	room,hotel	WHERE ((" + 
@@ -26,9 +26,9 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 	    			"	hotel.state=?	AND" + 
 	    			"	hotel.country=?	" +
 	    			")									" ;
-	    	Object[] parameters = new Object[4];
+	    	Object[] parameters = new Object[5];
 	    	int paramCounter=0;
-	    	if(!(rating == null && capacity == null && price == null && area == null)) {
+	    	if(!(hc_name == null && rating == null && capacity == null && price == null && area == null)) {
 	    		query+="	 AND	(";
 	    		
 		    	if(capacity!=null) {
@@ -52,6 +52,12 @@ public class RoomCustomRepositoryImpl implements RoomCustomRepository{
 		    		if(paramCounter>0) query+= "	AND";
 		   			parameters[paramCounter++]=rating;
 		   			query+="	hotel.rating>=?";
+		   		}
+		    	
+		    	if(hc_name!=null) {
+		    		if(paramCounter>0) query+= "	AND";
+		   			parameters[paramCounter++]=hc_name;
+		   			query+="	hotel.hc_name=?";
 		   		}
 		    		
 		    	query+="	)";		
