@@ -237,7 +237,7 @@ public class RestfulController {
 	//example: localhost:8080/rooms/reservation?start=2021-01-20T10:00:00&end=2021-01-26T18:30:00
 	//include the rest of the data in the request body as json
 	@PostMapping("/rooms/reservation")
-	public String reserveRoom(
+	public Boolean reserveRoom(
 			@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
 			@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
 			@RequestBody Map<String,Object> json)  throws ParseException
@@ -254,14 +254,14 @@ public class RestfulController {
 	    String country = (String) json.get("country");
 
 	    reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
-		return "Reservation complete.";
+		return new Boolean(true);
 	}
 	
 	//example: localhost:8080/rooms/checkin?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00
 	//include the rest of the data in the request body as json
 	//case where the checkin is linked to a pre-booked reservation
 	@PostMapping("/rooms/checkin")
-	public String checkIn(
+	public Boolean checkIn(
 								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
 								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
 								@RequestBody Map<String,Object> json) throws ParseException
@@ -271,14 +271,14 @@ public class RestfulController {
 		String employee_sin = (String) json.get("employee_sin");
 		Double payment = (Double) json.get("payment");
 		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
-		return "Check-In complete.";	
+		return  new Boolean(true);	
 	}
 	
 	//example: localhost:8080/rooms/checkin?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00
 	//include the rest of the data in the request body as json
 	//case where the checkin is made through a walk-in
 	@PostMapping("/rooms/reservation/checkin")
-	public String reserveAndCheckIn(
+	public Boolean reserveAndCheckIn(
 								@RequestParam(value = "start", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start_date,
 								@RequestParam(value = "end", required=true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end_date,
 								@RequestBody Map<String,Object> json) throws ParseException
@@ -297,7 +297,7 @@ public class RestfulController {
 	    String country = (String) json.get("country");
 	    reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
 	    checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
-		return "Reservation and Check-In complete.";	
+		return new Boolean(true);	
 	}
 	
 	
