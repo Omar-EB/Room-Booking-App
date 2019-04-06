@@ -269,9 +269,14 @@ public class RestfulController {
 		Integer hotel_id = (Integer) json.get("hotel_id");
 		Integer room_number = (Integer) json.get("room_number");
 		String employee_sin = (String) json.get("employee_sin");
-		Double payment = (Double) json.get("payment");
+		Double payment;
+		try {
+			payment = (Double) json.get("payment");
+		} catch (ClassCastException exception) {
+			payment = new Double(((Integer) json.get("payment")).doubleValue());
+		}
 		checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
-		return  new Boolean(true);	
+		return new Boolean(true);	
 	}
 	
 	//example: localhost:8080/rooms/checkin?start=2019-04-02T16:00:00&end=2019-04-10T16:00:00
@@ -286,7 +291,12 @@ public class RestfulController {
 		Integer hotel_id = (Integer) json.get("hotel_id");
 		Integer room_number = (Integer) json.get("room_number");
 		String employee_sin = (String) json.get("employee_sin");
-		Double payment = (Double) json.get("payment");
+		Double payment;
+		try {
+			payment = (Double) json.get("payment");
+		} catch (ClassCastException exception) {
+			payment = new Double(((Integer) json.get("payment")).doubleValue());
+		}
 		String customer_sin = (String) json.get("customer_sin");
 		String given_name = (String) json.get("given_name");
 		String family_name = (String) json.get("family_name");

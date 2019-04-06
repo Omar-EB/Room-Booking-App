@@ -48,8 +48,12 @@ public class CheckedInService {
 		//date.getYear() returns # of years since 1900
 		//date.getMonth() returns months index starting from 0 (ie Jan is 0 , March is 2 ..)
 		//additions below necessary for date creation through parser
-		key.setStart_date(format.parse((1900+start_date.getYear())+"-"+(1+start_date.getMonth())+"-"+start_date.getDate()+"T"+start_date.getHours()+":"+start_date.getMinutes()+":"+start_date.getSeconds()));
-		key.setEnd_date(format.parse((1900+end_date.getYear())+"-"+(1+end_date.getMonth())+"-"+end_date.getDate()+"T"+end_date.getHours()+":"+end_date.getMinutes()+":"+end_date.getSeconds()));
+		System.out.println("hotel_id:"+hotel_id+", room_number:"+room_number+", employee_sin:"+employee_sin+", payment:"+payment);
+		String s;
+		key.setStart_date(format.parse(s=((1900+start_date.getYear())+"-"+(1+start_date.getMonth())+"-"+start_date.getDate()+"T"+start_date.getHours()+":"+start_date.getMinutes()+":"+start_date.getSeconds())));
+		System.out.println("start: "+s);
+		key.setEnd_date(format.parse(s=((1900+end_date.getYear())+"-"+(1+end_date.getMonth())+"-"+end_date.getDate()+"T"+end_date.getHours()+":"+end_date.getMinutes()+":"+end_date.getSeconds())));
+		System.out.println("end: "+s);
 		Reservation reservation = reservationService.findReservationsById(key).get(0);	
 		Employee employee = employeeService.findEmployeeById(employee_sin).get(0);
 		CheckedIn checkin = new CheckedIn();
