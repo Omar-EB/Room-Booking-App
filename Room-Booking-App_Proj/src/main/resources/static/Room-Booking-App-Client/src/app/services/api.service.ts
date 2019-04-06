@@ -41,8 +41,9 @@ export class ApiService {
   }
 
   public getRoomsByHotelIdSearch(searchParameters): Observable<Room[]> {
-    const getUrl = this.baseUrl + 'rooms/' + searchParameters.hotel_id;
-    return this.httpClient.get<Room[]>(getUrl);
+    console.log(searchParameters);
+    const getUrl = this.baseUrl + 'rooms/' + searchParameters.hotel_id + '/query';
+    return this.httpClient.get<Room[]>(getUrl, {params: searchParameters});
   }
 
   public getRoomsSearch(searchParameters): Observable<Room[]> {
@@ -82,6 +83,12 @@ export class ApiService {
                     end: checkInParams.end_date.toISOString(), 
                     payment: '' + checkInParams.payment};
     return this.httpClient.post<CheckIn>(putUrl, checkInParams, {params: params});
+  }
+
+  public createRenting(rentingParams){
+    const putUrl = this.baseUrl + 'rooms/reservation/checkin';
+    const params = {start: rentingParams.start, end: rentingParams.end};
+    return this.httpClient.post(putUrl, rentingParams, {params: params});
   }
 
 

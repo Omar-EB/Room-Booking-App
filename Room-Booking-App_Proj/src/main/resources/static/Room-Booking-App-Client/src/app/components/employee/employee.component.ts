@@ -198,15 +198,17 @@ export class EmployeeComponent implements OnInit {
     if (!this.checkRentFormValid()) {
       return;
     }
-    this.apiService.createReservation(this.getRentParams())
-      .subscribe(reservation => {
+
+    this.apiService.createRenting(this.getRentParams())
+      .subscribe(renting => {
         const newRooms = [];
         for (const room of this.rooms) {
-          if (room.hotel.hotelId != this.selectedRoom.hotel.hotelId && room.roomNumber != this.selectedRoom.roomNumber) {
+          if (room.hotel.hotelId != this.selectedRoom.hotel.hotelId || room.roomNumber != this.selectedRoom.roomNumber) {
             newRooms.push(room);
           }
         }
         this.rooms = newRooms;
+        this.getReservations();
       },
       (error) => {
         window.alert('Error in booking of renting');
@@ -218,12 +220,22 @@ export class EmployeeComponent implements OnInit {
   }
 
   private getRentParams() {
-    const bookParams: any = {};
-    bookParams.hotel_id = this.selectedRoom.hotel.hotelId;
-    bookParams.room_number = this.selectedRoom.roomNumber;
-    bookParams.start = this.startDate + ':00';
-    bookParams.end = this.endDate + ':00';
-    return bookParams;
+    const rentParams: any = {};
+    rentParams.hotel_id = this.selectedRoom.hotel.hotelId;
+    rentParams.room_number = this.selectedRoom.roomNumber;
+    rentParams.employee_sin = this.checkIn.employeeSin;
+    rentParams.payment = this.checkIn.payment;
+    rentParams.start = this.startDate + ':00';
+    rentParams.end = this.endDate + ':00';
+    rentParams.customer_sin = this.customer.sin;
+    rentParams.given_name = this.customer.givenName;
+    rentParams.family_name = this.customer.familyName;
+    rentParams.street_name = this.customer.streetName;
+    rentParams.street_number = this.customer.streetNumber;
+    rentParams.city = this.customer.city;
+    rentParams.state = this.customer.state;
+    rentParams.country = this.customer.country;
+    return rentParams;
   }
 
   private checkRentFormValid(): boolean {

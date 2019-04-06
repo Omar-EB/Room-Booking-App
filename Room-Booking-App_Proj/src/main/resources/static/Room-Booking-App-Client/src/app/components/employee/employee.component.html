@@ -28,8 +28,8 @@
                   <td>{{reservation.room.hotel.getAddress()}}</td>
                   <td>{{reservation.hotelId}}</td>
                   <td>{{reservation.roomNumber}}</td>
-                  <td>{{reservation.startDate | date:'medium'}}</td>
-                  <td>{{reservation.endDate | date:'medium'}}</td>
+                  <td>{{reservation.startDate | date: 'medium' : 'UTC'}}</td>
+                  <td>{{reservation.endDate | date: 'medium' : 'UTC'}}</td>
                   <td>{{reservation.reservationType ? 'Renting' : 'Booking'}}</td>
                   <td>{{reservation.customer.sin}}</td>
                   <td>{{reservation.customer.getName()}}</td>
@@ -58,7 +58,7 @@
                   <div class = 'row'>
                     <label>
                       Hotel ID
-                      <input type = 'number' min = '0' name = 'hotelId' [(ngModel)] = 'hotelId'>
+                      <input type = 'number' class = 'form-control' min = '0' name = 'hotelId' [(ngModel)] = 'hotelId'>
                     </label>
                   </div>
                   <div class = 'row'>
@@ -198,7 +198,7 @@
     <h6>Renting Information</h6>
     <div class = 'row'>
       <label>
-        SIN 
+        Customer SIN 
         <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customer.sin'>
       </label>
     </div>
