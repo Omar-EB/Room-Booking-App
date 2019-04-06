@@ -139,7 +139,6 @@ export class SearchComponent implements OnInit {
     }
     this.apiService.createReservation(this.getBookParams())
       .subscribe(reservation => {
-        console.log(reservation);
         window.alert('Successfully booked');
         const newRooms = [];
         for (const room of this.rooms) {

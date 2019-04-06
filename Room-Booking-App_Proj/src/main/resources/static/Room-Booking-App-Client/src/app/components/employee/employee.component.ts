@@ -7,6 +7,7 @@ import { CheckIn } from 'src/app/models/checkin.model';
 import { Room } from 'src/app/models/room.model';
 
 import { ApiService } from '../../services/api.service';
+import { Customer } from 'src/app/models/customer.model';
 
 @Component({
   selector: 'app-employee',
@@ -21,17 +22,15 @@ export class EmployeeComponent implements OnInit {
 
   private hotelChains: string[];
   private hotelChain: string;
+  private hotelId: number;
   private startDate: string;
   private endDate: string;
-  private city: string;
-  private state: string;
-  private country: string;
   private rating: number;
   private roomCapacity: number;
   private area: number;
   private price: number;
 
-  private customerSin: string;
+  private customer: Customer;
 
   private rooms: Room[];
   private selectedRoom: Room;
@@ -43,6 +42,7 @@ export class EmployeeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.customer = new Customer();
     this.checkIn = new CheckIn();
     this.reservations = [];
     this.rooms = [];
@@ -54,12 +54,12 @@ export class EmployeeComponent implements OnInit {
     this.location.back();
   }
 
-  
+
   public onSearch(): void {
     if (!this.checkSearchFormValid()) {
       return;
     }
-    this.apiService.getRoomsSearch(this.getSearchParams())
+    this.apiService.getRoomsByHotelIdSearch(this.getSearchParams())
       .subscribe(roomsJson => {
         this.rooms = [];
         for (const roomJson of roomsJson) {
@@ -83,11 +83,9 @@ export class EmployeeComponent implements OnInit {
 
   private getSearchParams() {
     const searchParams: any = {}
+    searchParams.hotel_id = this.hotelId;
     searchParams.start = this.startDate + ':00';
     searchParams.end = this.endDate + ':00';
-    searchParams.city = this.city;
-    searchParams.state = this.state;
-    searchParams.country = this.country;
     if (this.roomCapacity != undefined) {
       searchParams.capacity = this.roomCapacity; 
     }
@@ -113,14 +111,8 @@ export class EmployeeComponent implements OnInit {
     } else if (this.endDate == undefined) {
       window.alert('End date missing');
       return false;
-    } else if (!this.city) {
-      window.alert('City is missing');
-      return false;
-    } else if (!this.state) {
-      window.alert('State is missing');
-      return false;
-    } else if (!this.country) {
-      window.alert('Country is missing');
+    } else if (!this.hotelId) {
+      window.alert('Hotel ID missing');
       return false;
     }
 
@@ -132,7 +124,7 @@ export class EmployeeComponent implements OnInit {
     if (!this.checkPaymentForm()) {
       return;
     }
-    
+
     this.setCheckInInfo();
     this.apiService.createCheckIn(this.checkIn)
       .subscribe(checkInJson => {
@@ -196,7 +188,7 @@ export class EmployeeComponent implements OnInit {
     if (!this.checkRentFormValid()) {
       return;
     }
-    this.apiService.createReservation(this.getBookParams())
+    this.apiService.createReservation(this.getRentParams())
       .subscribe(reservation => {
         const newRooms = [];
         for (const room of this.rooms) {
@@ -205,18 +197,6 @@ export class EmployeeComponent implements OnInit {
           }
         }
         this.rooms = newRooms;
-
-        // Now checkin the booking
-        this.setCheckInInfo();
-        this.apiService.createCheckIn(this.checkIn)
-          .subscribe(checkInJson => {
-            window.alert('Renting successful');
-            console.log(checkInJson);
-          },
-          (error) => {
-            window.alert('Error in checkin of renting');
-            console.log(error);
-          });
       },
       (error) => {
         window.alert('Error in booking of renting');
@@ -227,19 +207,39 @@ export class EmployeeComponent implements OnInit {
     modal.close('Save click');
   }
 
-  private getBookParams() {
+  private getRentParams() {
     const bookParams: any = {};
     bookParams.hotel_id = this.selectedRoom.hotel.hotelId;
     bookParams.room_number = this.selectedRoom.roomNumber;
     bookParams.start = this.startDate + ':00';
     bookParams.end = this.endDate + ':00';
-    bookParams.customer_sin = this.customerSin;
     return bookParams;
   }
 
   private checkRentFormValid(): boolean {
-    if (!this.customerSin) {
-      window.alert('Customer SIN is missing');
+    if (!this.customer.sin) {
+      window.alert('Sin is missing');
+      return false;
+    } else if (!this.customer.givenName) {
+      window.alert('Given name is missing');
+      return false;
+    } else if (!this.customer.familyName) {
+      window.alert('Family name is missing');
+      return false;
+    } else if (!this.customer.streetName) {
+      window.alert('Street name is missing');
+      return false;
+    } else if (!this.customer.streetNumber) {
+      window.alert('Street number is missing');
+      return false;
+    } else if (!this.customer.city) {
+      window.alert('City is missing');
+      return false;
+    } else if (!this.customer.state) {
+      window.alert('State is missing');
+      return false;
+    } else if (!this.customer.country) {
+      window.alert('Country is missing');
       return false;
     } else if (!this.checkIn.payment) {
       window.alert('Payment is missing');

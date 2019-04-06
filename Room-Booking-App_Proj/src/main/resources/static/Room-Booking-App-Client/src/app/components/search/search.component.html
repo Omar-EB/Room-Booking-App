@@ -134,10 +134,10 @@
     </button>
   </div>
   <div class="modal-body">
-    <h6>Customer Information</h6>
+    <h5>Customer Information</h5>
     <div class = 'row'>
       <label>
-        SIN 
+        Customer SIN 
         <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customer.sin'>
       </label>
     </div>
@@ -174,13 +174,13 @@
     <div class = 'row'>
       <label>
         State
-        <input type = 'text' class = 'form-control' name = 'state' [(ngModel)] = 'customer.state'>
+        <input type = 'text' class = 'form-control' maxlength = '2' name = 'state' [(ngModel)] = 'customer.state'>
       </label>
     </div>
     <div class = 'row'>
       <label>
         Country
-        <input type = 'text' class = 'form-control' name = 'country' [(ngModel)] = 'customer.country'>
+        <input type = 'text' class = 'form-control' maxlength = '2' name = 'country' [(ngModel)] = 'customer.country'>
       </label>
     </div>
   </div>
