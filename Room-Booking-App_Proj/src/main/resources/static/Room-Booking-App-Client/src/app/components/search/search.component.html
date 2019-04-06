@@ -138,7 +138,49 @@
     <div class = 'row'>
       <label>
         SIN 
-        <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customerSin'>
+        <input type = 'text' class = 'form-control' name = 'sin' [(ngModel)] = 'customer.sin'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        Given name
+        <input type = 'text' class = 'form-control' name = 'givenName' [(ngModel)] = 'customer.givenName'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        Family name
+        <input type = 'text' class = 'form-control' name = 'familyName' [(ngModel)] = 'customer.familyName'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        Street name
+        <input type = 'text' class = 'form-control' name = 'streetName' [(ngModel)] = 'customer.streetName'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        Street number
+        <input type = 'number' min = '0' class = 'form-control' name = 'streetNumber' [(ngModel)] = 'customer.streetNumber'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        City
+        <input type = 'text' class = 'form-control' name = 'city' [(ngModel)] = 'customer.city'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        State
+        <input type = 'text' class = 'form-control' name = 'state' [(ngModel)] = 'customer.state'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
+        Country
+        <input type = 'text' class = 'form-control' name = 'country' [(ngModel)] = 'customer.country'>
       </label>
     </div>
   </div>

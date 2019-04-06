@@ -29,20 +29,7 @@ export class SearchComponent implements OnInit {
   private area: number;
   private price: number;
 
-  private customerSin: string;
-
-
-  // private customer: Customer;
-  // Integer hotel_id = (Integer) json.get("hotel_id");
-  // Integer room_number = (Integer) json.get("room_number");
-  // String customer_sin = (String) json.get("customer_sin");
-  // String given_name = (String) json.get("given_name");
-  // String family_name = (String) json.get("family_name");
-  // String street_name = (String) json.get("street_name");
-  //   Integer street_number = (Integer) json.get("street_number");
-  //   String city = (String) json.get("city");
-  //   String state = (String) json.get("state");
-  //   String country = (String) json.get("country");
+  private customer: Customer;
 
   private rooms: Room[];
   private selectedRoom: Room;
@@ -54,6 +41,7 @@ export class SearchComponent implements OnInit {
     private modalService: NgbModal) { }
 
   ngOnInit() {
+    this.customer = new Customer();
     this.rooms = [];
     this.getHotelChainNames();
   }
@@ -176,13 +164,41 @@ export class SearchComponent implements OnInit {
     bookParams.room_number = this.selectedRoom.roomNumber;
     bookParams.start = this.startDate + ':00';
     bookParams.end = this.endDate + ':00';
-    bookParams.customer_sin = this.customerSin;
+    bookParams.customer_sin = this.customer.sin;
+    bookParams.given_name = this.customer.givenName;
+    bookParams.family_name = this.customer.familyName;
+    bookParams.street_name = this.customer.streetName;
+    bookParams.street_number = this.customer.streetNumber;
+    bookParams.city = this.customer.city;
+    bookParams.state = this.customer.state;
+    bookParams.country = this.customer.country;
     return bookParams;
   }
 
   private checkBookFormValid(): boolean {
-    if (!this.customerSin) {
+    if (!this.customer.sin) {
       window.alert('Sin is missing');
+      return false;
+    } else if (!this.customer.givenName) {
+      window.alert('Given name is missing');
+      return false;
+    } else if (!this.customer.familyName) {
+      window.alert('Family name is missing');
+      return false;
+    } else if (!this.customer.streetName) {
+      window.alert('Street name is missing');
+      return false;
+    } else if (!this.customer.streetNumber) {
+      window.alert('Street number is missing');
+      return false;
+    } else if (!this.customer.city) {
+      window.alert('City is missing');
+      return false;
+    } else if (!this.customer.state) {
+      window.alert('State is missing');
+      return false;
+    } else if (!this.customer.country) {
+      window.alert('Country is missing');
       return false;
     }
     return true;

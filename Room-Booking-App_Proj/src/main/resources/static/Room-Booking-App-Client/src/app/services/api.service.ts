@@ -61,7 +61,7 @@ export class ApiService {
   }
 
   public createReservation(reservationParams): Observable<Reservation> {
-    const putUrl = this.baseUrl + 'reservation';
+    const putUrl = this.baseUrl + 'rooms/reservation';
     const params = {start: reservationParams.start, end: reservationParams.end};
     return this.httpClient.post<Reservation>(putUrl, reservationParams, {params: params});
   }
