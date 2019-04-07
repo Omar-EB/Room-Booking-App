@@ -34,4 +34,12 @@ public class EmployeeService {
 	public Integer getHotelId(String employee_sin) {
 		return employeeRepository.findHotelId(employee_sin);
 	}
+	
+	public Employee saveEmployee(Employee employee) {
+		return employeeRepository.save(employee);
+	}
+	
+	public void deleteEmployee(String sin) {
+		employeeRepository.deleteById(sin);
+	}
 }

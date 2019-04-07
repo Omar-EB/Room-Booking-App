@@ -26,14 +26,14 @@ public class Employee {
 	@Id
 	private String sin;
 	
-	@OneToMany(mappedBy="employee",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="employee",fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<EmployeeRole> employee_roles;
+    private List<EmployeeRole> employee_roles=new ArrayList<>();
 	
 	
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<CheckedIn> checked_in;
+    private List<CheckedIn> checked_in=new ArrayList<>();
 	
 	private String given_name;
 	private String family_name;
@@ -44,6 +44,24 @@ public class Employee {
     private String state ;
     private String country ;
     
+	public Employee(Hotel hotel, String sin,
+			String given_name, String family_name, String street_name, Integer street_number, String city, String state,
+			String country) {
+		this.hotel = hotel;
+		this.sin = sin;
+		this.given_name = given_name;
+		this.family_name = family_name;
+		this.street_name = street_name;
+		this.street_number = street_number;
+		this.city = city;
+		this.state = state;
+		this.country = country;
+	}
+	
+	
+	public Employee() {}
+
+
 	public Hotel getHotel() {
 		return hotel;
 	}

@@ -25,7 +25,7 @@ public class HotelChain {
 	private String hc_name;
 	private Integer number_of_hotels;
 	
-    @OneToMany(mappedBy="hotelChain",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="hotelChain",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Hotel> hotels = new ArrayList<>();
     //
@@ -58,4 +58,15 @@ public class HotelChain {
 	public void setNumber_of_hotels(Integer number_of_hotels) {
 		this.number_of_hotels = number_of_hotels;
 	}
+
+
+	public List<Hotel> getHotels() {
+		return hotels;
+	}
+
+
+	public void setHotels(List<Hotel> hotels) {
+		this.hotels = hotels;
+	}
+	
 }

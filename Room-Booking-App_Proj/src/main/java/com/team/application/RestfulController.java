@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.team.application.models.*;
 import com.team.application.models.keys.ReservationCompositeKey;
+import com.team.application.models.keys.RoomCompositeKey;
 import com.team.application.repositories.display.DisplayRepository;
 import com.team.application.services.*;
 
@@ -37,6 +38,8 @@ public class RestfulController {
 	
 	@Autowired
 	private UnitService unitService;
+	@Autowired
+	private HotelChainService hotelChainService;
 	@Autowired
 	private HotelService hotelService;
 	@Autowired
@@ -176,11 +179,10 @@ public class RestfulController {
 		return checkedInService.findCheckInsByRoom(hotel_id, room_number);
 	}
 	
-	/*
-	@GetMapping("/rooms/checkins")
+	@GetMapping("/checkins")
 	public List<CheckedIn> findCheckIns(){
 		return checkedInService.getAllCheckIns();
-	} */
+	}
 	
 	@GetMapping("/employees")
 	public List<Employee> findEmployees(@RequestParam(value = "hotel_id", required=false) Integer hotel_id ){
@@ -309,6 +311,254 @@ public class RestfulController {
 	    reservationService.reserveRoom(hotel_id, room_number, customer_sin, given_name, family_name, street_name, street_number, city, state, country, start_date, end_date, customerService, roomService);
 	    checkedInService.reservationCheckIn(hotel_id, room_number, start_date, end_date, employee_sin, payment,reservationService,employeeService);
 		return new Boolean(true);	
+	}
+	
+	//Customer insert
+	@PostMapping("/backend/add/customer")
+	public Boolean addCustomer(@RequestBody Map<String,Object> json) {
+		String customer_sin = (String) json.get("customer_sin");
+		String given_name = (String) json.get("given_name");
+		String family_name = (String) json.get("family_name");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    
+	    customerService.addCustomer(new Customer(customer_sin, given_name, family_name, street_name, street_number, city, state, country));
+		return new Boolean(true);
+	}
+	
+	//Customer update
+	@PutMapping("/backend/update/customer")
+	public Boolean updateCustomer(@RequestBody Map<String,Object> json) {
+		String customer_sin = (String) json.get("customer_sin");
+		String given_name = (String) json.get("given_name");
+		String family_name = (String) json.get("family_name");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    
+	    Customer customer = customerService.findCustomerbyId(customer_sin).get(0);
+	    customer.setGiven_name(given_name);
+	    customer.setFamily_name(family_name);
+	    customer.setCity(city);
+	    customer.setState(state);
+	    customer.setCountry(country);
+	    customer.setStreet_name(street_name);
+	    customer.setStreet_number(street_number);
+	    customerService.addCustomer(customer);
+		return new Boolean(true);
+	}
+	
+	//Customer delete
+	//example: http://localhost:8080/backend/delete/customer?customer_sin=238593295
+	@DeleteMapping("/backend/delete/customer")
+	public Boolean deleteCustomer(@RequestParam(value="customer_sin", required=true) String customer_sin) {    
+	    customerService.deleteCustomer(customer_sin);
+	    return new Boolean(true);
+	}
+	
+	//Employee insert
+	@PostMapping("/backend/add/employee")
+	public Boolean addEmployee(@RequestBody Map<String,Object> json) {
+		String employee_sin = (String) json.get("employee_sin");
+		String given_name = (String) json.get("given_name");
+		String family_name = (String) json.get("family_name");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    Integer hotel_id = (Integer) json.get("hotel_id");
+	    
+	    Hotel hotel = hotelService.getHotelById(hotel_id);
+	    employeeService.saveEmployee(new Employee(hotel,employee_sin, given_name, family_name, street_name, street_number, city, state, country));
+		return new Boolean(true);
+	}
+	
+	@PutMapping("/backend/update/employee")
+	public Boolean updateEmployee(@RequestBody Map<String,Object> json) {
+		String employee_sin = (String) json.get("employee_sin");
+		String given_name = (String) json.get("given_name");
+		String family_name = (String) json.get("family_name");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    Integer hotel_id = (Integer) json.get("hotel_id");
+	    
+	    Employee employee = employeeService.findEmployeeById(employee_sin).get(0);
+	    employee.setGiven_name(given_name);
+	    employee.setFamily_name(family_name);
+	    employee.setCity(city);
+	    employee.setState(state);
+	    employee.setCountry(country);
+	    employee.setStreet_name(street_name);
+	    employee.setStreet_number(street_number);
+	    employee.setHotel(hotelService.getHotelById(hotel_id));
+	    employeeService.saveEmployee(employee);
+		return new Boolean(true);
+	}
+	
+	//Employee delete
+	//example: http://localhost:8080/backend/delete/employee?employee_sin=389129734
+	@GetMapping("/backend/delete/employee")
+	public Boolean deleteEmployee(@RequestParam(value="employee_sin", required=true) String employee_sin) {    
+	    employeeService.deleteEmployee(employee_sin);
+	    return new Boolean(true);
+	}
+	
+	
+	//Room insert
+	@PostMapping("/backend/add/room")
+	public Boolean addRoom(@RequestBody Map<String,Object> json) {
+	    Integer hotel_id = (Integer) json.get("hotel_id");
+	    Integer room_number = (Integer) json.get("room_number");
+	    String view_type = (String) json.get("view_type");
+	    Integer capacity = (Integer) json.get("capacity");
+	    Boolean extendable = (Boolean) json.get("room_number");
+	    Double price ;
+		try {
+			price = (Double) json.get("price");
+		} catch (ClassCastException exception) {
+			price = new Double(((Integer) json.get("price")).doubleValue());
+		}
+	    Double area=null ;
+		try {
+			area = (Double) json.get("area");
+		} catch (ClassCastException exception) {
+			price = new Double(((Integer) json.get("area")).doubleValue());
+		}	
+		
+		RoomCompositeKey key = new RoomCompositeKey();
+		key.setHotel_id(hotel_id);
+		key.setRoom_number(room_number);
+		
+		Hotel hotel = hotelService.getHotelById(hotel_id);
+		
+
+		Room room = new Room();
+		room.setRoom_id(key);
+		room.setHotel(hotel);
+		room.setArea(area);
+		room.setCapacity(capacity);
+		room.setExtendable(extendable);
+		room.setPrice(price);
+		room.setView_type(view_type);
+		
+	    roomService.saveRoom(room);
+		return new Boolean(true);
+	}
+	
+	//Room update
+	@PutMapping("/backend/update/room")
+	public Boolean updateRoom(@RequestBody Map<String,Object> json) {
+	    Integer hotel_id = (Integer) json.get("hotel_id");
+	    Integer room_number = (Integer) json.get("room_number");
+	    String view_type = (String) json.get("view_type");
+	    Integer capacity = (Integer) json.get("capacity");
+	    Boolean extendable = (Boolean) json.get("room_number");
+	    Double price ;
+		try {
+			price = (Double) json.get("price");
+		} catch (ClassCastException exception) {
+			price = new Double(((Integer) json.get("price")).doubleValue());
+		}
+	    Double area=null ;
+		try {
+			area = (Double) json.get("area");
+		} catch (ClassCastException exception) {
+			price = new Double(((Integer) json.get("area")).doubleValue());
+		}		
+
+		Room room = roomService.findRoomById(hotel_id, room_number).get(0);
+		room.setArea(area);
+		room.setCapacity(capacity);
+		room.setExtendable(extendable);
+		room.setPrice(price);
+		room.setView_type(view_type);
+		
+	    roomService.saveRoom(room);
+		return new Boolean(true);
+	}
+	
+	//Room delete
+	//example: http://localhost:8080/backend/delete/room?hotel_id=1&room_number=100
+	@DeleteMapping("/backend/delete/room")
+	public Boolean deleteRoom(@RequestParam(value="hotel_id", required=true) Integer hotel_id, @RequestParam(value="room_number", required=true) Integer room_number) {    
+	    roomService.deleteRoom(hotel_id, room_number);
+	    return new Boolean(true);
+	}
+	
+	
+	//Hotel insert
+	@PostMapping("/backend/add/hotel")
+	public Boolean addHotel(@RequestBody Map<String,Object> json) {
+	    //Integer hotel_id = (Integer) json.get("hotel_id");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    Integer rating = (Integer) json.get("rating");
+	    String phone_number = (String) json.get("phone_number");
+	    Integer number_of_rooms = (Integer) json.get("number_of_rooms");
+	    String hc_name = (String) json.get("hc_name");
+		
+	    HotelChain hotel_chain = hotelChainService.getHotelChain(hc_name).get(0);
+		Hotel hotel = new Hotel();
+		hotel.setHotelChain(hotel_chain);
+		hotel.setCountry(country);
+		hotel.setState(state);
+		hotel.setCity(city);
+		hotel.setPhone_number(phone_number);
+		hotel.setStreet_name(street_name);
+		hotel.setStreet_number(street_number);
+		hotel.setRating(rating);
+		hotel.setNumber_of_rooms(number_of_rooms);
+		//hotel_chain.getHotels().add(hotel);
+		
+	    hotelService.saveHotel(hotel);
+		return new Boolean(true);
+	}
+	
+	//Hotel update
+	@PutMapping("/backend/update/hotel")
+	public Boolean updateHotel(@RequestBody Map<String,Object> json) {
+	    Integer hotel_id = (Integer) json.get("hotel_id");
+		String street_name = (String) json.get("street_name");
+	    Integer street_number = (Integer) json.get("street_number");
+	    String city = (String) json.get("city");
+	    String state = (String) json.get("state");
+	    String country = (String) json.get("country");
+	    Integer rating = (Integer) json.get("rating");
+	    String phone_number = (String) json.get("phone_number");
+	    Integer number_of_rooms = (Integer) json.get("number_of_rooms");
+		
+		Hotel hotel = hotelService.getHotelById(hotel_id);
+		hotel.setCountry(country);
+		hotel.setState(state);
+		hotel.setCity(city);
+		hotel.setPhone_number(phone_number);
+		hotel.setStreet_name(street_name);
+		hotel.setStreet_number(street_number);
+		hotel.setRating(rating);
+		hotel.setNumber_of_rooms(number_of_rooms);
+		
+	    hotelService.saveHotel(hotel);
+		return new Boolean(true);
+	}
+	
+	//Hotel delete
+	//example: http://localhost:8080/backend/delete/hotel?hotel_id=1
+	@DeleteMapping("/backend/delete/hotel")
+	public Boolean deleteHotel(@RequestParam(value="hotel_id", required=true) Integer hotel_id) {    
+	    hotelService.deleteHotel(hotel_id);
+	    return new Boolean(true);
 	}
 	
 	

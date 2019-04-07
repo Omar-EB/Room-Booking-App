@@ -38,15 +38,15 @@ public class Room {
     Boolean extendable;
     Double area;
     
-	@OneToMany(mappedBy="room",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<RoomAmenities> amenities = new ArrayList<>();
 	
-	@OneToMany(mappedBy="room",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<RoomDamages> damages = new ArrayList<>();
 	
-	@OneToMany(mappedBy="room",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="room",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Reservation> reservations = new ArrayList<>();
     

@@ -49,4 +49,15 @@ public class RoomService {
 			return new ArrayList<Room>();
 		}
 	}
+	
+	public Room saveRoom(Room room) {
+		return roomRepository.save(room);
+	}
+	
+	public void deleteRoom (Integer hotel_id, Integer room_number) {
+		RoomCompositeKey key = new RoomCompositeKey();
+		key.setHotel_id(hotel_id);
+		key.setRoom_number(room_number);
+		roomRepository.deleteById(key);
+	}
 }

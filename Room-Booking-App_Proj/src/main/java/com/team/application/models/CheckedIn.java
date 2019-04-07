@@ -38,12 +38,11 @@ public class CheckedIn {
 	
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date start_date;
 	
+	//@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Id
 	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date end_date;
 	
 	@Id

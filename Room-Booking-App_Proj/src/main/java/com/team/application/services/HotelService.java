@@ -26,5 +26,15 @@ public class HotelService {
 	public int getHotelId(String street_name,int street_number,String city,String state,String country) {
 		return hotelRepository.findHotelId(street_name,street_number,city,state,country);
 	}
-
+	
+	public Hotel getHotelById(Integer hotel_id) {
+		return hotelRepository.findById(hotel_id).get();
+	}
+	
+	public Hotel saveHotel(Hotel hotel) {
+		return hotelRepository.save(hotel);
+	}
+	public void deleteHotel(Integer hotel_id) {
+		hotelRepository.deleteById(hotel_id);
+	}
 }

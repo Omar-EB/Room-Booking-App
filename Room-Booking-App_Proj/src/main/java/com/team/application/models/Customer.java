@@ -32,7 +32,7 @@ public class Customer {
     private String state ;
     private String country ;
     
-    @OneToMany(mappedBy="customer",cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
+    @OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Reservation> reservations = new ArrayList<>();
     

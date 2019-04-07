@@ -30,11 +30,11 @@ public class Hotel {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer hotel_id;
 	
-	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Room> rooms = new ArrayList<>();
 	
-	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Employee> employees = new ArrayList<>();
 	
