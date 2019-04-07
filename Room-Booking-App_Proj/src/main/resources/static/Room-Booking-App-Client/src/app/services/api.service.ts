@@ -101,6 +101,12 @@ export class ApiService {
     return this.httpClient.post(postUrl, employeeParams);
   }
 
+  public createHotel(hotelParams) {
+    console.log(hotelParams);
+    const postUrl = this.baseUrl + 'backend/add/hotel';
+    return this.httpClient.post(postUrl, hotelParams);
+  }
+
 
   public updateCustomer(customerParams) {
     const putUrl = this.baseUrl + '/backend/update/customer';
@@ -110,6 +116,11 @@ export class ApiService {
   public updateEmployee(employeeParams) {
     const putUrl = this.baseUrl + '/backend/update/employee';
     return this.httpClient.put(putUrl, employeeParams);
+  }
+
+  public updateHotel(hotelParams) {
+    const putUrl = this.baseUrl + '/backend/update/hotel';
+    return this.httpClient.put(putUrl, hotelParams);
   }
 
 
@@ -122,6 +133,12 @@ export class ApiService {
   public deleteEmployee(employeeSin: string) {
     const deleteUrl = this.baseUrl + 'backend/delete/employee';
     const params = {employee_sin: employeeSin};
+    return this.httpClient.delete(deleteUrl, {params: params});
+  }
+
+  public deleteHotel(hotelId: number) {
+    const deleteUrl = this.baseUrl + 'backend/delete/hotel';
+    const params = {hotel_id: ''+hotelId};
     return this.httpClient.delete(deleteUrl, {params: params});
   }
 

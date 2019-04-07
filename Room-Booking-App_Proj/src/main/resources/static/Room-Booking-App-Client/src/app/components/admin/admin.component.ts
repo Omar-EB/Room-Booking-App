@@ -195,6 +195,14 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    this.apiService.createHotel(this.getHotelParams())
+      .subscribe(result => {
+        this.hotels.push(this.hotel);
+      },
+      (error) => {
+        console.log(error);
+      });
+
     modal.close('');
   }
 
@@ -262,6 +270,22 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    this.apiService.updateHotel(this.getHotelParams())
+      .subscribe(result => {
+        const newHotels = [];
+        for (const h of this.hotels) {
+          if (h.hotelId != this.hotel.hotelId) {
+            newHotels.push(h);
+          } else {
+            newHotels.push(this.hotel);
+          }
+        } 
+        this.hotels = newHotels;
+      },
+      (error) => {
+        console.log(error)
+      });
+
     modal.close('');
   }
 
@@ -308,7 +332,19 @@ export class AdminComponent implements OnInit {
   }
 
   public onDeleteHotel(hotel: Hotel): void {
-    console.log(hotel);
+    this.apiService.deleteHotel(hotel.hotelId)
+    .subscribe(result => {
+      const newHotels = [];
+      for (const h of this.hotels) {
+        if (h.hotelId != hotel.hotelId) {
+          newHotels.push(h);
+        }
+      }
+      this.hotels = newHotels;
+    },
+    (error) => {
+      console.log(error);
+    });
   }
 
   public onDeleteRoom(room: Room): void {
@@ -348,6 +384,7 @@ export class AdminComponent implements OnInit {
   private getHotelParams() {
     const hotelParams: any = {};
     hotelParams.hc_name = this.hotel.hotelChain.hcName;
+    hotelParams.hotel_id = this.hotel.hotelId;
     hotelParams.street_name = this.hotel.streetName;
     hotelParams.street_number = +this.hotel.streetNumber;
     hotelParams.city = this.hotel.city;
@@ -355,6 +392,7 @@ export class AdminComponent implements OnInit {
     hotelParams.country = this.hotel.country;
     hotelParams.rating = +this.hotel.rating;
     hotelParams.phone_number = this.hotel.phoneNumber;
+    hotelParams.number_of_rooms = this.hotel.numberOfRooms;
     return hotelParams;
   }
 
