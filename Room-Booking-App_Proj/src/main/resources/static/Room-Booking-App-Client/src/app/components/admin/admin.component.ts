@@ -179,6 +179,14 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    this.apiService.createEmployee(this.getEmployeeParams())
+      .subscribe(result => {
+        this.employees.push(this.employee);
+      },
+      (error) => {
+        console.log(error);
+      });
+
     modal.close('');
   }
 
@@ -230,6 +238,22 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    this.apiService.updateEmployee(this.getEmployeeParams())
+      .subscribe(result => {
+        const newEmployees = [];
+        for (const employee of this.employees) {
+          if (employee.sin != this.employee.sin) {
+            newEmployees.push(employee);
+          } else {
+            newEmployees.push(this.employee);
+          }
+        } 
+        this.employees = newEmployees;
+      },
+      (error) => {
+        console.log(error)
+      });
+
     modal.close('');
   }
 
@@ -268,7 +292,19 @@ export class AdminComponent implements OnInit {
   }
 
   public onDeleteEmployee(employee: Employee): void {
-    console.log(employee);
+    this.apiService.deleteEmployee(employee.sin)
+    .subscribe(result => {
+      const newEmployees = [];
+      for (const emp of this.employees) {
+        if (emp.sin != employee.sin) {
+          newEmployees.push(emp);
+        }
+      }
+      this.employees = newEmployees;
+    },
+    (error) => {
+      console.log(error);
+    });
   }
 
   public onDeleteHotel(hotel: Hotel): void {
@@ -284,7 +320,7 @@ export class AdminComponent implements OnInit {
 
   private getCustomerParams() {
     const customerParams: any = {};
-    customerParams.sin = this.customer.sin;
+    customerParams.customer_sin = this.customer.sin;
     customerParams.given_name = this.customer.givenName;
     customerParams.family_name = this.customer.familyName;
     customerParams.street_name = this.customer.streetName;
@@ -297,7 +333,7 @@ export class AdminComponent implements OnInit {
 
   private getEmployeeParams() {
     const employeeParams: any = {};
-    employeeParams.sin = this.employee.sin;
+    employeeParams.employee_sin = this.employee.sin;
     employeeParams.given_name = this.employee.givenName;
     employeeParams.family_name = this.employee.familyName;
     employeeParams.street_name = this.employee.streetName;

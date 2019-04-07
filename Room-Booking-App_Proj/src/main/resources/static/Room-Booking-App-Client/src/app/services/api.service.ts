@@ -96,10 +96,20 @@ export class ApiService {
     return this.httpClient.post(postUrl, customerParams);
   }
 
+  public createEmployee(employeeParams) {
+    const postUrl = this.baseUrl + 'backend/add/employee';
+    return this.httpClient.post(postUrl, employeeParams);
+  }
+
 
   public updateCustomer(customerParams) {
     const putUrl = this.baseUrl + '/backend/update/customer';
     return this.httpClient.put(putUrl, customerParams);
+  }
+
+  public updateEmployee(employeeParams) {
+    const putUrl = this.baseUrl + '/backend/update/employee';
+    return this.httpClient.put(putUrl, employeeParams);
   }
 
 
@@ -108,6 +118,13 @@ export class ApiService {
     const params = {customer_sin: customerSin}
     return this.httpClient.delete(deleteUrl, {params: params});
   }
+
+  public deleteEmployee(employeeSin: string) {
+    const deleteUrl = this.baseUrl + 'backend/delete/employee';
+    const params = {employee_sin: employeeSin};
+    return this.httpClient.delete(deleteUrl, {params: params});
+  }
+
 
   public parseToRoom(roomJson: any): Room {
     const room = new Room();
