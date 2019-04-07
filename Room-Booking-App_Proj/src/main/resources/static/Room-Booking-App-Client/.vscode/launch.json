@@ -80,6 +80,13 @@
             "request": "launch",
             "url": "http://localhost:4200/#",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (11)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }{

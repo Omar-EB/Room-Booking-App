@@ -421,18 +421,18 @@ public class RestfulController {
 	    Integer room_number = (Integer) json.get("room_number");
 	    String view_type = (String) json.get("view_type");
 	    Integer capacity = (Integer) json.get("capacity");
-	    Boolean extendable = (Boolean) json.get("room_number");
+	    Boolean extendable = (Boolean) json.get("extendable");
 	    Double price ;
 		try {
 			price = (Double) json.get("price");
 		} catch (ClassCastException exception) {
 			price = new Double(((Integer) json.get("price")).doubleValue());
 		}
-	    Double area=null ;
+	    Double area ;
 		try {
 			area = (Double) json.get("area");
 		} catch (ClassCastException exception) {
-			price = new Double(((Integer) json.get("area")).doubleValue());
+			area = new Double(((Integer) json.get("area")).doubleValue());
 		}	
 		
 		RoomCompositeKey key = new RoomCompositeKey();
@@ -462,18 +462,18 @@ public class RestfulController {
 	    Integer room_number = (Integer) json.get("room_number");
 	    String view_type = (String) json.get("view_type");
 	    Integer capacity = (Integer) json.get("capacity");
-	    Boolean extendable = (Boolean) json.get("room_number");
+	    Boolean extendable = (Boolean) json.get("extendable");
 	    Double price ;
 		try {
 			price = (Double) json.get("price");
 		} catch (ClassCastException exception) {
 			price = new Double(((Integer) json.get("price")).doubleValue());
 		}
-	    Double area=null ;
+	    Double area ;
 		try {
 			area = (Double) json.get("area");
 		} catch (ClassCastException exception) {
-			price = new Double(((Integer) json.get("area")).doubleValue());
+			area = new Double(((Integer) json.get("area")).doubleValue());
 		}		
 
 		Room room = roomService.findRoomById(hotel_id, room_number).get(0);
