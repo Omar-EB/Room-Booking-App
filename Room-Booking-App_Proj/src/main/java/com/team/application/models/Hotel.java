@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class Hotel {
 	private HotelChain hotelChain;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer hotel_id;
 	
 	@OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
@@ -45,7 +46,7 @@ public class Hotel {
     private String country ;
     private Integer rating ;
     private String phone_number ;
-    private Integer  number_of_rooms ;
+    private Integer number_of_rooms = new Integer(0) ;
 
 	
     public HotelChain getHotelChain() {
