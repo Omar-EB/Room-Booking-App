@@ -1,10 +1,14 @@
-CREATE OR REPLACE VIEW public.roomsperarea AS
- SELECT hotel.city,
-    hotel.state,
-    hotel.country,
-    sum(hotel.number_of_rooms) AS sum
-   FROM hotel
-  GROUP BY hotel.city, hotel.state, hotel.country;
+CREATE OR REPLACE VIEW public.roomsavailable AS
+ SELECT h.city,
+    h.state,
+    h.country,
+    count(*) AS number_rooms_available
+   FROM hotel h
+     JOIN room r ON h.hotel_id = r.hotel_id
+  WHERE NOT ((r.hotel_id, r.room_number) IN ( SELECT res.hotel_id,
+            res.room_number
+           FROM reservation res))
+  GROUP BY h.city, h.state, h.country;
 
 CREATE OR REPLACE VIEW public.roomcapacities AS
  SELECT h.hc_name,
