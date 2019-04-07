@@ -53,15 +53,22 @@ EXECUTE PROCEDURE increment_hotel_num();
 CREATE FUNCTION check_managers_role()
 	RETURNS TRIGGER AS $BODY$
 BEGIN
-IF 'manager' NOT IN (SELECT lower(ROLE) FROM 
-	(SELECT employee.sin FROM employee, 
-		(SELECT hotel.hotel_id FROM hotel, 
-		 	(SELECT hotel_id FROM employee 
-			 WHERE employee.sin = OLD.sin LIMIT 1) AS e
-		WHERE e.hotel_id = hotel.hotel_id LIMIT 1) AS h
-	WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = employees.sin)
-THEN 
-	RAISE EXCEPTION 'There must be at least one manager for every hotel';
+
+IF EXISTS  (SELECT hotel.hotel_id FROM hotel, 
+			(SELECT hotel_id FROM employee 
+			WHERE employee.sin = OLD.sin LIMIT 1) AS e
+			WHERE e.hotel_id = hotel.hotel_id LIMIT 1)
+THEN
+	IF 'manager' NOT IN (SELECT lower(ROLE) FROM 
+		(SELECT employee.sin FROM employee, 
+			(SELECT hotel.hotel_id FROM hotel, 
+				(SELECT hotel_id FROM employee 
+				WHERE employee.sin = OLD.sin LIMIT 1) AS e
+			WHERE e.hotel_id = hotel.hotel_id LIMIT 1) AS h
+		WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = employees.sin)
+	THEN 
+		RAISE EXCEPTION 'There must be at least one manager for every hotel';
+	END IF;
 END IF;
 RETURN NULL;
 END

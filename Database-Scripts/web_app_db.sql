@@ -37,15 +37,22 @@ CREATE FUNCTION public.check_managers_role() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-IF 'manager' NOT IN (SELECT lower(ROLE) FROM 
-	(SELECT employee.sin FROM employee, 
-		(SELECT hotel.hotel_id FROM hotel, 
-		 	(SELECT hotel_id FROM employee 
-			 WHERE employee.sin = OLD.sin LIMIT 1) AS e
-		WHERE e.hotel_id = hotel.hotel_id LIMIT 1) AS h
-	WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = employees.sin)
-THEN 
-	RAISE EXCEPTION 'There must be at least one manager for every hotel';
+
+IF EXISTS  (SELECT hotel.hotel_id FROM hotel, 
+			(SELECT hotel_id FROM employee 
+			WHERE employee.sin = OLD.sin LIMIT 1) AS e
+			WHERE e.hotel_id = hotel.hotel_id LIMIT 1)
+THEN
+	IF 'manager' NOT IN (SELECT lower(ROLE) FROM 
+		(SELECT employee.sin FROM employee, 
+			(SELECT hotel.hotel_id FROM hotel, 
+				(SELECT hotel_id FROM employee 
+				WHERE employee.sin = OLD.sin LIMIT 1) AS e
+			WHERE e.hotel_id = hotel.hotel_id LIMIT 1) AS h
+		WHERE employee.hotel_id = h.hotel_id) AS employees JOIN employeerole ON employeerole.sin = employees.sin)
+	THEN 
+		RAISE EXCEPTION 'There must be at least one manager for every hotel';
+	END IF;
 END IF;
 RETURN NULL;
 END
@@ -459,6 +466,8 @@ ALTER TABLE public.roomamenities OWNER TO postgres;
 
 CREATE VIEW public.roomcapacities AS
  SELECT h.hc_name,
+    h.hotel_id,
+    r.room_number,
     h.street_name,
     h.street_number,
     h.city,
@@ -485,19 +494,23 @@ CREATE TABLE public.roomdamages (
 ALTER TABLE public.roomdamages OWNER TO postgres;
 
 --
--- Name: roomsperarea; Type: VIEW; Schema: public; Owner: postgres
+-- Name: roomsavailable; Type: VIEW; Schema: public; Owner: postgres
 --
 
-CREATE VIEW public.roomsperarea AS
- SELECT hotel.city,
-    hotel.state,
-    hotel.country,
-    sum(hotel.number_of_rooms) AS sum
-   FROM public.hotel
-  GROUP BY hotel.city, hotel.state, hotel.country;
+CREATE VIEW public.roomsavailable AS
+ SELECT h.city,
+    h.state,
+    h.country,
+    count(*) AS number_rooms_available
+   FROM (public.hotel h
+     JOIN public.room r ON ((h.hotel_id = r.hotel_id)))
+  WHERE (NOT ((r.hotel_id, r.room_number) IN ( SELECT res.hotel_id,
+            res.room_number
+           FROM public.reservation res)))
+  GROUP BY h.city, h.state, h.country;
 
 
-ALTER TABLE public.roomsperarea OWNER TO postgres;
+ALTER TABLE public.roomsavailable OWNER TO postgres;
 
 --
 -- Name: unit; Type: TABLE; Schema: public; Owner: postgres
@@ -549,9 +562,9 @@ COPY public.checkedin (employee_sin, hotel_id, room_number, start_date, end_date
 --
 
 COPY public.customer (sin, given_name, family_name, street_name, street_number, city, state, country, date_of_registration) FROM stdin;
-124532589	Quang-Vinh	Do	Craig Henry	31	Ottawa	ON	CA	2019-04-01 23:34:57
-122342564	Omar	Elboraey	Vanier	31	Ottawa	ON	CA	2019-04-01 23:34:57
-532346978	Joey	Jeon	Baseline	31	Ottawa	ON	CA	2019-04-01 23:34:57
+124532589	Quang-Vinh	Do	Craig Henry	31	Ottawa	ON	CA	2019-04-07 11:37:18
+122342564	Omar	Elboraey	Vanier	31	Ottawa	ON	CA	2019-04-07 11:37:18
+532346978	Joey	Jeon	Baseline	31	Ottawa	ON	CA	2019-04-07 11:37:18
 \.
 
 
@@ -561,8 +574,8 @@ COPY public.customer (sin, given_name, family_name, street_name, street_number, 
 
 COPY public.employee (hotel_id, sin, street_name, street_number, city, state, country, given_name, family_name) FROM stdin;
 1	153269837	Laurier	100	Ottawa	ON	CA	Mob	Psycho
-1	389129734	Marvel	100	Ottawa	ON	CA	Iron	Man
 1	253423627	Merivale	100	Ottawa	ON	CA	Reigen	Reigen
+1	389129734	Marvel	100	Ottawa	ON	CA	Iron	Man
 \.
 
 
@@ -572,10 +585,11 @@ COPY public.employee (hotel_id, sin, street_name, street_number, city, state, co
 
 COPY public.employeerole (sin, role) FROM stdin;
 153269837	manager
-389129734	Nurse
-389129734	UI Designer
+253423627	Software developper
 253423627	cook
 253423627	Waiter
+389129734	Nurse
+389129734	UI Designer
 \.
 
 
@@ -584,7 +598,6 @@ COPY public.employeerole (sin, role) FROM stdin;
 --
 
 COPY public.hotel (hc_name, hotel_id, street_name, street_number, city, state, country, rating, phone_number, number_of_rooms) FROM stdin;
-McDonalds	9	Street24	65	Ottawa	ON	CA	1	533-236-9762	0
 TopHill	1	Lincoln	25	Montreal	QC	CA	1	423-196-9274	5
 TopHill	2	Cedar	25	Montreal	QC	CA	2	543-236-9274	5
 TopHill	3	River	65	Montreal	QC	CA	3	953-236-9272	5
@@ -593,6 +606,62 @@ TopHill	5	Route10	65	Ottawa	ON	CA	2	153-246-9762	5
 TopHill	6	Manordale	65	Ottawa	ON	CA	4	553-236-9762	5
 TopHill	7	Algonquin	65	Ottawa	ON	CA	4	753-236-9762	5
 TopHill	8	Route9	65	Ottawa	ON	CA	4	953-236-9762	5
+McDonalds	9	Street3	65	Ottawa	ON	CA	1	533-236-9762	5
+McDonalds	10	Snorlax	25	Montreal	QC	CA	2	543-236-9274	5
+McDonalds	11	Road	65	Montreal	QC	CA	3	953-236-9272	5
+McDonalds	12	Route11	65	Ottawa	ON	CA	5	153-236-9752	5
+McDonalds	13	Route99	65	Ottawa	ON	CA	2	153-246-9762	5
+McDonalds	14	Manor	65	Ottawa	ON	CA	4	553-236-9762	5
+McDonalds	15	Alquin	65	Ottawa	ON	CA	4	753-236-9762	5
+McDonalds	16	Ash	65	Ottawa	ON	CA	4	953-236-9762	5
+Prolog	17	Seet3	65	Ottawa	ON	CA	1	533-236-9762	5
+Prolog	18	Snor	25	Montreal	QC	CA	2	543-236-9274	5
+Prolog	19	Far	65	Montreal	QC	CA	3	953-236-9272	5
+Prolog	20	Halo	65	Ottawa	ON	CA	5	153-236-9752	5
+Prolog	21	Jabba	65	Ottawa	ON	CA	2	153-246-9762	5
+Prolog	22	Lemon	65	Ottawa	ON	CA	4	553-236-9762	5
+Prolog	23	Wave	65	Ottawa	ON	CA	4	753-236-9762	5
+Prolog	24	Key	65	Ottawa	ON	CA	4	953-236-9762	5
+Mariott	25	Seet3	65	Ottawa	ON	CA	1	533-236-9762	5
+Mariott	26	Snor	25	Montreal	QC	CA	2	543-236-9274	5
+Mariott	27	Far	65	Montreal	QC	CA	3	953-236-9272	5
+Mariott	28	Halo	65	Ottawa	ON	CA	5	153-236-9752	5
+Mariott	29	Jabba	65	Ottawa	ON	CA	2	153-246-9762	5
+Mariott	30	Lemon	65	Ottawa	ON	CA	4	553-236-9762	5
+Mariott	31	Wave	65	Ottawa	ON	CA	4	753-236-9762	5
+Mariott	32	Key	65	Ottawa	ON	CA	4	953-236-9762	5
+Thanos	33	Cactus	9	Ottawa	ON	CA	1	533-236-9762	5
+Thanos	34	Cat	25	Montreal	QC	CA	2	543-236-9274	5
+Thanos	35	Sovereign	5	Montreal	QC	CA	3	953-236-9272	5
+Thanos	36	Laurier	65	Ottawa	ON	CA	5	153-236-9752	5
+Thanos	37	Over	35	Ottawa	ON	CA	2	153-246-9762	5
+Thanos	38	Apple	55	Ottawa	ON	CA	4	553-236-9762	5
+Thanos	39	Orange	66	Ottawa	ON	CA	4	753-236-9762	5
+Thanos	40	Key	55	Ottawa	ON	CA	4	953-236-9762	5
+Magica	41	Flower	94	Ottawa	ON	CA	1	533-236-9762	5
+Magica	42	Mackenzie	253	Montreal	QC	CA	2	543-236-9274	5
+Magica	43	King	54	Montreal	QC	CA	3	953-236-9272	5
+Magica	44	Edward	365	Ottawa	ON	CA	5	153-236-9752	5
+Magica	45	Moodie	325	Ottawa	ON	CA	2	153-246-9762	5
+Magica	46	Carleton	535	Ottawa	ON	CA	4	553-236-9762	5
+Magica	47	Merivale	66	Ottawa	ON	CA	4	753-236-9762	5
+Magica	48	Keyee	53	Ottawa	ON	CA	4	953-236-9762	5
+Deuce	49	Heart	94	Ottawa	ON	CA	1	533-236-9762	5
+Deuce	50	Yes	253	Montreal	QC	CA	2	543-236-9274	5
+Deuce	51	Angular	54	Montreal	QC	CA	3	953-236-9272	5
+Deuce	52	Spring	365	Ottawa	ON	CA	5	153-236-9752	5
+Deuce	53	Boot	325	Ottawa	ON	CA	2	153-246-9762	5
+Deuce	54	Carlen	535	Ottawa	ON	CA	4	553-236-9762	5
+Deuce	55	Merale	66	Ottawa	ON	CA	4	753-236-9762	5
+Deuce	56	Yeet	53	Ottawa	ON	CA	4	953-236-9762	5
+Joker	57	Space	94	Ottawa	ON	CA	1	533-236-9762	5
+Joker	58	Green	253	Montreal	QC	CA	2	543-236-9274	5
+Joker	59	Angar	54	Montreal	QC	CA	3	953-236-9272	5
+Joker	60	Ring	365	Ottawa	ON	CA	5	153-236-9752	5
+Joker	61	Bot	325	Ottawa	ON	CA	2	153-246-9762	5
+Joker	62	Arlen	535	Ottawa	ON	CA	4	553-236-9762	5
+Joker	63	Rale	66	Ottawa	ON	CA	4	753-236-9762	5
+Joker	64	Yeeeeeet	53	Ottawa	ON	CA	4	953-236-9762	5
 \.
 
 
@@ -602,7 +671,13 @@ TopHill	8	Route9	65	Ottawa	ON	CA	4	953-236-9762	5
 
 COPY public.hotelchain (hc_name, number_of_hotels) FROM stdin;
 TopHill	8
-McDonalds	1
+McDonalds	8
+Prolog	8
+Mariott	8
+Thanos	8
+Magica	8
+Deuce	8
+Joker	8
 \.
 
 
@@ -612,9 +687,6 @@ McDonalds	1
 
 COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_sin, reservation_type) FROM stdin;
 1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	t
-2	100	2019-04-15 18:00:00	2019-04-20 18:00:00	124532589	f
-2	100	2019-02-15 18:00:00	2019-03-20 18:00:00	124532589	f
-1	100	2019-06-16 18:00:00	2019-06-29 18:00:00	124532589	f
 \.
 
 
@@ -623,11 +695,8 @@ COPY public.reservation (hotel_id, room_number, start_date, end_date, customer_s
 --
 
 COPY public.reservationsarchive (id, hc_name, hotel_id, room_number, start_date, end_date, customer_sin, employee_sin, reservation_type) FROM stdin;
-4	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	\N	f
-5	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	253423627	t
-6	TopHill	2	100	2019-04-15 18:00:00	2019-04-20 18:00:00	124532589	\N	f
-7	TopHill	2	100	2019-02-15 18:00:00	2019-03-20 18:00:00	124532589	\N	f
-8	TopHill	1	100	2019-06-16 18:00:00	2019-06-29 18:00:00	124532589	\N	f
+1	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	\N	f
+2	TopHill	1	100	2019-04-12 18:00:00	2019-04-20 18:00:00	124532589	253423627	t
 \.
 
 
@@ -676,6 +745,286 @@ COPY public.room (hotel_id, room_number, view_type, capacity, price, extendable,
 8	103	Mountain	5	80.00	t	100.00
 8	200	Mountain	8	80.00	f	453.00
 8	201	Sea	9	20.00	t	42.00
+9	100	Sea	3	80.00	f	96.00
+9	101	Sea	4	80.00	f	10.00
+9	103	Mountain	5	80.00	t	100.00
+9	200	Sea	8	80.00	f	453.00
+9	201	Mountain	9	20.00	t	42.00
+10	100	Sea	3	80.00	f	96.00
+10	101	Sea	4	80.00	f	10.00
+10	103	Mountain	5	80.00	t	100.00
+10	200	Volcano	8	80.00	f	453.00
+10	201	Sky	9	20.00	t	42.00
+11	100	Sea	3	80.00	f	96.00
+11	101	Sea	4	80.00	f	10.00
+11	103	Mountain	5	80.00	t	100.00
+11	200	Sea	8	80.00	f	453.00
+11	201	Mountain	9	20.00	t	42.00
+12	100	Sea	3	80.00	f	96.00
+12	101	Sea	4	80.00	f	10.00
+12	103	Mountain	5	80.00	t	100.00
+12	200	Sea	8	80.00	f	453.00
+12	201	Mountain	9	20.00	t	42.00
+13	100	Sea	3	80.00	f	96.00
+13	101	Sea	4	80.00	f	10.00
+13	103	Mountain	5	80.00	t	100.00
+13	200	Sea	8	80.00	f	453.00
+13	201	Sea	9	20.00	t	42.00
+14	100	Sea	3	80.00	f	96.00
+14	101	Sea	4	80.00	f	10.00
+14	103	Mountain	5	80.00	t	100.00
+14	200	Sea	8	80.00	f	453.00
+14	201	Mountain	9	20.00	t	42.00
+15	100	Sea	3	80.00	f	96.00
+15	101	Sea	4	80.00	f	10.00
+15	103	Mountain	5	80.00	t	100.00
+15	200	Mountain	8	80.00	f	453.00
+15	201	Mountain	9	20.00	t	42.00
+16	100	Sea	3	80.00	f	96.00
+16	101	Sea	4	80.00	f	10.00
+16	103	Mountain	5	80.00	t	100.00
+16	200	Mountain	8	80.00	f	453.00
+16	201	Sea	9	20.00	t	42.00
+17	100	Sea	3	80.00	f	96.00
+17	101	Sea	4	80.00	f	10.00
+17	103	Mountain	5	80.00	t	100.00
+17	200	Sea	8	80.00	f	453.00
+17	201	Mountain	9	20.00	t	42.00
+18	100	Sea	3	80.00	f	96.00
+18	101	Sea	4	80.00	f	10.00
+18	103	Mountain	5	80.00	t	100.00
+18	200	Volcano	8	80.00	f	453.00
+18	201	Sky	9	20.00	t	42.00
+19	100	Sea	3	80.00	f	96.00
+19	101	Sea	4	80.00	f	10.00
+19	103	Mountain	5	80.00	t	100.00
+19	200	Sea	8	80.00	f	453.00
+19	201	Mountain	9	20.00	t	42.00
+20	100	Sea	3	80.00	f	96.00
+20	101	Sea	4	80.00	f	10.00
+20	103	Mountain	5	80.00	t	100.00
+20	200	Sea	8	80.00	f	453.00
+20	201	Mountain	9	20.00	t	42.00
+21	100	Sea	3	80.00	f	96.00
+21	101	Sea	4	80.00	f	10.00
+21	103	Mountain	5	80.00	t	100.00
+21	200	Sea	8	80.00	f	453.00
+21	201	Mountain	9	20.00	t	42.00
+22	100	Sea	3	80.00	f	96.00
+22	101	Sea	4	80.00	f	10.00
+22	103	Mountain	5	80.00	t	100.00
+22	200	Mountain	8	80.00	f	453.00
+22	201	Mountain	9	20.00	t	42.00
+23	100	Sea	3	80.00	f	96.00
+23	101	Sea	4	80.00	f	10.00
+23	103	Mountain	5	80.00	t	100.00
+23	200	Mountain	8	80.00	f	453.00
+23	201	Sea	9	20.00	t	42.00
+24	100	Sea	3	80.00	f	96.00
+24	101	Sea	4	80.00	f	10.00
+24	103	Mountain	5	80.00	t	100.00
+24	200	Sea	8	80.00	f	453.00
+24	201	Sea	9	20.00	t	42.00
+25	100	Sea	3	80.00	f	96.00
+25	101	Sea	4	80.00	f	10.00
+25	103	Mountain	5	80.00	t	100.00
+25	200	Sea	8	80.00	f	453.00
+25	201	Mountain	9	20.00	t	42.00
+26	100	Sea	3	80.00	f	96.00
+26	101	Sea	4	80.00	f	10.00
+26	103	Mountain	5	80.00	t	100.00
+26	200	Volcano	8	80.00	f	453.00
+26	201	Sky	9	20.00	t	42.00
+27	100	Sea	3	80.00	f	96.00
+27	101	Sea	4	80.00	f	10.00
+27	103	Mountain	5	80.00	t	100.00
+27	200	Sea	8	80.00	f	453.00
+27	201	Mountain	9	20.00	t	42.00
+28	100	Sea	3	80.00	f	96.00
+28	101	Sea	4	80.00	f	10.00
+28	103	Mountain	5	80.00	t	100.00
+28	200	Sea	8	80.00	f	453.00
+28	201	Mountain	9	20.00	t	42.00
+29	100	Sea	3	80.00	f	96.00
+29	101	Sea	4	80.00	f	10.00
+29	103	Mountain	5	80.00	t	100.00
+29	200	Sea	8	80.00	f	453.00
+29	201	Mountain	9	20.00	t	42.00
+30	100	Sea	3	80.00	f	96.00
+30	101	Sea	4	80.00	f	10.00
+30	103	Mountain	5	80.00	t	100.00
+30	200	Mountain	8	80.00	f	453.00
+30	201	Mountain	9	20.00	t	42.00
+31	100	Sea	3	80.00	f	96.00
+31	101	Sea	4	80.00	f	10.00
+31	103	Mountain	5	80.00	t	100.00
+31	200	Mountain	8	80.00	f	453.00
+31	201	Sea	9	20.00	t	42.00
+32	100	Sea	3	80.00	f	96.00
+32	101	Sea	4	80.00	f	10.00
+32	103	Mountain	5	80.00	t	100.00
+32	200	Sea	8	80.00	f	453.00
+32	201	Sea	9	20.00	t	42.00
+33	100	Sea	3	80.00	f	96.00
+33	101	Sea	4	80.00	f	10.00
+33	103	Mountain	5	80.00	t	100.00
+33	200	Sea	8	80.00	f	453.00
+33	201	Mountain	9	20.00	t	42.00
+34	100	Sea	3	80.00	f	96.00
+34	101	Sea	4	80.00	f	10.00
+34	103	Mountain	5	80.00	t	100.00
+34	200	Volcano	8	80.00	f	453.00
+34	201	Sky	9	20.00	t	42.00
+35	100	Sea	3	80.00	f	96.00
+35	101	Sea	4	80.00	f	10.00
+35	103	Mountain	5	80.00	t	100.00
+35	200	Sea	8	80.00	f	453.00
+35	201	Mountain	9	20.00	t	42.00
+36	100	Sea	3	80.00	f	96.00
+36	101	Sea	4	80.00	f	10.00
+36	103	Mountain	5	80.00	t	100.00
+36	200	Sea	8	80.00	f	453.00
+36	201	Mountain	9	20.00	t	42.00
+37	100	Sea	3	80.00	f	96.00
+37	101	Sea	4	80.00	f	10.00
+37	103	Mountain	5	80.00	t	100.00
+37	200	Sea	8	80.00	f	453.00
+37	201	Mountain	9	20.00	t	42.00
+38	100	Sea	3	80.00	f	96.00
+38	101	Sea	4	80.00	f	10.00
+38	103	Mountain	5	80.00	t	100.00
+38	200	Mountain	8	80.00	f	453.00
+38	201	Mountain	9	20.00	t	42.00
+39	100	Sea	3	80.00	f	96.00
+39	101	Sea	4	80.00	f	10.00
+39	103	Mountain	5	80.00	t	100.00
+39	200	Mountain	8	80.00	f	453.00
+39	201	Sea	9	20.00	t	42.00
+40	100	Sea	3	80.00	f	96.00
+40	101	Sea	4	80.00	f	10.00
+40	103	Mountain	5	80.00	t	100.00
+40	200	Sea	8	80.00	f	453.00
+40	201	Sea	9	20.00	t	42.00
+41	100	Sea	3	80.00	f	96.00
+41	101	Sea	4	80.00	f	10.00
+41	103	Mountain	5	80.00	t	100.00
+41	200	Sea	8	80.00	f	453.00
+41	201	Mountain	9	20.00	t	42.00
+42	100	Sea	3	80.00	f	96.00
+42	101	Sea	4	80.00	f	10.00
+42	103	Mountain	5	80.00	t	100.00
+42	200	Volcano	8	80.00	f	453.00
+42	201	Sky	9	20.00	t	42.00
+43	100	Sea	3	80.00	f	96.00
+43	101	Sea	4	80.00	f	10.00
+43	103	Mountain	5	80.00	t	100.00
+43	200	Sea	8	80.00	f	453.00
+43	201	Mountain	9	20.00	t	42.00
+44	100	Sea	3	80.00	f	96.00
+44	101	Sea	4	80.00	f	10.00
+44	103	Mountain	5	80.00	t	100.00
+44	200	Sea	8	80.00	f	453.00
+44	201	Mountain	9	20.00	t	42.00
+45	100	Sea	3	80.00	f	96.00
+45	101	Sea	4	80.00	f	10.00
+45	103	Mountain	5	80.00	t	100.00
+45	200	Sea	8	80.00	f	453.00
+45	201	Mountain	9	20.00	t	42.00
+46	100	Sea	3	80.00	f	96.00
+46	101	Sea	4	80.00	f	10.00
+46	103	Mountain	5	80.00	t	100.00
+46	200	Mountain	8	80.00	f	453.00
+46	201	Mountain	9	20.00	t	42.00
+47	100	Sea	3	80.00	f	96.00
+47	101	Sea	4	80.00	f	10.00
+47	103	Mountain	5	80.00	t	100.00
+47	200	Mountain	8	80.00	f	453.00
+47	201	Sea	9	20.00	t	42.00
+48	100	Sea	3	80.00	f	96.00
+48	101	Sea	4	80.00	f	10.00
+48	103	Mountain	5	80.00	t	100.00
+48	200	Sea	8	80.00	f	453.00
+48	201	Sea	9	20.00	t	42.00
+49	100	Sea	3	80.00	f	96.00
+49	101	Sea	4	80.00	f	10.00
+49	103	Mountain	5	80.00	t	100.00
+49	200	Sea	8	80.00	f	453.00
+49	201	Mountain	9	20.00	t	42.00
+50	100	Sea	3	80.00	f	96.00
+50	101	Sea	4	80.00	f	10.00
+50	103	Mountain	5	80.00	t	100.00
+50	200	Volcano	8	80.00	f	453.00
+50	201	Sky	9	20.00	t	42.00
+51	100	Sea	3	80.00	f	96.00
+51	101	Sea	4	80.00	f	10.00
+51	103	Mountain	5	80.00	t	100.00
+51	200	Sea	8	80.00	f	453.00
+51	201	Mountain	9	20.00	t	42.00
+52	100	Sea	3	80.00	f	96.00
+52	101	Sea	4	80.00	f	10.00
+52	103	Mountain	5	80.00	t	100.00
+52	200	Sea	8	80.00	f	453.00
+52	201	Mountain	9	20.00	t	42.00
+53	100	Sea	3	80.00	f	96.00
+53	101	Sea	4	80.00	f	10.00
+53	103	Mountain	5	80.00	t	100.00
+53	200	Sea	8	80.00	f	453.00
+53	201	Mountain	9	20.00	t	42.00
+54	100	Sea	3	80.00	f	96.00
+54	101	Sea	4	80.00	f	10.00
+54	103	Mountain	5	80.00	t	100.00
+54	200	Mountain	8	80.00	f	453.00
+54	201	Mountain	9	20.00	t	42.00
+55	100	Sea	3	80.00	f	96.00
+55	101	Sea	4	80.00	f	10.00
+55	103	Mountain	5	80.00	t	100.00
+55	200	Mountain	8	80.00	f	453.00
+55	201	Sea	9	20.00	t	42.00
+56	100	Sea	3	80.00	f	96.00
+56	101	Sea	4	80.00	f	10.00
+56	103	Mountain	5	80.00	t	100.00
+56	200	Sea	8	80.00	f	453.00
+56	201	Sea	9	20.00	t	42.00
+57	100	Sea	3	80.00	f	96.00
+57	101	Sea	4	80.00	f	10.00
+57	103	Mountain	5	80.00	t	100.00
+57	200	Sea	8	80.00	f	453.00
+57	201	Mountain	9	20.00	t	42.00
+58	100	Sea	3	80.00	f	96.00
+58	101	Sea	4	80.00	f	10.00
+58	103	Mountain	5	80.00	t	100.00
+58	200	Volcano	8	80.00	f	453.00
+58	201	Sky	9	20.00	t	42.00
+59	100	Sea	3	80.00	f	96.00
+59	101	Sea	4	80.00	f	10.00
+59	103	Mountain	5	80.00	t	100.00
+59	200	Sea	8	80.00	f	453.00
+59	201	Mountain	9	20.00	t	42.00
+60	100	Sea	3	80.00	f	96.00
+60	101	Sea	4	80.00	f	10.00
+60	103	Mountain	5	80.00	t	100.00
+60	200	Sea	8	80.00	f	453.00
+60	201	Mountain	9	20.00	t	42.00
+61	100	Sea	3	80.00	f	96.00
+61	101	Sea	4	80.00	f	10.00
+61	103	Mountain	5	80.00	t	100.00
+61	200	Sea	8	80.00	f	453.00
+61	201	Mountain	9	20.00	t	42.00
+62	100	Sea	3	80.00	f	96.00
+62	101	Sea	4	80.00	f	10.00
+62	103	Mountain	5	80.00	t	100.00
+62	200	Mountain	8	80.00	f	453.00
+62	201	Mountain	9	20.00	t	42.00
+63	100	Sea	3	80.00	f	96.00
+63	101	Sea	4	80.00	f	10.00
+63	103	Mountain	5	80.00	t	100.00
+63	200	Mountain	8	80.00	f	453.00
+63	201	Sea	9	20.00	t	42.00
+64	100	Sea	3	80.00	f	96.00
+64	101	Sea	4	80.00	f	10.00
+64	103	Mountain	5	80.00	t	100.00
+64	200	Sea	8	80.00	f	453.00
+64	201	Sea	9	20.00	t	42.00
 \.
 
 
@@ -726,14 +1075,14 @@ SELECT pg_catalog.setval('public.hibernate_sequence', 1, false);
 -- Name: hotel_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.hotel_id_seq', 9, true);
+SELECT pg_catalog.setval('public.hotel_id_seq', 64, true);
 
 
 --
 -- Name: reservationsarchive_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 8, true);
+SELECT pg_catalog.setval('public.reservationsarchive_id_seq', 2, true);
 
 
 --
@@ -1063,24 +1412,10 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.roomamenities TO "Web_App_User
 
 
 --
--- Name: TABLE roomcapacities; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT SELECT ON TABLE public.roomcapacities TO "Web_App_User";
-
-
---
 -- Name: TABLE roomdamages; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.roomdamages TO "Web_App_User";
-
-
---
--- Name: TABLE roomsperarea; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT SELECT ON TABLE public.roomsperarea TO "Web_App_User";
 
 
 --
