@@ -139,20 +139,22 @@ AFTER INSERT OR UPDATE ON reservation
 FOR EACH ROW
 EXECUTE PROCEDURE log_reservation();
 --------------------------------------------------------------------------------------------------
-select room.* from room,hotel,reservation where ((
+-- the main room query based on parameters
+select room.* from room,hotel where ((
 	room.hotel_id=hotel.hotel_id AND
 	hotel.city=?				 AND
 	hotel.state=?				 AND
 	hotel.country=?				 AND
-	hotel.rating=? 				 
+	hotel.rating=? 				 AND
+	hotel.hc_name=?
 	) AND (
 	room.capacity>=?				 AND
 	room.price<=?				 AND
 	room.area>=?				 
   	) AND (
-		if not exists (
+		not exists (
 			select 1 from reservation where (
-				(reservation.hotel_id=room.hotel_id AND reservation.room_id=room.room_id) AND (
+				(reservation.hotel_id=room.hotel_id AND reservation.room_number=room.room_number) AND (
 					(reservation.start_date<=? AND reservation.end_date>?) OR -- start
 					(reservation.start_date<? AND reservation.end_date>=?) OR -- end
 					(reservation.start_date>=? AND reservation.end_date<=?) -- ?1 :start , ?2 : end
@@ -160,7 +162,27 @@ select room.* from room,hotel,reservation where ((
 			);
 		)
 	)
-);
+)	GROUP BY room.hotel_id,room.room_number ;
+--------------------------------------------------------------------------------------------------
+-- room query for a specific hotel
+select room.* from room,hotel where ((
+	room.hotel_id=?
+	) AND (
+	room.capacity>=?				 AND
+	room.price<=?				 AND
+	room.area>=?				 
+  	) AND (
+		not exists (
+			select 1 from reservation where (
+				(reservation.hotel_id=room.hotel_id AND reservation.room_number=room.room_number) AND (
+					(reservation.start_date<=? AND reservation.end_date>?) OR -- start
+					(reservation.start_date<? AND reservation.end_date>=?) OR -- end
+					(reservation.start_date>=? AND reservation.end_date<=?) -- ?1 :start , ?2 : end
+				)
+			);
+		)
+	)
+)	GROUP BY room.hotel_id,room.room_number ;
 --------------------------------------------------------------------------------------------------
 SELECT p.name, e.city, e.category, e.num_rooms, s.price
 From hotel e
