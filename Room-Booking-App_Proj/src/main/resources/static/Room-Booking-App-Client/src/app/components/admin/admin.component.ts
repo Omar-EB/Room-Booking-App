@@ -207,10 +207,17 @@ export class AdminComponent implements OnInit {
   }
 
   public onCreateRoom(modal): void {
-    console.log(this.room);
     if (!this.checkRoomInfoValid()) {
       return;
     }
+
+    this.apiService.createRoom(this.getRoomParams())
+      .subscribe(result => {
+        this.rooms.push(this.room);
+      },
+      (error) => {
+        console.log(error);
+      });
 
     modal.close('');
   }
@@ -294,6 +301,22 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    this.apiService.updateRoom(this.getRoomParams())
+    .subscribe(result => {
+      const newRooms = [];
+      for (const r of this.rooms) {
+        if (r.hotel.hotelId != this.room.hotel.hotelId || r.roomNumber != this.room.roomNumber) {
+          newRooms.push(r);
+        } else {
+          newRooms.push(this.room);
+        }
+      } 
+      this.rooms = newRooms;
+    },
+    (error) => {
+      console.log(error)
+    });
+
     modal.close('');
   }
 
@@ -348,7 +371,19 @@ export class AdminComponent implements OnInit {
   }
 
   public onDeleteRoom(room: Room): void {
-    console.log(room);
+    this.apiService.deleteRoom(room.hotel.hotelId, room.roomNumber)
+    .subscribe(result => {
+      const newRooms = [];
+      for (const r of this.rooms) {
+        if (r.hotel.hotelId != room.hotel.hotelId || r.roomNumber != room.roomNumber) {
+          newRooms.push(r);
+        }
+      }
+      this.rooms = newRooms;
+    },
+    (error) => {
+      console.log(error);
+    });
   }
 
 //=========================================================================================

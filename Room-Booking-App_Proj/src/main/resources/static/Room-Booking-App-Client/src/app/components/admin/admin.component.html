@@ -131,7 +131,7 @@
                   <td>{{room.extendable ? 'Yes' : 'No'}}</td>
                   <td>{{room.area}}</td>
                   <td>
-                    <button class = 'btn btn-primary' (click)='openUpdateRoom(room)'>Update</button>
+                    <button class = 'btn btn-primary' (click)='openUpdateRoom(updateRoom, room)'>Update</button>
                   </td>
                   <td>
                     <button class = 'btn btn-danger' (click)='onDeleteRoom(room)'>Delete</button>
@@ -590,6 +590,12 @@
     </div>
     <div class = 'row'>
       <label>
+        Capacity
+        <input type = 'number' min = '0' class = 'form-control' name = 'capacity' [(ngModel)] = 'room.capacity'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
         Price
         <input type = 'number' min = '0' class = 'form-control' name = 'price' [(ngModel)] = 'room.price'>
       </label>
@@ -598,8 +604,8 @@
       <label>
         Extendable
         <select class = 'form-control' name = 'extendable' [(ngModel)] = 'room.extendable'>
-          <option value = 1>True</option>
-          <option value = 0>False</option>
+          <option [ngValue] = 'true'>Yes</option>
+          <option [ngValue] = 'false'>No</option>
         </select>
       </label>
     </div>
@@ -648,6 +654,12 @@
     </div>
     <div class = 'row'>
       <label>
+        Capacity
+        <input type = 'number' min = '0' class = 'form-control' name = 'capacity' [(ngModel)] = 'room.capacity'>
+      </label>
+    </div>
+    <div class = 'row'>
+      <label>
         Price
         <input type = 'number' min = '0' class = 'form-control' name = 'price' [(ngModel)] = 'room.price'>
       </label>
@@ -656,8 +668,8 @@
       <label>
         Extendable
         <select class = 'form-control' name = 'extendable' [(ngModel)] = 'room.extendable'>
-          <option value = 1>True</option>
-          <option value = 0>False</option>
+          <option [ngValue] = 'true'>Yes</option>
+          <option [ngValue] = 'false'>No</option>
         </select>
       </label>
     </div>

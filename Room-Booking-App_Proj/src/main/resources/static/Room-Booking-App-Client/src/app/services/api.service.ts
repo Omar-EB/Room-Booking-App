@@ -102,9 +102,14 @@ export class ApiService {
   }
 
   public createHotel(hotelParams) {
-    console.log(hotelParams);
     const postUrl = this.baseUrl + 'backend/add/hotel';
     return this.httpClient.post(postUrl, hotelParams);
+  }
+
+  public createRoom(roomParams) {
+    console.log(roomParams);
+    const postUrl = this.baseUrl + 'backend/add/room';
+    return this.httpClient.post(postUrl, roomParams);
   }
 
 
@@ -121,6 +126,11 @@ export class ApiService {
   public updateHotel(hotelParams) {
     const putUrl = this.baseUrl + '/backend/update/hotel';
     return this.httpClient.put(putUrl, hotelParams);
+  }
+
+  public updateRoom(roomParams) {
+    const putUrl = this.baseUrl + '/backend/update/room';
+    return this.httpClient.put(putUrl, roomParams);
   }
 
 
@@ -142,6 +152,11 @@ export class ApiService {
     return this.httpClient.delete(deleteUrl, {params: params});
   }
 
+  public deleteRoom(hotelId: number, roomNumber: number) {
+    const deleteUrl = this.baseUrl + 'backend/delete/room';
+    const params = {hotel_id: ''+hotelId, room_number: ''+roomNumber};
+    return this.httpClient.delete(deleteUrl, {params: params});
+  }
 
   public parseToRoom(roomJson: any): Room {
     const room = new Room();
