@@ -507,7 +507,7 @@ public class RestfulController {
 	    String country = (String) json.get("country");
 	    Integer rating = (Integer) json.get("rating");
 	    String phone_number = (String) json.get("phone_number");
-	    Integer number_of_rooms = (Integer) json.get("number_of_rooms");
+	    //Integer number_of_rooms = (Integer) json.get("number_of_rooms");
 	    String hc_name = (String) json.get("hc_name");
 		
 	    HotelChain hotel_chain = hotelChainService.getHotelChain(hc_name).get(0);
@@ -520,7 +520,7 @@ public class RestfulController {
 		hotel.setStreet_name(street_name);
 		hotel.setStreet_number(street_number);
 		hotel.setRating(rating);
-		hotel.setNumber_of_rooms(number_of_rooms);
+		hotel.setNumber_of_rooms(new Integer(0));
 		//hotel_chain.getHotels().add(hotel);
 		
 	    hotelService.saveHotel(hotel);
