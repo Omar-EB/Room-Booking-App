@@ -197,7 +197,7 @@ export class AdminComponent implements OnInit {
 
     this.apiService.createHotel(this.getHotelParams())
       .subscribe(result => {
-        this.hotels.push(this.hotel);
+        this.getHotels();
       },
       (error) => {
         console.log(error);
@@ -213,7 +213,7 @@ export class AdminComponent implements OnInit {
 
     this.apiService.createRoom(this.getRoomParams())
       .subscribe(result => {
-        this.rooms.push(this.room);
+        this.getRooms();
       },
       (error) => {
         console.log(error);

@@ -107,7 +107,6 @@ export class ApiService {
   }
 
   public createRoom(roomParams) {
-    console.log(roomParams);
     const postUrl = this.baseUrl + 'backend/add/room';
     return this.httpClient.post(postUrl, roomParams);
   }
