@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ApiService } from '../../services/api.service';
 
@@ -19,12 +20,22 @@ export class AdminComponent implements OnInit {
   private hotels: Hotel[];
   private rooms: Room[];
 
+  private customer: Customer;
+  private employee: Employee;
+  private hotel: Hotel;
+  private room: Room;
+
   constructor(
     private location: Location,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
+    this.customer = new Customer();
+    this.employee = new Employee();
+    this.hotel = new Hotel();
+    this.room = new Room();
     this.getCustomers();
     this.getEmployees();
     this.getHotels();
@@ -87,37 +98,351 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  public onUpdateCustomer(customer: Customer): void {
-    console.log(customer);
+//=========================================================================================
+  public openCreateCustomer(createCustomer: NgbModal): void {
+    this.customer = new Customer();
+    this.modalService.open(createCustomer, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
   }
+
+  public openCreateEmployee(createEmployee: NgbModal): void {
+    this.employee = new Employee();
+    this.modalService.open(createEmployee, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+  public openCreateHotel(createHotel: NgbModal): void {
+    this.hotel = new Hotel();
+    this.modalService.open(createHotel, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+  public openCreateRoom(createRoom: NgbModal): void {
+    this.room = new Room();
+    this.modalService.open(createRoom, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+//=========================================================================================
+  public openUpdateCustomer(updateCustomer: NgbModal, customer: Customer): void {
+    this.customer = customer;
+    this.modalService.open(updateCustomer, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+  public openUpdateEmployee(updateEmployee: NgbModal, employee: Employee): void {
+    this.employee = employee;
+    this.modalService.open(updateEmployee, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+  public openUpdateHotel(updateHotel: NgbModal, hotel: Hotel): void {
+    this.hotel = hotel;
+    this.modalService.open(updateHotel, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+  public openUpdateRoom(updateRoom: NgbModal, room: Room): void {
+    this.room = room;;
+    this.modalService.open(updateRoom, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    }, (reason) => {
+    });
+  }
+
+//=========================================================================================
+
+  public onCreateCustomer(modal): void {
+    if (!this.checkCustomerInfoValid()) {
+      return;
+    }
+
+    this.apiService.createCustomer(this.getCustomerParams())
+      .subscribe(result => {
+        this.customers.push(this.customer);
+      },
+      (error) => {
+        console.log(error);
+      });
+
+    modal.close('');
+  }
+
+  public onCreateEmployee(modal): void {
+    if (!this.checkEmployeeInfoValid()) {
+      return;
+    }
+
+    modal.close('');
+  }
+
+  public onCreateHotel(modal): void {
+    if (!this.checkHotelInfoValid()) {
+      return;
+    }
+
+    modal.close('');
+  }
+
+  public onCreateRoom(modal): void {
+    console.log(this.room);
+    if (!this.checkRoomInfoValid()) {
+      return;
+    }
+
+    modal.close('');
+  }
+
+//=========================================================================================
+
+  public onUpdateCustomer(modal): void {
+    if (!this.checkCustomerInfoValid()) {
+      return;
+    }
+
+    this.apiService.updateCustomer(this.getCustomerParams())
+      .subscribe(result => {
+        const newCustomers = [];
+        for (const customer of this.customers) {
+          if (customer.sin != this.customer.sin) {
+            newCustomers.push(customer);
+          } else {
+            newCustomers.push(this.customer);
+          }
+        } 
+        this.customers = newCustomers;
+      },
+      (error) => {
+        console.log(error)
+      });
+
+    modal.close('');
+  }
+
+  public onUpdateEmployee(modal): void {
+    if (!this.checkEmployeeInfoValid()) {
+      return;
+    }
+
+    modal.close('');
+  }
+
+  public onUpdateHotel(modal): void {
+    if (!this.checkHotelInfoValid()) {
+      return;
+    }
+
+    modal.close('');
+  }
+
+  public onUpdateRoom(modal): void {
+    if (!this.checkRoomInfoValid()) {
+      return;
+    }
+
+    modal.close('');
+  }
+
+//=========================================================================================
 
   public onDeleteCustomer(customer: Customer): void {
-    console.log(customer);
-  }
-
-  public onUpdateEmployee(employee: Employee): void {
-    console.log(employee);
+    this.apiService.deleteCustomer(customer.sin)
+      .subscribe(result => {
+        const newCustomers = [];
+        for (const cust of this.customers) {
+          if (cust.sin != customer.sin) {
+            newCustomers.push(cust);
+          }
+        }
+        this.customers = newCustomers;
+      },
+      (error) => {
+        console.log(error);
+      });
   }
 
   public onDeleteEmployee(employee: Employee): void {
     console.log(employee);
   }
 
-  public onUpdateHotel(hotel: Hotel): void {
-    console.log(hotel);
-  }
-
   public onDeleteHotel(hotel: Hotel): void {
     console.log(hotel);
-  }
-
-  public onUpdateRoom(room: Room): void {
-    console.log(room);
   }
 
   public onDeleteRoom(room: Room): void {
     console.log(room);
   }
 
+//=========================================================================================
+
+
+  private getCustomerParams() {
+    const customerParams: any = {};
+    customerParams.sin = this.customer.sin;
+    customerParams.given_name = this.customer.givenName;
+    customerParams.family_name = this.customer.familyName;
+    customerParams.street_name = this.customer.streetName;
+    customerParams.street_number = +this.customer.streetNumber;
+    customerParams.city = this.customer.city;
+    customerParams.state = this.customer.state;
+    customerParams.country = this.customer.country;
+    return customerParams;
+  }
+
+  private getEmployeeParams() {
+    const employeeParams: any = {};
+    employeeParams.sin = this.employee.sin;
+    employeeParams.given_name = this.employee.givenName;
+    employeeParams.family_name = this.employee.familyName;
+    employeeParams.street_name = this.employee.streetName;
+    employeeParams.street_number = +this.employee.streetNumber;
+    employeeParams.city = this.employee.city;
+    employeeParams.state = this.employee.state;
+    employeeParams.country = this.employee.country;
+    employeeParams.hotel_id = +this.employee.hotel.hotelId;
+    return employeeParams;
+  }
+
+  private getHotelParams() {
+    const hotelParams: any = {};
+    hotelParams.hc_name = this.hotel.hotelChain.hcName;
+    hotelParams.street_name = this.hotel.streetName;
+    hotelParams.street_number = +this.hotel.streetNumber;
+    hotelParams.city = this.hotel.city;
+    hotelParams.state = this.hotel.state;
+    hotelParams.country = this.hotel.country;
+    hotelParams.rating = +this.hotel.rating;
+    hotelParams.phone_number = this.hotel.phoneNumber;
+    return hotelParams;
+  }
+
+  private getRoomParams() {
+    const roomParams: any = {};
+    roomParams.hotel_id = +this.room.hotel.hotelId;
+    roomParams.room_number = +this.room.roomNumber;
+    roomParams.view_type = this.room.viewType;
+    roomParams.capacity = +this.room.capacity;
+    roomParams.price = +this.room.price;
+    roomParams.extendable = !!+this.room.extendable;
+    roomParams.area = +this.room.area;
+    return roomParams;
+  }
+
+  private checkCustomerInfoValid(): boolean {
+    if (!this.customer.sin) {
+      window.alert('Sin is missing');
+      return false;
+    } else if (!this.customer.givenName) {
+      window.alert('Given name is missing');
+      return false;
+    } else if (!this.customer.familyName) {
+      window.alert('Family name is missing');
+      return false;
+    } else if (!this.customer.streetName) {
+      window.alert('Street name is missing');
+      return false;
+    } else if (!this.customer.streetNumber) {
+      window.alert('Street number is missing');
+      return false;
+    } else if (!this.customer.city) {
+      window.alert('City is missing');
+      return false;
+    } else if (!this.customer.state) {
+      window.alert('State is missing');
+      return false;
+    } else if (!this.customer.country) {
+      window.alert('Country is missing');
+      return false;
+    }
+    return true;
+  }
+
+  private checkEmployeeInfoValid(): boolean {
+    if (!this.employee.sin) {
+      window.alert('Sin is missing');
+      return false;
+    } else if (!this.employee.givenName) {
+      window.alert('Given name is missing');
+      return false;
+    } else if (!this.employee.familyName) {
+      window.alert('Family name is missing');
+      return false;
+    } else if (!this.employee.streetName) {
+      window.alert('Street name is missing');
+      return false;
+    } else if (!this.employee.streetNumber) {
+      window.alert('Street number is missing');
+      return false;
+    } else if (!this.employee.city) {
+      window.alert('City is missing');
+      return false;
+    } else if (!this.employee.state) {
+      window.alert('State is missing');
+      return false;
+    } else if (!this.employee.country) {
+      window.alert('Country is missing');
+      return false;
+    } else if (!this.employee.hotel.hotelId) {
+      window.alert('Hotel id is missing');
+      return false;
+    }
+    return true;
+  }
+
+  
+  private checkHotelInfoValid(): boolean {
+    if (!this.hotel.hotelChain.hcName) {
+      window.alert('Hotel Chain is missing');
+      return false;
+    } else if (!this.hotel.streetName) {
+      window.alert('Street name is missing');
+      return false;
+    } else if (!this.hotel.streetNumber) {
+      window.alert('Street number is missing');
+      return false;
+    } else if (!this.hotel.city) {
+      window.alert('City is missing');
+      return false;
+    } else if (!this.hotel.state) {
+      window.alert('State is missing');
+      return false;
+    } else if (!this.hotel.country) {
+      window.alert('Country is missing');
+      return false;
+    } else if (!this.hotel.rating) {
+      window.alert('Rating is missing');
+      return false;
+    } else if (!this.hotel.phoneNumber) {
+      window.alert('Phone number is missing');
+      return false;
+    }
+    return true;
+  }
+
+  private checkRoomInfoValid(): boolean {
+    if (!this.room.hotel.hotelId) {
+      window.alert('Hotel id is missing');
+      return false;
+    } else if (!this.room.roomNumber) {
+      window.alert('Room number is missing');
+      return false;
+    } else if (!this.room.viewType) {
+      window.alert('View type is missing');
+      return false;
+    } else if (!this.room.price) {
+      window.alert('Price is missing');
+      return false;
+    } else if (!this.room.area) {
+      window.alert('Area is missing');
+      return false;
+    }
+    return true;
+  }
 
 }

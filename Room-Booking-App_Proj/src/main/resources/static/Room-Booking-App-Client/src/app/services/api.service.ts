@@ -72,25 +72,42 @@ export class ApiService {
   }
 
   public createReservation(reservationParams): Observable<Reservation> {
-    const putUrl = this.baseUrl + 'rooms/reservation';
+    const postUrl = this.baseUrl + 'rooms/reservation';
     const params = {start: reservationParams.start, end: reservationParams.end};
-    return this.httpClient.post<Reservation>(putUrl, reservationParams, {params: params});
+    return this.httpClient.post<Reservation>(postUrl, reservationParams, {params: params});
   }
 
   public createCheckIn(checkInParams): Observable<CheckIn> {
-    const putUrl = this.baseUrl + 'rooms/checkin/';
+    const postUrl = this.baseUrl + 'rooms/checkin/';
     const params = {start: checkInParams.start_date.toISOString(), 
                     end: checkInParams.end_date.toISOString(), 
                     payment: '' + checkInParams.payment};
-    return this.httpClient.post<CheckIn>(putUrl, checkInParams, {params: params});
+    return this.httpClient.post<CheckIn>(postUrl, checkInParams, {params: params});
   }
 
-  public createRenting(rentingParams){
-    const putUrl = this.baseUrl + 'rooms/reservation/checkin';
+  public createRenting(rentingParams) {
+    const postUrl = this.baseUrl + 'rooms/reservation/checkin';
     const params = {start: rentingParams.start, end: rentingParams.end};
-    return this.httpClient.post(putUrl, rentingParams, {params: params});
+    return this.httpClient.post(postUrl, rentingParams, {params: params});
   }
 
+  public createCustomer(customerParams) {
+    const postUrl = this.baseUrl + 'backend/add/customer';
+    return this.httpClient.post(postUrl, customerParams);
+  }
+
+
+  public updateCustomer(customerParams) {
+    const putUrl = this.baseUrl + '/backend/update/customer';
+    return this.httpClient.put(putUrl, customerParams);
+  }
+
+
+  public deleteCustomer(customerSin: string) {
+    const deleteUrl = this.baseUrl + 'backend/delete/customer';
+    const params = {customer_sin: customerSin}
+    return this.httpClient.delete(deleteUrl, {params: params});
+  }
 
   public parseToRoom(roomJson: any): Room {
     const room = new Room();

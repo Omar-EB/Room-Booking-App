@@ -11,6 +11,10 @@ export class Employee {
     country: string;
     hotel: Hotel;
 
+    constructor() {
+        this.hotel = new Hotel();
+    }
+
     public getName(): string {
         return this.givenName + ' ' + this.familyName;
     }

@@ -1,7 +1,7 @@
 import { Hotel } from './hotel.model';
 
 export class Room {
-    hotel: Hotel;
+    hotel: Hotel = new Hotel();
     roomNumber: number;
     viewType: string;
     capacity: number;
@@ -9,4 +9,5 @@ export class Room {
     extendable: boolean;
     area: number;
     amenities: string[] = [];
+
 }
