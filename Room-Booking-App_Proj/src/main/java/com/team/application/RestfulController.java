@@ -324,7 +324,7 @@ public class RestfulController {
 	    String city = (String) json.get("city");
 	    String state = (String) json.get("state");
 	    String country = (String) json.get("country");
-	    
+	    System.out.println("customer sin: "+customer_sin);
 	    customerService.addCustomer(new Customer(customer_sin, given_name, family_name, street_name, street_number, city, state, country));
 		return new Boolean(true);
 	}
@@ -341,6 +341,7 @@ public class RestfulController {
 	    String state = (String) json.get("state");
 	    String country = (String) json.get("country");
 	    
+	    System.out.println("customer sin: "+customer_sin);
 	    Customer customer = customerService.findCustomerbyId(customer_sin).get(0);
 	    customer.setGiven_name(given_name);
 	    customer.setFamily_name(family_name);
@@ -406,7 +407,7 @@ public class RestfulController {
 	
 	//Employee delete
 	//example: http://localhost:8080/backend/delete/employee?employee_sin=389129734
-	@GetMapping("/backend/delete/employee")
+	@DeleteMapping("/backend/delete/employee")
 	public Boolean deleteEmployee(@RequestParam(value="employee_sin", required=true) String employee_sin) {    
 	    employeeService.deleteEmployee(employee_sin);
 	    return new Boolean(true);
