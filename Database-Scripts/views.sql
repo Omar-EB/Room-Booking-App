@@ -12,6 +12,8 @@ CREATE OR REPLACE VIEW public.roomsavailable AS
 
 CREATE OR REPLACE VIEW public.roomcapacities AS
  SELECT h.hc_name,
+    h.hotel_id,
+    r.room_number,
     h.street_name,
     h.street_number,
     h.city,
