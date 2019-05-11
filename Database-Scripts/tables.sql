@@ -143,4 +143,3 @@ CREATE TABLE ReservationsArchive (
 	reservation_type Boolean DEFAULT False ,
 	PRIMARY KEY (id)
 )
-
