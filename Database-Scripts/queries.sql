@@ -18,7 +18,7 @@ select room.* from room,hotel where ((
 					(reservation.start_date<? AND reservation.end_date>=?) OR -- end
 					(reservation.start_date>=? AND reservation.end_date<=?) -- ?1 :start , ?2 : end
 				)
-			);
+			)
 		)
 	)
 )	GROUP BY room.hotel_id,room.room_number ;
@@ -38,7 +38,7 @@ select room.* from room,hotel where ((
 					(reservation.start_date<? AND reservation.end_date>=?) OR -- end
 					(reservation.start_date>=? AND reservation.end_date<=?) -- ?1 :start , ?2 : end
 				)
-			);
+			)
 		)
 	)
 )	GROUP BY room.hotel_id,room.room_number ;
