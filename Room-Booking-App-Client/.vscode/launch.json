@@ -1,0 +1,100 @@
+// Use IntelliSense to learn about possible attributes.
+// Hover to view descriptions of existing attributes.
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "Launch Chrome Web_Client_Run",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (1)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (2)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (3)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (4)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (5)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (6)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (7)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (8)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (9)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (10)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome Web_Client_Run (11)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200/#",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}{
+    "name": "Launch Chrome Web_Client_Run (3)",
+    "type": "chrome",
+    "request": "launch",
+    "url": "http://localhost:4200/#",
+    "webRoot": "${workspaceFolder}"
+}
+]
+}
